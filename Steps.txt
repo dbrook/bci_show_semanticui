@@ -1,0 +1,12 @@
+$ yarn create react-app bci_tradeshow --template typescript
+$ cd bci_tradeshow
+$ yarn add semantic-ui-react semantic-ui-css
+
+## Semantic-UI CSS is fucked / not-maintained. Use fomantic-ui instead?
+$ yarn add fomantic-ui-css
+
+## Nope, just need to fix semantic ui:
+https://github.com/Semantic-Org/Semantic-UI/issues/7073#:%7E:text=This%20issue%20is%20extremely%20annoying%2C%20to%20workaround%20it%20I%20created%20%40semantic%2Dui%2Dreact/css%2Dpatch%2C%20works%20with%20semantic%2Dui%2Dcss%20%26%20semantic%2Dui%2Dless.
+
+## Start the app in development mode:
+$ yarn start

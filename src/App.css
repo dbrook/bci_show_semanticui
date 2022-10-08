@@ -1,5 +1,40 @@
+#root {
+  height: 100%;
+}
+
+/* Hide the tabular format if the display isn't wide enough */
+@media (max-width: 1024px) {
+  .ui.celled.unstackable.table.BCIdesktop {
+    display: none;
+  }
+}
+
+.ui.celled.unstackable.table.BCIdesktop {
+  margin: 0;
+}
+
+/* Hide the condensed / tablet-mobile view if the display is wide enough to show the desktop one */
+@media (min-width: 1024px) {
+  .ui.BCImobiletablet {
+    display: none;
+  }
+}
+
+/* Table contents bleed above the fixed table header when scrolling unless this is done */
+.tabInnerLayout {
+  flex-grow: 1;
+  height: 0px;
+  overflow-y: auto;
+}
+
 .App {
   text-align: center;
+
+  height: 100%;
+
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
 }
 
 .App-logo {
