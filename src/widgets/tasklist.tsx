@@ -1,6 +1,13 @@
 import React from 'react';
 import { Divider, Table } from 'semantic-ui-react';
 
+import NumericalProgress from './numericalprogress';
+
+import { OpenStockForm, VendorVisit } from '../types/enums';
+import Visitation from './visitation';
+import OpenStock from './openstock';
+import VendorActions from './vendoractions';
+
 export default class TaskList extends React.Component {
   render() {
     const boothStyle = {
@@ -8,11 +15,11 @@ export default class TaskList extends React.Component {
     };
 
     const visitStyle = {
-      width: '12em',
+      width: '10em',
     };
 
     const simpleStyle = {
-      width: '8em',
+      width: '8.5em',
     };
 
     const openStockStyle = {
@@ -23,6 +30,16 @@ export default class TaskList extends React.Component {
       position: 'sticky',
       top: 0,
       zIndex: 2,
+    };
+
+    const tempVendorStat = {
+      boothId: 196,
+      vendor: 'Foo',
+      visit: VendorVisit.NOT_VISITED,
+      questions: [{question:'foo', answer: 'bar'}, {question:'foo', answer: undefined}],
+      powerBuys: [{itemId:'121F', submitted: false}],
+      profitCenters: [{itemId:'450G', submitted: true}],
+      openStockForm: OpenStockForm.DO_NOT_GET,
     };
 
     return (
@@ -36,41 +53,21 @@ export default class TaskList extends React.Component {
               <Table.HeaderCell style={simpleStyle}>Questions</Table.HeaderCell>
               <Table.HeaderCell style={simpleStyle}>Power Buy</Table.HeaderCell>
               <Table.HeaderCell style={simpleStyle}>Profit Center</Table.HeaderCell>
-              <Table.HeaderCell style={openStockStyle}>Open Stock</Table.HeaderCell>
+              <Table.HeaderCell style={openStockStyle}>Open Stock Form</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
-          <Table.Row>
-            <Table.Cell textAlign='right'>196</Table.Cell>
-            <Table.Cell>Dewartimer Industries</Table.Cell>
-            <Table.Cell textAlign='center'>Not Visited</Table.Cell>
-            <Table.Cell textAlign='center'>None</Table.Cell>
-            <Table.Cell textAlign='center'>0 of 15</Table.Cell>
-            <Table.Cell textAlign='center'>0 of 12</Table.Cell>
-            <Table.Cell>Not Retrieved (ADV) (DEL)</Table.Cell>
-          </Table.Row>
-          </Table>
+          <VendorActions vendorStatus={tempVendorStat}/>
+        </Table>
         <div className='ui BCImobiletablet'>
-          <div><div><b>196</b> - Dewartimer Industries</div><div>Not Visited, None, 0 of 15, 0 of 12, Not Reitreved (ADV) (DEL)</div></div>
-          <Divider />
-          <div>FOOOOD</div>
-          <Divider />
-          <div>FOOOOD</div>
-          <Divider />
-          <div>FOOOOD</div>
-          <Divider />
-          <div>FOOOOD</div>
-          <Divider />
-          <div>FOOOOD</div>
-          <Divider />
-          <div>FOOOOD</div>
-          <Divider />
-          <div>FOOOOD</div>
-          <Divider />
-          <div>FOOOOD</div>
-          <Divider />
-          <div>FOOOOD</div>
-          <Divider />
-          <div>FOOOOD</div>
+          <div>
+            <div><b>196</b> - Dewartimer Industries</div>
+            <div>
+              <Visitation visitStatus={VendorVisit.NOT_VISITED}/>
+              <NumericalProgress completed={0} total={1}/>
+              <NumericalProgress completed={10} total={15}/>
+              <NumericalProgress completed={2} total={2}/>
+            </div>
+          </div>
           <Divider />
           <div>FOOOOD</div>
         </div>
