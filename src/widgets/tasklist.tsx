@@ -1,12 +1,9 @@
 import React from 'react';
-import { Divider, Table } from 'semantic-ui-react';
-
-import NumericalProgress from './numericalprogress';
+import { Table } from 'semantic-ui-react';
 
 import { OpenStockForm, VendorVisit } from '../types/enums';
 import { IVendorStatus } from '../types/interfaces';
 import VendorActions from './vendoractions';
-import OpenStock from './openstock';
 
 export default class TaskList extends React.Component {
   render() {
@@ -81,7 +78,7 @@ export default class TaskList extends React.Component {
       {
         boothId: 237,
         vendor: 'Bax',
-        visit: VendorVisit.VISITED,
+        visit: VendorVisit.NOT_VISITED,
         questions: [],
         powerBuys: [],
         profitCenters: [],
@@ -89,7 +86,8 @@ export default class TaskList extends React.Component {
       },
     ];
 
-    let vendorRows = tempVendorStat.map((x: IVendorStatus) => <VendorActions vendorStatus={x}/>);
+    let vendorRows = tempVendorStat.map((x: IVendorStatus) => <VendorActions vendorStatus={x} condensed={false}/>);
+    let vendorRowsMobile = tempVendorStat.map((x: IVendorStatus) => <VendorActions vendorStatus={x} condensed={true}/>);
 
     // Displays tabular format on wide screens, condensed view on mobiles/tablets
     return (
@@ -109,19 +107,7 @@ export default class TaskList extends React.Component {
           {vendorRows}
         </Table>
         <div className='ui BCImobiletablet'>
-          <div>
-            <div><b>196</b> - Dewartimer Industries</div>
-            <div>
-              <NumericalProgress label='QU' completed={0} total={0}/>
-              <NumericalProgress label='PC' completed={0} total={1}/>
-              <NumericalProgress label='PB' completed={10} total={15}/>
-              <NumericalProgress label='VI' completed={20} total={20}/>
-              <NumericalProgress label='VI' completed={20} total={20}/>
-              <OpenStock formStatus={OpenStockForm.PICK_UP}/>
-            </div>
-          </div>
-          <Divider />
-          <div>FOOOOD</div>
+          {vendorRowsMobile}
         </div>
       </div>
     );

@@ -11,19 +11,29 @@ export default class NumericalProgress extends React.Component<NumericalProgress
   render() {
     const { completed, total, label } = this.props;
 
-    const buttonStyle = {
+    const buttonOnlyStyle = {
       width: '100%',
+    };
+    const labelButtonStyle = {
+      width: '4.5em',
+    };
+    const labelOnlyStyle = {
+      justifyContent: 'center',  // Items are secretyly flexbox under the hood!
+      width: '5.75em',
+    };
+    const outerButtonLabelStyle = {
+      marginBottom: '4px',
     };
 
     let button;
     if (total === 0) {
       if (label) {
-        button = <Button as='div' labelPosition='right'>
-            <Button>{label}</Button>
-            <Label as='a' basic pointing='left'>None</Label>
+        button = <Button as='div' labelPosition='right' style={outerButtonLabelStyle}>
+            <Button style={labelButtonStyle}>{label}</Button>
+            <Label as='a' basic pointing='left' style={labelOnlyStyle}>None</Label>
           </Button>;
       } else {
-        button = <Button basic style={buttonStyle}>None</Button>;
+        button = <Button basic style={buttonOnlyStyle}>None</Button>;
       }
     } else {
       let color: SemanticCOLORS;
@@ -38,12 +48,12 @@ export default class NumericalProgress extends React.Component<NumericalProgress
       }
 
       if (label) {
-          button = <Button as='div' labelPosition='right'>
-              <Button color={color}>{label}</Button>
-              <Label as='a' basic color={color} pointing='left'>{progress}</Label>
-            </Button>;
+        button = <Button as='div' labelPosition='right' style={outerButtonLabelStyle}>
+            <Button color={color} style={labelButtonStyle}>{label}</Button>
+            <Label as='a' basic color={color} pointing='left' style={labelOnlyStyle}>{progress}</Label>
+          </Button>;
       } else {
-          button = <Button color={color} style={buttonStyle}>{progress}</Button>
+        button = <Button color={color} style={buttonOnlyStyle}>{progress}</Button>
       }
     }
 
