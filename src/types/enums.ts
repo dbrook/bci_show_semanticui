@@ -10,4 +10,5 @@ export enum OpenStockForm {
   RETRIEVED = 2,
   FILLED_IN = 3,
   SUBMITTED = 4,
+  ABANDONED = 5,
 };

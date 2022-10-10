@@ -3,7 +3,6 @@ import { Table } from 'semantic-ui-react';
 
 
 import { IQuestionAnswer, ISubmittableItem, IVendorStatus } from '../types/interfaces';
-import { OpenStockForm, VendorVisit } from '../types/enums';
 import NumericalProgress from './numericalprogress';
 import Visitation from './visitation';
 import OpenStock from './openstock';
@@ -46,13 +45,3 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
     return nbSubmitted;
   }
 }
-
-/*
-      boothId: 196,
-      vendor: 'Foo',
-      visit: VendorVisit.NOT_VISITED,
-      questions: [],
-      powerBuys: [],
-      profitCenters: [],
-      openStockForm: OpenStockForm.DO_NOT_GET
-*/
