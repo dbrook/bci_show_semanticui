@@ -7,13 +7,24 @@ import 'semantic-ui-css/semantic.css';
 import MenuBar from './widgets/menubar';
 import TabArea from './widgets/tabarea';
 
-function App() {
-  return (
-    <div className="App">
-      <MenuBar />
-      <TabArea />
-    </div>
-  );
+export default class App extends React.Component<any, any> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hideCompleted: false };
+    this.toggleHideCompleted = this.toggleHideCompleted.bind(this);
+  }
+
+  render() {
+    return (
+      <div className="App">
+        <MenuBar hideCompleted={this.state.hideCompleted} toggleHideCompleted={this.toggleHideCompleted}/>
+        <TabArea hideCompleted={this.state.hideCompleted} />
+      </div>
+    );
+  }
+
+  public toggleHideCompleted() {
+    this.setState({ hideCompleted: !this.state.hideCompleted });
+  }
 }
 
-export default App;

@@ -2,7 +2,11 @@ import React from 'react';
 import { Tab } from 'semantic-ui-react';
 import TaskList from './tasklist';
 
-export default class TabArea extends React.Component {
+interface TabAreaProps {
+  hideCompleted?: boolean,
+};
+
+export default class TabArea extends React.Component<TabAreaProps> {
   render() {
     const innerTabStyle = {
       flexGrow: 1,
@@ -19,7 +23,7 @@ export default class TabArea extends React.Component {
         render: () => {
           return (
             <Tab.Pane attached='top' style={innerTabStyle}>
-              <TaskList />
+              <TaskList hideCompleted={this.props.hideCompleted} />
             </Tab.Pane>
           );
         },

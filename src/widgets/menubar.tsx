@@ -1,8 +1,15 @@
 import React from 'react';
 import { Button, Dropdown, Icon, Menu } from 'semantic-ui-react';
 
-export default class MenuBar extends React.Component {
+interface MenuBarProps {
+  hideCompleted: boolean,
+  toggleHideCompleted: () => void,
+};
+
+export default class MenuBar extends React.Component<MenuBarProps> {
   render() {
+    const { hideCompleted, toggleHideCompleted } = this.props;
+
     const menuStyle = {
       display: 'flex',
       width: '100%',
@@ -26,7 +33,7 @@ export default class MenuBar extends React.Component {
           <Icon name='calendar alternate outline' />
           2022-Fall (ACY)
         </Button>
-        <Dropdown labeled button text='Data' className='icon basic primary' iconPosition='left' icon='database'>
+        <Dropdown labeled button text='Data' className='icon basic primary' iconposition='left' icon='database'>
           <Dropdown.Menu>
             <Dropdown.Item>Import...</Dropdown.Item>
             <Dropdown.Item>Export...</Dropdown.Item>
@@ -35,7 +42,7 @@ export default class MenuBar extends React.Component {
           </Dropdown.Menu>
         </Dropdown>
         <div style={spacerStyle} />
-        <Button icon primary basic button labelPosition='left'>
+        <Button icon primary basic={!hideCompleted} onClick={toggleHideCompleted} button labelPosition='left'>
           <Icon name='clipboard check' />
           Hide Done
         </Button>
