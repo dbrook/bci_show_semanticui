@@ -37,6 +37,15 @@ export default class TaskList extends React.Component<TaskListProps> {
 
     const tempVendorStat = [
       {
+        boothId: 100,
+        vendor: 'Initial Added',
+        visit: VendorVisit.NOT_VISITED,
+        questions: [],
+        powerBuys: [],
+        profitCenters: [],
+        openStockForm: OpenStockForm.DO_NOT_GET,
+      },
+      {
         boothId: 196,
         vendor: 'Company Foo',
         visit: VendorVisit.NOT_VISITED,
