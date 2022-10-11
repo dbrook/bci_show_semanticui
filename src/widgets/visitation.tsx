@@ -23,6 +23,9 @@ export default class Visitation extends React.Component<NumericalProgressProps> 
     case VendorVisit.VISITED:
       button = <Button color='green' style={buttonStyle}>Visited</Button>;
       break;
+    case VendorVisit.NEED_REVISIT:
+      button = <Button color='pink' style={buttonStyle}>Revisit</Button>;
+      break;
     case VendorVisit.DO_NOT_VISIT:
     default:
       button = <Button basic style={buttonStyle}>No Visit</Button>;

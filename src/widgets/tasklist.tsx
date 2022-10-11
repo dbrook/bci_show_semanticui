@@ -109,6 +109,15 @@ export default class TaskList extends React.Component<TaskListProps> {
         openStockForm: OpenStockForm.ABANDONED,
       },
       {
+        boothId: 247,
+        vendor: 'Vendor Revisit, Inc.',
+        visit: VendorVisit.NEED_REVISIT,
+        questions: [],
+        powerBuys: [],
+        profitCenters: [],
+        openStockForm: OpenStockForm.ABANDONED,
+      },
+      {
         boothId: 998,
         vendor: 'Everything, Inc.',
         visit: VendorVisit.VISITED,
@@ -168,7 +177,7 @@ export default class TaskList extends React.Component<TaskListProps> {
 
   private vendorCompleted(vendor: IVendorStatus): boolean {
     return (
-      (vendor.visit !== VendorVisit.NOT_VISITED) &&
+      (vendor.visit !== VendorVisit.NOT_VISITED && vendor.visit !== VendorVisit.NEED_REVISIT) &&
       (vendor.openStockForm !== OpenStockForm.PICK_UP &&
        vendor.openStockForm !== OpenStockForm.RETRIEVED &&
        vendor.openStockForm !== OpenStockForm.FILLED_IN) &&

@@ -29,7 +29,17 @@ export default class TabArea extends React.Component<TabAreaProps> {
         },
       },
       {
-        menuItem: 'Floor',
+        menuItem: 'PC/PB',
+        render: () => {
+          return (
+            <Tab.Pane attached='top' style={innerTabStyle}>
+              Profit Center, Power Buy Full Data List Placeholder
+            </Tab.Pane>
+          );
+        },
+      },
+      {
+        menuItem: 'Map',
         render: () => {
           return (
             <Tab.Pane attached='top' style={innerTabStyle}>
@@ -39,7 +49,7 @@ export default class TabArea extends React.Component<TabAreaProps> {
         },
       },
       {
-        menuItem: 'Directory',
+        menuItem: 'Dir',
         render: () => {
           return (
             <Tab.Pane attached='top' style={innerTabStyle}>
