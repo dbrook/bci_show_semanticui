@@ -13,7 +13,7 @@ export default class TaskModal extends React.Component<TaskModalProps> {
 
     return (
       <Modal open={open}>
-        <Modal.Header>Add Vendor</Modal.Header>
+        <Modal.Header>Add Item</Modal.Header>
         <Modal.Content>
           <Dropdown placeholder='Vendor Booth' scrolling selection fluid options={
             [
@@ -37,7 +37,7 @@ export default class TaskModal extends React.Component<TaskModalProps> {
           }/>
         </Modal.Content>
         <Modal.Actions>
-          <Checkbox label='Make Another'/>
+          <Checkbox label='Add Another'/>
           <Button basic color='green' onClick={() => closeHander(false)}>Add</Button>
           <Button basic onClick={() => closeHander(false)}>Close</Button>
         </Modal.Actions>

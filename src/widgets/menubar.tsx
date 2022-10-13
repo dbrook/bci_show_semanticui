@@ -63,7 +63,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
           </Button>
           <Button icon primary basic button labelPosition='left' onClick={() => this.showAddTaskModal(true)}>
             <Icon name='plus square outline' />
-            Add Vendor
+            Add...
           </Button>
         </Menu>
       </>

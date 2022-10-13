@@ -1,6 +1,8 @@
 import React from 'react';
 import { Tab } from 'semantic-ui-react';
+
 import TaskList from './tasklist';
+import TaskDetailList from './taskdetaillist';
 
 interface TabAreaProps {
   hideCompleted?: boolean,
@@ -19,11 +21,11 @@ export default class TabArea extends React.Component<TabAreaProps> {
 
     const panes = [
       {
-        menuItem: 'Tasks',
+        menuItem: 'Vendors',
         render: () => {
           return (
             <Tab.Pane attached='top' style={innerTabStyle}>
-              <TaskList hideCompleted={this.props.hideCompleted} />
+              List of All Vendors, Baby!
             </Tab.Pane>
           );
         },
@@ -39,21 +41,21 @@ export default class TabArea extends React.Component<TabAreaProps> {
         },
       },
       {
-        menuItem: 'QU,PC,PB',
+        menuItem: 'Summary',
         render: () => {
           return (
             <Tab.Pane attached='top' style={innerTabStyle}>
-              Profit Center, Power Buy Full Data List Placeholder
+              <TaskList hideCompleted={this.props.hideCompleted} />
             </Tab.Pane>
           );
         },
       },
       {
-        menuItem: 'Directory',
+        menuItem: 'Tasks',
         render: () => {
           return (
             <Tab.Pane attached='top' style={innerTabStyle}>
-              List of All Vendors, Baby!
+              <TaskDetailList hideCompleted={this.props.hideCompleted} />
             </Tab.Pane>
           );
         },

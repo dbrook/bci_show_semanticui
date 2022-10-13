@@ -35,6 +35,14 @@
   justify-content: space-around;
 }
 
+/* Left-Aligned Flex Container */
+.BCIleftalignflex {
+  margin-left: 2px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+}
+
 .App {
   text-align: center;
 
