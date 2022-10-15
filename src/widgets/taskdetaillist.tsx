@@ -5,8 +5,10 @@ import { OpenStockForm, VendorVisit } from '../types/enums';
 import { IVendorStatus } from '../types/interfaces';
 import SimpleSubmittableGroup from './simplesubmittablegroup';
 
+import { nbSubmitted } from '../common/utils';
+
 interface TaskDetailListProps {
-  hideCompleted?: boolean,
+  hideCompleted: boolean,
 };
 
 export default class TaskDetailList extends React.Component<TaskDetailListProps> {
@@ -36,7 +38,7 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
         visit: VendorVisit.VISITED,
         questions: [{question:'foo', answer: 'bar'}],
         powerBuys: [],
-        profitCenters: [{itemId:'450G', submitted: true}],
+        profitCenters: [{itemId:'450G', submitted: false}],
         openStockForm: OpenStockForm.PICK_UP,
       },
       {
@@ -113,16 +115,22 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
       },
     ];
 
+    const { hideCompleted } = this.props;
+
 //     let questionRows = tempVendorStat.map((x: IVendorStatus) => {
 //       return <VendorActions key={x.boothId} vendorStatus={x} condensed={true}/>
 //     });
 //
     let profitCenterRows = tempVendorStat.map((x: IVendorStatus) => {
       if (x.profitCenters.length) {
+        if (hideCompleted && x.profitCenters.length === nbSubmitted(x.profitCenters)) {
+          return null;
+        }
         return <SimpleSubmittableGroup key={x.boothId}
                                        boothId={x.boothId}
                                        vendor={x.vendor}
                                        items={x.profitCenters}
+                                       hideCompleted={hideCompleted}
                                        prefix='PC'/>
       }
       return null;
@@ -130,10 +138,14 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
 
     let powerBuyRows = tempVendorStat.map((x: IVendorStatus) => {
       if (x.powerBuys.length) {
+        if (hideCompleted && x.powerBuys.length === nbSubmitted(x.powerBuys)) {
+          return null;
+        }
         return <SimpleSubmittableGroup key={x.boothId}
                                        boothId={x.boothId}
                                        vendor={x.vendor}
                                        items={x.powerBuys}
+                                       hideCompleted={hideCompleted}
                                        prefix='PB'/>
       }
       return null;

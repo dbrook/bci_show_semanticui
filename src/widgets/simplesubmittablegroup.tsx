@@ -9,16 +9,20 @@ interface SimpleSubmittableGroupProps {
   boothId: number,
   vendor: string,
   items: ISubmittableItem[],
+  hideCompleted: boolean,
   prefix?: string,
 };
 
 export default class SimpleSubmittableGroup extends React.Component<SimpleSubmittableGroupProps> {
   render() {
-    const { boothId, vendor, items, prefix } = this.props;
+    const { boothId, vendor, items, hideCompleted, prefix } = this.props;
 
-    const itemsAsSubmittables = items.map((x) =>
-      <SimpleSubmittable key={x.itemId} itemId={x.itemId} submitted={x.submitted} prefix={prefix}/>
-    );
+    const itemsAsSubmittables = items.map((x) => {
+      if (hideCompleted && x.submitted) {
+        return null;
+      }
+      return <SimpleSubmittable key={x.itemId} itemId={x.itemId} submitted={x.submitted} prefix={prefix}/>;
+    });
 
     return <div>
         <Header as='h3'>{boothId} - {vendor}</Header>
