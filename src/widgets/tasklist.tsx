@@ -26,7 +26,7 @@ export default class TaskList extends React.Component<TaskListProps> {
     };
 
     const openStockStyle = {
-      width: '16.5em',
+      width: '15em',
     };
 
     const stickyTableHead = {

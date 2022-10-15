@@ -69,19 +69,19 @@ export default class OpenStock extends React.Component<OpenStockProps> {
       <Button disabled icon basic color='red'><Icon name='trash alternate outline'/></Button>;
 
     if (labeled) {
-      const labelStyle = {
-        justifyContent: 'center',  // Items are secretyly flexbox under the hood!
-        width: '7em',
+      const outerStyle = {
+        height: '100%',
+        marginBottom: '4px',
       };
-      const buttonStyle = {
-        width: '4.5em',
+      const labelDetailStyle = {
+        width: '6em',
       };
 
-      button = <div>
-          <Button as='div' labelPosition='right'>
-            <Button {...mainProps} style={buttonStyle}>OS</Button>
-            <Label {...mainProps} style={labelStyle} as='a' basic pointing='left'>{currentStateStr}</Label>
-          </Button>
+      button = <div style={outerStyle}>
+          <Label size='large' {...mainProps}>
+            OS
+            <Label.Detail style={labelDetailStyle}>{currentStateStr}</Label.Detail>
+          </Label>
           <Button.Group>
             <Button icon basic color={nextColor}>
               <Icon name={nextIcon}/>
@@ -90,12 +90,13 @@ export default class OpenStock extends React.Component<OpenStockProps> {
           </Button.Group>
         </div>;
     } else {
-      const buttonStyle = {
-        width: '9em',
+      const labelStyle = {
+        width: '7.5em',
+        textAlign: 'center',
       };
 
       button = <div>
-          <Button {...mainProps} style={buttonStyle}>{currentStateStr}</Button>
+          <Label {...mainProps} size='large' style={labelStyle}>{currentStateStr}</Label>
           <Button.Group>
             <Button icon basic color={nextColor}>
               <Icon name={nextIcon}/>
@@ -108,10 +109,3 @@ export default class OpenStock extends React.Component<OpenStockProps> {
     return button;
   }
 }
-
-/*
-<Button as='div' labelPosition='right'>
-  <Button color={color}>{label}</Button>
-  <Label as='a' basic color={color} pointing='left'>{progress}</Label>
-</Button>
-*/

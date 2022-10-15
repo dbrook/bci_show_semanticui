@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Label, SemanticCOLORS } from 'semantic-ui-react';
+import { Label, SemanticCOLORS } from 'semantic-ui-react';
 
 interface NumericalProgressProps {
   completed?: number,
@@ -12,28 +12,27 @@ export default class NumericalProgress extends React.Component<NumericalProgress
     const { completed, total, label } = this.props;
 
     const buttonOnlyStyle = {
+      textAlign: 'center',
       width: '100%',
     };
-    const labelButtonStyle = {
-      width: '4.5em',
-    };
-    const labelOnlyStyle = {
-      justifyContent: 'center',  // Items are secretyly flexbox under the hood!
+    const labelDetailStyle = {
       width: '5.75em',
     };
     const outerButtonLabelStyle = {
       marginBottom: '4px',
+      height: '100%',
+      width: '10.15em',
     };
 
     let button;
     if (total === 0) {
       if (label) {
-        button = <Button as='div' labelPosition='right' style={outerButtonLabelStyle}>
-            <Button style={labelButtonStyle}>{label}</Button>
-            <Label as='a' basic pointing='left' style={labelOnlyStyle}>None</Label>
-          </Button>;
+        button = <Label size='large' basic style={outerButtonLabelStyle}>
+            {label}
+            <Label.Detail style={labelDetailStyle}>None</Label.Detail>
+          </Label>;
       } else {
-        button = <Button basic style={buttonOnlyStyle}>None</Button>;
+        button = <Label size='large' basic style={buttonOnlyStyle}>None</Label>;
       }
     } else {
       let color: SemanticCOLORS;
@@ -48,12 +47,12 @@ export default class NumericalProgress extends React.Component<NumericalProgress
       }
 
       if (label) {
-        button = <Button as='div' labelPosition='right' style={outerButtonLabelStyle}>
-            <Button color={color} style={labelButtonStyle}>{label}</Button>
-            <Label as='a' basic color={color} pointing='left' style={labelOnlyStyle}>{progress}</Label>
-          </Button>;
+        button = <Label size='large' color={color} style={outerButtonLabelStyle}>
+            {label}
+            <Label.Detail style={labelDetailStyle}>{progress}</Label.Detail>
+          </Label>;
       } else {
-        button = <Button color={color} style={buttonOnlyStyle}>{progress}</Button>
+        button = <Label size='large' color={color} style={buttonOnlyStyle}>{progress}</Label>
       }
     }
 
