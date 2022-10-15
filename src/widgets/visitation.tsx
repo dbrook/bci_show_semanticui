@@ -12,7 +12,6 @@ export default class Visitation extends React.Component<NumericalProgressProps> 
     const { visitStatus, mobile } = this.props;
     const buttonStyle = {
       width: mobile ? '10.2em' : '100%',
-      marginBottom: mobile ? '4px' : '0',
     };
 
     let button;

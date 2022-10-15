@@ -19,7 +19,6 @@ export default class NumericalProgress extends React.Component<NumericalProgress
       width: '5.75em',
     };
     const outerButtonLabelStyle = {
-      marginBottom: '4px',
       height: '100%',
       width: '10.15em',
     };

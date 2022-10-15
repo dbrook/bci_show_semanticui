@@ -11,11 +11,6 @@ export default class SimpleSubmittable extends React.Component<SimpleSubmittable
   render() {
     const { prefix, itemId, submitted } = this.props;
 
-    const outerButtonLabelStyle = {
-      marginBottom: '4px',
-      marginRight: '5px',
-    };
-
     const labelStyle = {
       justifyContent: 'center',
       width: '6.5em',
@@ -24,7 +19,7 @@ export default class SimpleSubmittable extends React.Component<SimpleSubmittable
     const itemName = prefix ? `${prefix}-${itemId}` : itemId;
 
     if (submitted) {
-      return <Button.Group style={outerButtonLabelStyle}>
+      return <Button.Group>
           <Button as='div' labelPosition='left'>
             <Label basic color='green' as='a' style={labelStyle}>{itemName}</Label>
             <Button icon color='green'><Icon name='check circle'/></Button>
@@ -32,7 +27,7 @@ export default class SimpleSubmittable extends React.Component<SimpleSubmittable
           </Button>
         </Button.Group>;
     } else {
-      return <Button.Group style={outerButtonLabelStyle}>
+      return <Button.Group>
           <Button as='div' labelPosition='left'>
             <Label basic color='grey' as='a' style={labelStyle}>{itemName}</Label>
             <Button icon basic color='grey'><Icon name='circle outline'/></Button>

@@ -32,8 +32,10 @@
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  justify-content: space-around;
+  justify-content: center;
   align-items: center;
+  row-gap: 10px;
+  column-gap: 10px;
 }
 
 /* Left-Aligned Flex Container */
@@ -42,6 +44,8 @@
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
+  row-gap: 10px;
+  column-gap: 10px;
 }
 
 .App {

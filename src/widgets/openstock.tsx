@@ -21,14 +21,14 @@ export default class OpenStock extends React.Component<OpenStockProps> {
 
     switch (formStatus) {
     case OpenStockForm.PICK_UP:
-      mainProps = { color: 'violet' };
+      mainProps = { color: 'orange' };
       currentStateStr = 'Pick Up';
-      nextColor = 'pink';
+      nextColor = 'purple';
       nextIcon = 'download';
       deleteBtnDisable = false;
       break;
     case OpenStockForm.RETRIEVED:
-      mainProps = { color: 'pink' };
+      mainProps = { color: 'purple' };
       currentStateStr = 'Retrieved';
       nextColor = 'blue';
       nextIcon = 'pencil alternate';
@@ -44,14 +44,14 @@ export default class OpenStock extends React.Component<OpenStockProps> {
     case OpenStockForm.SUBMITTED:
       mainProps = { color: 'green' };
       currentStateStr = 'Submitted';
-      nextColor = 'violet';
+      nextColor = 'black';
       nextIcon = 'undo';
       deleteBtnDisable = true;
       break;
     case OpenStockForm.ABANDONED:
       mainProps = { color: 'red', basic: true };
       currentStateStr = 'Abandoned';
-      nextColor = 'violet';
+      nextColor = 'black';
       nextIcon = 'undo';
       deleteBtnDisable = true;
       break;
@@ -59,7 +59,7 @@ export default class OpenStock extends React.Component<OpenStockProps> {
     default:
       mainProps = { basic: true };
       currentStateStr = 'None';
-      nextColor = 'violet';
+      nextColor = 'orange';
       nextIcon = 'play';
       deleteBtnDisable = true;
     };
@@ -71,7 +71,6 @@ export default class OpenStock extends React.Component<OpenStockProps> {
     if (labeled) {
       const outerStyle = {
         height: '100%',
-        marginBottom: '4px',
       };
       const labelDetailStyle = {
         width: '6em',
