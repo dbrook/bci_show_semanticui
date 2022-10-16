@@ -60,7 +60,7 @@ export default class OpenStock extends React.Component<OpenStockProps> {
       mainProps = { basic: true };
       currentStateStr = 'None';
       nextColor = 'orange';
-      nextIcon = 'play';
+      nextIcon = 'file';
       deleteBtnDisable = true;
     };
 

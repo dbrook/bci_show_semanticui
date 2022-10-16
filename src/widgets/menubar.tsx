@@ -42,7 +42,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
 
     return (
       <>
-        <TaskModal open={addTaskModalShown} closeHander={this.showAddTaskModal} />
+        <TaskModal open={addTaskModalShown} closeHander={this.showAddTaskModal} presetItemType='VI'/>
         <Menu style={menuStyle}>
           <Button icon primary basic labelPosition='left' style={buttonStyle}>
             <Icon name='calendar alternate outline' />
