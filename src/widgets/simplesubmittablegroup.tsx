@@ -26,7 +26,7 @@ export default class SimpleSubmittableGroup extends React.Component<SimpleSubmit
 
     return <div>
         <Header as='h3'>{boothId} - {vendor}</Header>
-        <div className='BCIleftalignflex'>
+        <div className='BCItaskitemsflex'>
           {itemsAsSubmittables}
         </div>
         <Divider />

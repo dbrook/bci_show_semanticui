@@ -38,11 +38,12 @@
   column-gap: 10px;
 }
 
-/* Left-Aligned Flex Container */
-.BCIleftalignflex {
+/* Flex Container for tasks */
+.BCItaskitemsflex {
   margin-left: 2px;
   display: flex;
   flex-wrap: wrap;
+  justify-content: flext-start;
   flex-direction: row;
   row-gap: 10px;
   column-gap: 10px;
