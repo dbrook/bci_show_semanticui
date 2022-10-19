@@ -103,7 +103,6 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
   }
 
   private changeItemType(e: any, data: any) {
-    console.log(data);
     this.setState({ itemTypeToAdd: data.value });
   }
 }
