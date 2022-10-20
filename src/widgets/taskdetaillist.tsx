@@ -4,6 +4,7 @@ import { Header } from 'semantic-ui-react';
 import { OpenStockForm, VendorVisit } from '../types/enums';
 import { IVendorStatus } from '../types/interfaces';
 import SimpleSubmittableGroup from './simplesubmittablegroup';
+import QuestionAnswerGroup from './questionanswergroup';
 
 import { nbSubmitted } from '../common/utils';
 
@@ -27,7 +28,7 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
         boothId: 196,
         vendor: 'Company Foo',
         visit: VendorVisit.NOT_VISITED,
-        questions: [{question:'foo', answer: 'bar'}, {question:'foo', answer: undefined}],
+        questions: [{question:'foo', answer: 'barquesti'}, {question:'fooonsquestions questionsquest ionsquestionsqu estions questions questions questions questions questions questions questions', answer: undefined}],
         powerBuys: [{itemId:'121F', submitted: false}],
         profitCenters: [{itemId:'450G', submitted: true}],
         openStockForm: OpenStockForm.DO_NOT_GET,
@@ -99,7 +100,7 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
         boothId: 998,
         vendor: 'Everything, Inc.',
         visit: VendorVisit.VISITED,
-        questions: [{question:'foo', answer: 'bar'}],
+        questions: [{question:'This is an insanely long question and I am not sure anybody will ever actually figure out the answer to it unless they have genious mode?', answer: 'bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar bar '}],
         powerBuys: [{itemId:'451A', submitted: true}],
         profitCenters: [{itemId:'456G', submitted: true}],
         openStockForm: OpenStockForm.SUBMITTED,
@@ -117,10 +118,20 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
 
     const { hideCompleted } = this.props;
 
-//     let questionRows = tempVendorStat.map((x: IVendorStatus) => {
-//       return <VendorActions key={x.boothId} vendorStatus={x} condensed={true}/>
-//     });
-//
+    let questionRows = tempVendorStat.map((x: IVendorStatus) => {
+      if (x.questions.length) {
+        if (hideCompleted && x.powerBuys.length === nbSubmitted(x.powerBuys)) {
+          return null;
+        }
+        return <QuestionAnswerGroup key={x.boothId}
+                                    boothId={x.boothId}
+                                    vendor={x.vendor}
+                                    items={x.questions}
+                                    hideCompleted={hideCompleted}/>
+      }
+      return null;
+    });
+
     let profitCenterRows = tempVendorStat.map((x: IVendorStatus) => {
       if (x.profitCenters.length) {
         if (hideCompleted && x.profitCenters.length === nbSubmitted(x.profitCenters)) {
@@ -154,6 +165,7 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
     return (
       <div className='tabInnerLayout'>
         <Header as='h2' dividing textAlign='left' color='orange'>Questions</Header>
+        {questionRows}
         <Header as='h2' dividing textAlign='left' color='teal'>Profit Centers</Header>
         {profitCenterRows}
         <Header as='h2' dividing textAlign='left' color='violet'>Power Buys</Header>

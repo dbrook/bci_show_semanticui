@@ -49,11 +49,54 @@
   column-gap: 10px;
 }
 
+/* Flex Container for question/answers */
+.BCIquestionanswerflex {
+  margin-left: 2px;
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #D4D4D5;  /* Grey color taken from Semantic UI */
+  border-radius: 4px;
+  padding: 5px;
+  row-gap: 5px;
+  column-gap: 10px;
+  align-items: flex-start;
+}
+.BCIquestionanswerflex.unanswered {
+  /* Red color taken from Semantic UI */
+  color: #DB2828;
+  border-color: #DB2828;
+}
+
+.BCIindividualquestion {
+  padding: 0 5px 0 5px;
+  margin-bottom: 0;
+  text-align: left;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.BCIquestionanswerlabel {
+  font-weight: bold;
+  background-color: grey;
+  color: white;
+  border-radius: 4px;
+  padding: 5px 10px 5px 10px;
+  margin-left: -5px;
+  margin-right: 10px;
+  width: 2.55em;
+  text-align: center;
+  flex-shrink: 0;
+}
+.BCIquestionanswerlabel.unanswered {
+  /* Red color taken from Semantic UI */
+  background-color: #DB2828;
+}
+
 .App {
   text-align: center;
-
   height: 100%;
-
   display: flex;
   flex-direction: column;
   padding: 5px;
