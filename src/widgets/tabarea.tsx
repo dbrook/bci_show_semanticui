@@ -14,7 +14,7 @@ export default class TabArea extends React.Component<TabAreaProps> {
       flexGrow: 1,
       display: 'flex',
       flexDirection: 'column',
-      padding: '8px',
+      padding: '5px',
       height: '0px',
       overflowY:'auto',
     };

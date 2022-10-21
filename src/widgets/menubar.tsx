@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Dropdown, Icon, Menu } from 'semantic-ui-react';
+import { Button, Dropdown, Icon } from 'semantic-ui-react';
 
 import TaskModal from './taskmodal';
 
@@ -23,15 +23,6 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
     const { hideCompleted, toggleHideCompleted } = this.props;
     const { addTaskModalShown } = this.state;
 
-    const menuStyle = {
-      display: 'flex',
-      width: '100%',
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      padding: '8px 4px 8px 8px',
-      marginBottom: '5px',
-    };
-
     const buttonStyle = {
       alignSelf: 'stretch',
     };
@@ -43,7 +34,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
     return (
       <>
         <TaskModal open={addTaskModalShown} closeHander={this.showAddTaskModal} presetItemType='VI'/>
-        <Menu style={menuStyle}>
+        <div className='topBar'>
           <Button icon primary basic labelPosition='left' style={buttonStyle}>
             <Icon name='calendar alternate outline' />
             2022-Fall (ACY)
@@ -65,7 +56,28 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
             <Icon name='plus square outline' />
             Add...
           </Button>
-        </Menu>
+        </div>
+        <div className='topBarCondensed'>
+          <Button icon primary basic labelPosition='left' style={buttonStyle}>
+            <Icon name='calendar alternate outline' />
+            2022-Fall (ACY)
+          </Button>
+          <Dropdown button className='icon basic primary' iconposition='left' icon='database'>
+            <Dropdown.Menu>
+              <Dropdown.Item>Import...</Dropdown.Item>
+              <Dropdown.Item>Export...</Dropdown.Item>
+              <Dropdown.Divider />
+              <Dropdown.Item>Clear...</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+          <div style={spacerStyle} />
+          <Button icon primary basic={!hideCompleted} onClick={toggleHideCompleted} button>
+            <Icon name='clipboard check' />
+          </Button>
+          <Button icon primary basic button onClick={() => this.showAddTaskModal(true)}>
+            <Icon name='plus square outline' />
+          </Button>
+        </div>
       </>
     );
   }

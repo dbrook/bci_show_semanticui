@@ -2,9 +2,35 @@
   height: 100%;
 }
 
+/* Condense the menu bar buttons on small displays */
+.topBar {
+  border: 1px solid #D4D4D5;  /* Grey color taken from Semantic UI */
+  border-radius: 4px;
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 4px 1px 4px 4px;
+  margin-bottom: 5px;
+}
+
+.topBarCondensed {
+  border: 1px solid #D4D4D5;  /* Grey color taken from Semantic UI */
+  border-radius: 4px;
+  display: flex;
+  width: 100%;
+  flex-direction: row;
+  flex-wrap: wrap;
+  padding: 4px 1px 4px 4px;
+  margin-bottom: 5px;
+}
+
 /* Hide the tabular format if the display isn't wide enough */
 @media (max-width: 1024px) {
   .ui.celled.unstackable.table.BCIdesktop {
+    display: none;
+  }
+  .topBar {
     display: none;
   }
 }
@@ -16,6 +42,9 @@
 /* Hide the condensed / tablet-mobile view if the display is wide enough to show the desktop one */
 @media (min-width: 1024px) {
   .ui.BCImobiletablet {
+    display: none;
+  }
+  .topBarCondensed {
     display: none;
   }
 }
