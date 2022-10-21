@@ -77,21 +77,8 @@
   align-items: center;
 }
 
-.BCIquestionanswerlabel {
-  font-weight: bold;
-  background-color: grey;
-  color: white;
-  border-radius: 4px;
-  padding: 5px 10px 5px 10px;
-  margin-left: -5px;
+.ui.basic.icon.button.BCIquestionanswerbtn {
   margin-right: 10px;
-  width: 2.55em;
-  text-align: center;
-  flex-shrink: 0;
-}
-.BCIquestionanswerlabel.unanswered {
-  /* Red color taken from Semantic UI */
-  background-color: #DB2828;
 }
 
 .App {

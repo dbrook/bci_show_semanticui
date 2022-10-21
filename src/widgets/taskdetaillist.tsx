@@ -28,7 +28,7 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
         boothId: 196,
         vendor: 'Company Foo',
         visit: VendorVisit.NOT_VISITED,
-        questions: [{question:'foo', answer: 'barquesti'}, {question:'fooonsquestions questionsquest ionsquestionsqu estions questions questions questions questions questions questions questions', answer: undefined}],
+        questions: [{question:'foo', answer: 'barquesti'}, {question:'fooonsquestions questionsquest ionsquestionsqu estions questions questions questions questions questions questions questions', answer: ''}],
         powerBuys: [{itemId:'121F', submitted: false}],
         profitCenters: [{itemId:'450G', submitted: true}],
         openStockForm: OpenStockForm.DO_NOT_GET,
