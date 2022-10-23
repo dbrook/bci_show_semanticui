@@ -4,7 +4,8 @@ import { Button, Checkbox, Dropdown, Form, Input, Modal } from 'semantic-ui-reac
 interface TaskModalProps {
   open: boolean,
   closeHander: (arg0: boolean) => any,
-  presetBoothNum?: number,
+  presetBoothId?: string,
+  presetVendorName?: string,
   presetItemType?: string,
 };
 
@@ -20,9 +21,10 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
   }
 
   render() {
-    const { open, closeHander } = this.props;
+    const { open, closeHander, presetBoothId, presetVendorName } = this.props;
     const { itemTypeToAdd } = this.state;
 
+    // FIXME: this should be passed in from the global data store of vendors (when it's made...)
     const vendorMenu = [
       {key: 100, text:'100 - Business Title', value: 100},
       {key: 101, text:'101 - Other Title', value: 101},
@@ -65,17 +67,20 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
         entryField = null;
     }
 
+    let headerText: string = presetBoothId ? `Add Task to ${presetBoothId}` : 'Add Task to Vendor';
+
     return (
       <Modal open={open}>
-        <Modal.Header>Add Item</Modal.Header>
+        <Modal.Header>{headerText}</Modal.Header>
         <Modal.Content>
           <Form>
-            <Form.Group widths='equal'>
-              <Form.Field>
-                <label>Vendor</label>
-                <Dropdown scrolling search selection fluid options={vendorMenu}/>
-              </Form.Field>
-            </Form.Group>
+              <Form.Group widths='equal'>
+                <Form.Field>
+                  <label>Vendor</label>
+                  {presetVendorName ??
+                  <Dropdown scrolling search selection fluid options={vendorMenu}/>}
+                </Form.Field>
+              </Form.Group>
             <Form.Group widths='equal'>
               <Form.Field>
                 <Checkbox radio label='Visit' value='VI' checked={itemTypeToAdd === 'VI'} onChange={this.changeItemType}/>

@@ -6,7 +6,7 @@ import { ISubmittableItem } from '../types/interfaces';
 import SimpleSubmittable from './simplesubmittable';
 
 interface SimpleSubmittableGroupProps {
-  boothId: number,
+  boothNum: number,
   vendor: string,
   items: ISubmittableItem[],
   hideCompleted: boolean,
@@ -15,7 +15,7 @@ interface SimpleSubmittableGroupProps {
 
 export default class SimpleSubmittableGroup extends React.Component<SimpleSubmittableGroupProps> {
   render() {
-    const { boothId, vendor, items, hideCompleted, prefix } = this.props;
+    const { boothNum, vendor, items, hideCompleted, prefix } = this.props;
 
     const itemsAsSubmittables = items.map((x) => {
       if (hideCompleted && x.submitted) {
@@ -25,7 +25,7 @@ export default class SimpleSubmittableGroup extends React.Component<SimpleSubmit
     });
 
     return <div>
-        <Header as='h3'>{boothId} - {vendor}</Header>
+        <Header as='h3'>{boothNum} - {vendor}</Header>
         <div className='BCItaskitemsflex'>
           {itemsAsSubmittables}
         </div>

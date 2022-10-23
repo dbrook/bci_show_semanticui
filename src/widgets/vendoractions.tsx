@@ -15,12 +15,12 @@ interface VendorActionsProps {
 
 export default class VendorActions extends React.Component<VendorActionsProps> {
   render() {
-    const { boothId, vendor, visit, questions, powerBuys, profitCenters, openStockForm } = this.props.vendorStatus;
+    const { boothNum, vendor, visit, questions, powerBuys, profitCenters, openStockForm } = this.props.vendorStatus;
     const condensedView = this.props.condensed;
 
     if (condensedView) {
       return <div>
-          <Header as='h3'>{boothId} - {vendor}</Header>
+          <Header as='h3'>{boothNum} - {vendor}</Header>
           <div className='BCImobilevendorstatus'>
             <Visitation visitStatus={visit} mobile />
             <NumericalProgress label='QU' completed={nbAnsweredQuestions(questions)} total={questions.length}/>
@@ -32,7 +32,7 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
         </div>;
     } else {
       return <Table.Row>
-          <Table.Cell textAlign='center'><b>{boothId}</b></Table.Cell>
+          <Table.Cell textAlign='center'><b>{boothNum}</b></Table.Cell>
           <Table.Cell>{vendor}</Table.Cell>
           <Table.Cell><Visitation visitStatus={visit}/></Table.Cell>
           <Table.Cell><NumericalProgress completed={nbAnsweredQuestions(questions)} total={questions.length}/></Table.Cell>

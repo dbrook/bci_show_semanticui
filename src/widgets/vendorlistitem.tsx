@@ -1,22 +1,29 @@
 import React from 'react';
-// import { Divider, Header, Table } from 'semantic-ui-react';
+import { Button, Icon } from 'semantic-ui-react';
 
-import { VendorVisit } from '../types/enums';
-import NumericalProgress from './numericalprogress';
-import Visitation from './visitation';
-import OpenStock from './openstock';
-
-import { nbAnsweredQuestions, nbSubmitted } from '../common/utils';
+import TaskModal from './taskmodal';
 
 interface VendorListItemProps {
-  boothId: number,
+  boothId: string,
+  boothNum: number,
   vendor: string,
-  vendorStatus: VendorVisit,
 };
 
-export default class VendorListItem extends React.Component<VendorListItemProps> {
+interface VendorListItemState {
+  addTaskModalShown: boolean,
+};
+
+export default class VendorListItem extends React.Component<VendorListItemProps, VendorListItemState> {
+  constructor(props: any) {
+    super(props);
+    this.state = { addTaskModalShown: false };
+    this.showAddTaskModal = this.showAddTaskModal.bind(this);
+    this.openTaskModal = this.openTaskModal.bind(this);
+  }
+
   render() {
-    const { boothId, vendor, vendorStatus } = this.props;
+    const { boothId, boothNum, vendor } = this.props;
+    const { addTaskModalShown } = this.state;
 
     const vendorListStyle = {
       display: 'flex',
@@ -26,7 +33,7 @@ export default class VendorListItem extends React.Component<VendorListItemProps>
       columnGap: '5px',
     };
 
-    const venderBoothNum = {
+    const vendorBoothNumStyle = {
       border: '1px solid #D4D4D5',
       backgroundColor: '#D4D4D5',
       borderRadius: '4px',
@@ -35,10 +42,31 @@ export default class VendorListItem extends React.Component<VendorListItemProps>
       flexShrink: '0',
     };
 
+    const vendorNameStyle = {
+      textAlign: 'left' as const,
+    };
+
     return <div style={vendorListStyle}>
-        <Visitation visitStatus={vendorStatus} mobile />
-        <span style={venderBoothNum}>{boothId}</span>
-        <span>{vendor}</span>
+        <TaskModal open={addTaskModalShown}
+                   closeHander={this.showAddTaskModal}
+                   presetItemType='VI'
+                   presetBoothId={boothId}
+                   presetVendorName={vendor} />
+        <Button icon primary basic button labelPosition='left' onClick={this.openTaskModal}>
+          <Icon name='plus square outline' />
+          Add...
+        </Button>
+        <span style={vendorBoothNumStyle}>{boothNum}</span>
+        <span style={vendorNameStyle}>{vendor}</span>
       </div>;
+  }
+
+  private openTaskModal() {
+    this.showAddTaskModal(true);
+  }
+
+  private showAddTaskModal(showIt: boolean) {
+    this.setState({ addTaskModalShown: showIt });
+    return;
   }
 }

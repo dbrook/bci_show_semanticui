@@ -6,7 +6,7 @@ import { IQuestionAnswer } from '../types/interfaces';
 import QuestionAnswer from './questionanswer';
 
 interface QuestionAnswerGroupProps {
-  boothId: number,
+  boothNum: number,
   vendor: string,
   items: IQuestionAnswer[],
   hideCompleted: boolean,
@@ -14,7 +14,7 @@ interface QuestionAnswerGroupProps {
 
 export default class QuestionAnswerGroup extends React.Component<QuestionAnswerGroupProps> {
   render() {
-    const { boothId, vendor, items, hideCompleted } = this.props;
+    const { boothNum, vendor, items, hideCompleted } = this.props;
 
     const itemsAsQuestAns = items.map((x) => {
       if (hideCompleted && x.answer) {
@@ -27,7 +27,7 @@ export default class QuestionAnswerGroup extends React.Component<QuestionAnswerG
     });
 
     return <div>
-        <Header as='h3'>{boothId} - {vendor}</Header>
+        <Header as='h3'>{boothNum} - {vendor}</Header>
         <div>
           {itemsAsQuestAns}
         </div>
