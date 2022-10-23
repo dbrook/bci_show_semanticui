@@ -4,7 +4,7 @@ import { VendorVisit } from  '../types/enums';
 
 interface NumericalProgressProps {
   visitStatus: VendorVisit,
-  mobile: boolean,
+  mobile?: boolean,
 };
 
 export default class Visitation extends React.Component<NumericalProgressProps> {
@@ -12,6 +12,7 @@ export default class Visitation extends React.Component<NumericalProgressProps> 
     const { visitStatus, mobile } = this.props;
     const buttonStyle = {
       width: mobile ? '10.2em' : '100%',
+      flexShrink: '0',
     };
 
     let button;

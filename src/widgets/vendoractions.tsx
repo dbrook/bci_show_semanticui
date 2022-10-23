@@ -34,7 +34,7 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
       return <Table.Row>
           <Table.Cell textAlign='center'><b>{boothId}</b></Table.Cell>
           <Table.Cell>{vendor}</Table.Cell>
-          <Table.Cell><Visitation visitStatus={visit} mobile={false}/></Table.Cell>
+          <Table.Cell><Visitation visitStatus={visit}/></Table.Cell>
           <Table.Cell><NumericalProgress completed={nbAnsweredQuestions(questions)} total={questions.length}/></Table.Cell>
           <Table.Cell><NumericalProgress completed={nbSubmitted(powerBuys)} total={powerBuys.length}/></Table.Cell>
           <Table.Cell><NumericalProgress completed={nbSubmitted(profitCenters)} total={profitCenters.length}/></Table.Cell>

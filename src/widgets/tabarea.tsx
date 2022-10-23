@@ -1,6 +1,7 @@
 import React from 'react';
 import { Tab } from 'semantic-ui-react';
 
+import VendorList from './vendorlist';
 import TaskList from './tasklist';
 import TaskDetailList from './taskdetaillist';
 
@@ -25,7 +26,7 @@ export default class TabArea extends React.Component<TabAreaProps> {
         render: () => {
           return (
             <Tab.Pane attached='top' style={innerTabStyle}>
-              List of All Vendors, Baby!
+              <VendorList />
             </Tab.Pane>
           );
         },

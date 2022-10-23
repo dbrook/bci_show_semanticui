@@ -81,6 +81,7 @@
 /* Flex Container for question/answers */
 .BCIquestionanswerflex {
   margin-left: 2px;
+  margin-right: 2px;
   margin-bottom: 10px;
   display: flex;
   flex-direction: column;
