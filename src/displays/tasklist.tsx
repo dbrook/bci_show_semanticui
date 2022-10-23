@@ -3,7 +3,7 @@ import { Table } from 'semantic-ui-react';
 
 import { OpenStockForm, VendorVisit } from '../types/enums';
 import { IVendorStatus } from '../types/interfaces';
-import VendorActions from './vendoractions';
+import VendorActions from '../widgets/vendoractions';
 
 import { nbAnsweredQuestions, nbSubmitted } from '../common/utils';
 

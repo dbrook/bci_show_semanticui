@@ -3,8 +3,8 @@ import { Header } from 'semantic-ui-react';
 
 import { OpenStockForm, VendorVisit } from '../types/enums';
 import { IVendorStatus } from '../types/interfaces';
-import SimpleSubmittableGroup from './simplesubmittablegroup';
-import QuestionAnswerGroup from './questionanswergroup';
+import SimpleSubmittableGroup from '../widgets/simplesubmittablegroup';
+import QuestionAnswerGroup from '../widgets/questionanswergroup';
 
 import { nbSubmitted } from '../common/utils';
 

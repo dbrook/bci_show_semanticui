@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Dropdown, Icon } from 'semantic-ui-react';
 
-import TaskModal from './taskmodal';
+import TaskModal from '../widgets/taskmodal';
 
 interface MenuBarProps {
   hideCompleted: boolean,

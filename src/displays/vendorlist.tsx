@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { IVendorDirectory } from '../types/interfaces';
-import VendorListItem from './vendorlistitem';
+import VendorListItem from '../widgets/vendorlistitem';
 
 export default class TaskList extends React.Component {
   render() {

@@ -4,8 +4,8 @@ import './App.css';
 import 'semantic-ui-css/semantic.css';
 
 // Temporary includes to just get the examples rendered
-import MenuBar from './widgets/menubar';
-import TabArea from './widgets/tabarea';
+import MenuBar from './displays/menubar';
+import TabArea from './displays/tabarea';
 
 export default class App extends React.Component<any, any> {
   constructor(props: any) {
