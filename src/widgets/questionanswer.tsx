@@ -32,13 +32,6 @@ export default class QuestionAnswer extends React.Component<QuestionAnswerProps,
     const questionIcon = editingQuestion ? 'save' : 'question';
     const answerIcon = editingAnswer ? 'save' : answer !== '' ? 'check' : 'arrow alternate circle right';
 
-    const textFormStyle = {
-      flexGrow: 1,
-    };
-    const textAreaStyle = {
-      padding: '5px',
-    };
-
     return <div className={outerClass}>
         <p className='BCIindividualquestion'>
           <Button basic icon color={questionBtnColor} className='BCIquestionanswerbtn' onClick={this.toggleQuestionEdit}>
@@ -46,8 +39,8 @@ export default class QuestionAnswer extends React.Component<QuestionAnswerProps,
           </Button>
           {
             (!editingQuestion) ? question :
-            <Form style={textFormStyle}>
-              <TextArea rows={2} style={textAreaStyle}>
+            <Form className='BCIquestionanswerform'>
+              <TextArea rows={2} className='BCIquestionanswerinput'>
                 {question}
               </TextArea>
             </Form>
@@ -59,8 +52,8 @@ export default class QuestionAnswer extends React.Component<QuestionAnswerProps,
           </Button>
           {
             (!editingAnswer) ? answer :
-            <Form style={textFormStyle}>
-              <TextArea rows={2} style={textAreaStyle}>
+            <Form className='BCIquestionanswerform'>
+              <TextArea rows={2} className='BCIquestionanswerinput'>
                 {answer}
               </TextArea>
             </Form>

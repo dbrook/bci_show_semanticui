@@ -10,25 +10,23 @@ interface NumericalProgressProps {
 export default class Visitation extends React.Component<NumericalProgressProps> {
   render() {
     const { visitStatus, mobile } = this.props;
-    const buttonStyle = {
-      width: mobile ? '10.2em' : '100%',
-      flexShrink: '0',
-    };
+
+    const buttonClass = mobile ? 'BCImobilesinglevendorvisit' : 'BCIdesktopsinglevendorvisit';
 
     let button;
     switch (visitStatus) {
     case VendorVisit.NOT_VISITED:
-      button = <Button color='red' style={buttonStyle}>Not Visited</Button>;
+      button = <Button color='red' className={buttonClass}>Not Visited</Button>;
       break;
     case VendorVisit.VISITED:
-      button = <Button color='green' style={buttonStyle}>Visited</Button>;
+      button = <Button color='green' className={buttonClass}>Visited</Button>;
       break;
     case VendorVisit.NEED_REVISIT:
-      button = <Button color='pink' style={buttonStyle}>Revisit</Button>;
+      button = <Button color='pink' className={buttonClass}>Revisit</Button>;
       break;
     case VendorVisit.DO_NOT_VISIT:
     default:
-      button = <Button basic style={buttonStyle}>No Visit</Button>;
+      button = <Button basic className={buttonClass}>No Visit</Button>;
     };
 
     return button;

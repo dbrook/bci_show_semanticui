@@ -11,27 +11,15 @@ export default class NumericalProgress extends React.Component<NumericalProgress
   render() {
     const { completed, total, label } = this.props;
 
-    const buttonOnlyStyle = {
-      textAlign: 'center',
-      width: '100%',
-    };
-    const labelDetailStyle = {
-      width: '5.75em',
-    };
-    const outerButtonLabelStyle = {
-      height: '100%',
-      width: '10.15em',
-    };
-
     let button;
     if (total === 0) {
       if (label) {
-        button = <Label size='large' basic style={outerButtonLabelStyle}>
+        button = <Label size='large' basic className='BCIouternumerical'>
             {label}
-            <Label.Detail style={labelDetailStyle}>None</Label.Detail>
+            <Label.Detail className='BCIlabelednumericallabel'>None</Label.Detail>
           </Label>;
       } else {
-        button = <Label size='large' basic style={buttonOnlyStyle}>None</Label>;
+        button = <Label size='large' basic className='BCIunlabelednumerical'>None</Label>;
       }
     } else {
       let color: SemanticCOLORS;
@@ -46,12 +34,12 @@ export default class NumericalProgress extends React.Component<NumericalProgress
       }
 
       if (label) {
-        button = <Label size='large' color={color} style={outerButtonLabelStyle}>
+        button = <Label size='large' color={color} className='BCIouternumerical'>
             {label}
-            <Label.Detail style={labelDetailStyle}>{progress}</Label.Detail>
+            <Label.Detail className='BCIlabelednumericallabel'>{progress}</Label.Detail>
           </Label>;
       } else {
-        button = <Label size='large' color={color} style={buttonOnlyStyle}>{progress}</Label>
+        button = <Label size='large' color={color} className='BCIunlabelednumerical'>{progress}</Label>
       }
     }
 

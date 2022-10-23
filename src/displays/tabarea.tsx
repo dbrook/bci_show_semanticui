@@ -11,21 +11,12 @@ interface TabAreaProps {
 
 export default class TabArea extends React.Component<TabAreaProps> {
   render() {
-    const innerTabStyle = {
-      flexGrow: 1,
-      display: 'flex',
-      flexDirection: 'column',
-      padding: '5px',
-      height: '0px',
-      overflowY:'auto',
-    };
-
     const panes = [
       {
         menuItem: 'Vendors',
         render: () => {
           return (
-            <Tab.Pane attached='top' style={innerTabStyle}>
+            <Tab.Pane attached='top' className='innerTabStyle'>
               <VendorList />
             </Tab.Pane>
           );
@@ -35,7 +26,7 @@ export default class TabArea extends React.Component<TabAreaProps> {
         menuItem: 'Map',
         render: () => {
           return (
-            <Tab.Pane attached='top' style={innerTabStyle}>
+            <Tab.Pane attached='top' className='innerTabStyle'>
               Trade Show Floor Map Placeholder
             </Tab.Pane>
           );
@@ -45,7 +36,7 @@ export default class TabArea extends React.Component<TabAreaProps> {
         menuItem: 'Summary',
         render: () => {
           return (
-            <Tab.Pane attached='top' style={innerTabStyle}>
+            <Tab.Pane attached='top' className='innerTabStyle'>
               <TaskList hideCompleted={this.props.hideCompleted} />
             </Tab.Pane>
           );
@@ -55,7 +46,7 @@ export default class TabArea extends React.Component<TabAreaProps> {
         menuItem: 'Tasks',
         render: () => {
           return (
-            <Tab.Pane attached='top' style={innerTabStyle}>
+            <Tab.Pane attached='top' className='innerTabStyle'>
               <TaskDetailList hideCompleted={this.props.hideCompleted} />
             </Tab.Pane>
           );
@@ -63,14 +54,8 @@ export default class TabArea extends React.Component<TabAreaProps> {
       },
     ];
 
-    const outerTabStyle = {
-      flexGrow: 1,
-      display: 'flex',
-      flexDirection: 'column',
-    };
-
     return (
-      <Tab menu={{ attached: 'bottom', tabular: true }} panes={panes} style={outerTabStyle} />
+      <Tab menu={{ attached: 'bottom', tabular: true }} panes={panes} className='outerTabStyle' />
     );
   }
 }

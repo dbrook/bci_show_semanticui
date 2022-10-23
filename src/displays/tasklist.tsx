@@ -13,28 +13,6 @@ interface TaskListProps {
 
 export default class TaskList extends React.Component<TaskListProps> {
   render() {
-    const boothStyle = {
-      width: '5em',
-    };
-
-    const visitStyle = {
-      width: '10em',
-    };
-
-    const simpleStyle = {
-      width: '8.5em',
-    };
-
-    const openStockStyle = {
-      width: '15em',
-    };
-
-    const stickyTableHead = {
-      position: 'sticky',
-      top: 0,
-      zIndex: 2,
-    };
-
     const tempVendorStat = [
       {
         boothId: '100-0',
@@ -166,20 +144,20 @@ export default class TaskList extends React.Component<TaskListProps> {
     return (
       <div className='tabInnerLayout'>
         <Table unstackable celled className='BCIdesktop'>
-          <Table.Header style={stickyTableHead}>
+          <Table.Header className='BCItasksum stickyTableHead'>
             <Table.Row>
-              <Table.HeaderCell style={boothStyle}>Booth</Table.HeaderCell>
+              <Table.HeaderCell className='BCItasksum boothStyle'>Booth</Table.HeaderCell>
               <Table.HeaderCell>Vendor</Table.HeaderCell>
-              <Table.HeaderCell style={visitStyle}>Visit</Table.HeaderCell>
-              <Table.HeaderCell style={simpleStyle}>Questions</Table.HeaderCell>
-              <Table.HeaderCell style={simpleStyle}>Power Buy</Table.HeaderCell>
-              <Table.HeaderCell style={simpleStyle}>Profit Center</Table.HeaderCell>
-              <Table.HeaderCell style={openStockStyle}>Open Stock Form</Table.HeaderCell>
+              <Table.HeaderCell className='BCItasksum visitStyle'>Visit</Table.HeaderCell>
+              <Table.HeaderCell className='BCItasksum simpleStyle'>Questions</Table.HeaderCell>
+              <Table.HeaderCell className='BCItasksum simpleStyle'>Power Buy</Table.HeaderCell>
+              <Table.HeaderCell className='BCItasksum simpleStyle'>Profit Center</Table.HeaderCell>
+              <Table.HeaderCell className='BCItasksum openStockStyle'>Open Stock Form</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           {vendorRows}
         </Table>
-        <div className='ui BCImobiletablet'>
+        <div className='BCImobiletablet'>
           {vendorRowsMobile}
         </div>
       </div>

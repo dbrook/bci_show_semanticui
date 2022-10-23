@@ -23,19 +23,11 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
     const { hideCompleted, toggleHideCompleted } = this.props;
     const { addTaskModalShown } = this.state;
 
-    const buttonStyle = {
-      alignSelf: 'stretch',
-    };
-
-    const spacerStyle = {
-      flexGrow: 1,
-    };
-
     return (
       <>
         <TaskModal open={addTaskModalShown} closeHander={this.showAddTaskModal} presetItemType='VI'/>
         <div className='topBar'>
-          <Button icon primary basic labelPosition='left' style={buttonStyle}>
+          <Button icon primary basic labelPosition='left'>
             <Icon name='calendar alternate outline' />
             2022-Fall (ACY)
           </Button>
@@ -47,7 +39,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
               <Dropdown.Item>Clear...</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
-          <div style={spacerStyle} />
+          <div className='BCIflexmenubarspacer' />
           <Button icon primary basic={!hideCompleted} onClick={toggleHideCompleted} button labelPosition='left'>
             <Icon name='clipboard check' />
             Hide Done
@@ -58,7 +50,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
           </Button>
         </div>
         <div className='topBarCondensed'>
-          <Button icon primary basic labelPosition='left' style={buttonStyle}>
+          <Button icon primary basic labelPosition='left'>
             <Icon name='calendar alternate outline' />
             2022-Fall (ACY)
           </Button>
@@ -70,7 +62,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
               <Dropdown.Item>Clear...</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
-          <div style={spacerStyle} />
+          <div className='BCIflexmenubarspacer' />
           <Button icon primary basic={!hideCompleted} onClick={toggleHideCompleted} button>
             <Icon name='clipboard check' />
           </Button>

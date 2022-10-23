@@ -69,17 +69,10 @@ export default class OpenStock extends React.Component<OpenStockProps> {
       <Button disabled icon basic color='red'><Icon name='trash alternate outline'/></Button>;
 
     if (labeled) {
-      const outerStyle = {
-        height: '100%',
-      };
-      const labelDetailStyle = {
-        width: '6em',
-      };
-
-      button = <div style={outerStyle}>
+      button = <div>
           <Label size='large' {...mainProps}>
             OS
-            <Label.Detail style={labelDetailStyle}>{currentStateStr}</Label.Detail>
+            <Label.Detail className='BCIunlabeledopenstock'>{currentStateStr}</Label.Detail>
           </Label>
           <Button.Group>
             <Button icon basic color={nextColor}>
@@ -89,13 +82,8 @@ export default class OpenStock extends React.Component<OpenStockProps> {
           </Button.Group>
         </div>;
     } else {
-      const labelStyle = {
-        width: '7.5em',
-        textAlign: 'center',
-      };
-
       button = <div>
-          <Label {...mainProps} size='large' style={labelStyle}>{currentStateStr}</Label>
+          <Label {...mainProps} size='large' className='BCIlabeledopenstock'>{currentStateStr}</Label>
           <Button.Group>
             <Button icon basic color={nextColor}>
               <Icon name={nextIcon}/>

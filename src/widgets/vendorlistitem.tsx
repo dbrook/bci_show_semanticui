@@ -25,28 +25,7 @@ export default class VendorListItem extends React.Component<VendorListItemProps,
     const { boothId, boothNum, vendor } = this.props;
     const { addTaskModalShown } = this.state;
 
-    const vendorListStyle = {
-      display: 'flex',
-      width: '100%',
-      marginBottom: '5px',
-      alignItems: 'center',
-      columnGap: '5px',
-    };
-
-    const vendorBoothNumStyle = {
-      border: '1px solid #D4D4D5',
-      backgroundColor: '#D4D4D5',
-      borderRadius: '4px',
-      padding: '5px',
-      width: '3em',
-      flexShrink: '0',
-    };
-
-    const vendorNameStyle = {
-      textAlign: 'left' as const,
-    };
-
-    return <div style={vendorListStyle}>
+    return <div className='BCIvendorListStyle'>
         <TaskModal open={addTaskModalShown}
                    closeHander={this.showAddTaskModal}
                    presetItemType='VI'
@@ -56,8 +35,8 @@ export default class VendorListItem extends React.Component<VendorListItemProps,
           <Icon name='plus square outline' />
           Add...
         </Button>
-        <span style={vendorBoothNumStyle}>{boothNum}</span>
-        <span style={vendorNameStyle}>{vendor}</span>
+        <span className='BCIvendorBoothNumStyle'>{boothNum}</span>
+        <span className='BCIvendorListName'>{vendor}</span>
       </div>;
   }
 

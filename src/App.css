@@ -2,7 +2,18 @@
   height: 100%;
 }
 
-/* Condense the menu bar buttons on small displays */
+/* Overall viewport, 5px padding, take up whole viewport with a vertical flexbox */
+.App {
+  text-align: center;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+}
+
+/* * * * * * * * * * * *
+ * Menu Bar Styling
+ * * * * * * * * * * * */
 .topBar {
   border: 1px solid #D4D4D5;  /* Grey color taken from Semantic UI */
   border-radius: 4px;
@@ -25,59 +36,138 @@
   margin-bottom: 5px;
 }
 
-/* Hide the tabular format if the display isn't wide enough */
-@media (max-width: 1024px) {
-  .ui.celled.unstackable.table.BCIdesktop {
-    display: none;
-  }
-  .topBar {
-    display: none;
-  }
+.BCIflexmenubarspacer {
+  flex-grow: 1;
 }
 
-.ui.celled.unstackable.table.BCIdesktop {
-  margin: 0;
+
+/* * * * * * * * * * * *
+ * Scrollable-contents Tabbed Interface Shell
+ * * * * * * * * * * * */
+.outerTabStyle {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
-/* Hide the condensed / tablet-mobile view if the display is wide enough to show the desktop one */
-@media (min-width: 1024px) {
-  .ui.BCImobiletablet {
-    display: none;
-  }
-  .topBarCondensed {
-    display: none;
-  }
+.ui.top.attached.segment.active.tab.innerTabStyle {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 5px;
+  height: 0px;
+  overflow-y: auto;
 }
 
-/* Table contents bleed above the fixed table header when scrolling unless this is done */
+/* Allow scrolling of contents if they exceed the height of the viewport */
 .tabInnerLayout {
   flex-grow: 1;
   height: 0px;
   overflow-y: auto;
 }
 
-/* Mobile View Progress in FlexBox */
+
+/* * * * * * * * * * * *
+ * Widget Styling
+ * * * * * * * * * * * */
+
+/* DESKTOP - Tabular Variant of the Summary */
+.ui.celled.unstackable.table.BCIdesktop {
+  margin: 0;
+}
+.BCItasksum.stickyTableHead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+.BCItasksum.boothStyle {
+  width: 5em;
+}
+.BCItasksum.visitStyle {
+  width: 10em;
+}
+.BCItasksum.simpleStyle {
+  width: 8.5em;
+}
+.BCItasksum.openStockStyle {
+  width: 15em;
+}
+
+
+/* MOBILE/TABLET - Flexbox Variant of the Summary */
 .BCImobilevendorstatus {
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   row-gap: 10px;
   column-gap: 10px;
 }
 
-/* Flex Container for tasks */
-.BCItaskitemsflex {
-  margin-left: 2px;
+
+/* INDIVIDUAL ITEMS */
+/* Vendor List */
+.BCIvendorListStyle {
   display: flex;
-  flex-wrap: wrap;
-  justify-content: flext-start;
-  flex-direction: row;
-  row-gap: 10px;
-  column-gap: 10px;
+  width: 100%;
+  margin-bottom: 5px;
+  align-items: center;
+  column-gap: 5px;
+}
+.BCIvendorBoothNumStyle {
+  border: 1px solid #D4D4D5;
+  background-color: #D4D4D5;
+  border-radius: 4px;
+  padding: 5px;
+  width: 3em;
+  flex-shrink: 0;
+}
+.BCIvendorListName {
+  text-align: left;
 }
 
+/* Vendor Visit */
+.BCIdesktopsinglevendorvisit {
+  width: 100%;
+  flex-shrink: 0;
+}
+.BCImobilesinglevendorvisit {
+  width: 10.2em;
+  flex-shrink: 0;
+}
+
+/* Numerical Progress */
+.BCIouternumerical {
+  height: 100%;
+  width: 10.15em;
+}
+.BCIlabelednumericallabel {
+  width: 5.75em;
+}
+.BCIunlabelednumerical {
+  text-align: center;
+  width: 100%;
+}
+
+/* Open Stock */
+.BCIunlabeledopenstock {
+  text-align: center;
+  width: 6em;
+}
+.BCIlabeledopenstock {
+  width: 7.5em;
+  text-align: center;
+}
+
+/* Simple Submittable (Profit Ctr / Power Buy) */
+.BCIsimplesubmittable {
+  justify-content: center;
+  width: 6.5em;
+}
+
+
+/* GROUPS OF ITEMS */
 /* Flex Container for question/answers */
 .BCIquestionanswerflex {
   margin-left: 2px;
@@ -93,11 +183,9 @@
   align-items: flex-start;
 }
 .BCIquestionanswerflex.unanswered {
-  /* Red color taken from Semantic UI */
-  color: #DB2828;
+  color: #DB2828;             /* Red color taken from Semantic UI */
   border-color: #DB2828;
 }
-
 .BCIindividualquestion {
   padding: 0 5px 0 5px;
   margin-bottom: 0;
@@ -107,50 +195,48 @@
   align-items: center;
   width: 100%;
 }
-
 .ui.basic.icon.button.BCIquestionanswerbtn {
   margin-right: 10px;
 }
+.BCIquestionanswerform {
+  flex-grow: 1;
+}
+.BCIquestionanswerinput {
+  padding: 5px;  /* FIXME: why does this not get propagated to the textarea? */
+}
 
-.App {
-  text-align: center;
-  height: 100%;
+/* Group of Simple Submittables */
+.BCItaskitemsflex {
+  margin-left: 2px;
   display: flex;
-  flex-direction: column;
-  padding: 5px;
+  flex-wrap: wrap;
+  justify-content: flext-start;
+  flex-direction: row;
+  row-gap: 10px;
+  column-gap: 10px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
 
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
+/* * * * * * * * * * * *
+ * Responsive Elements
+ * * * * * * * * * * * */
+
+/* Hide the tabular format if the display isn't wide enough */
+@media (max-width: 1024px) {
+  .ui.celled.unstackable.table.BCIdesktop {
+    display: none;
+  }
+  .topBar {
+    display: none;
   }
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
+/* Hide the condensed / tablet-mobile view if the display is wide enough to show the desktop one */
+@media (min-width: 1024px) {
+  .BCImobiletablet {
+    display: none;
   }
-  to {
-    transform: rotate(360deg);
+  .topBarCondensed {
+    display: none;
   }
 }
