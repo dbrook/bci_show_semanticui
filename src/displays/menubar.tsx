@@ -1,17 +1,21 @@
 import React from 'react';
 import { Button, Dropdown, Icon } from 'semantic-ui-react';
 
+import { inject, observer } from 'mobx-react';
+
 import TaskModal from '../widgets/taskmodal';
 
 interface MenuBarProps {
   hideCompleted: boolean,
   toggleHideCompleted: () => void,
+  showStore?: any,
 };
 
 interface MenuBarState {
   addTaskModalShown: boolean,
 };
 
+@inject('showStore') @observer
 export default class MenuBar extends React.Component<MenuBarProps, MenuBarState> {
   constructor(props: any) {
     super(props);
@@ -20,7 +24,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
   }
 
   render() {
-    const { hideCompleted, toggleHideCompleted } = this.props;
+    const { hideCompleted, toggleHideCompleted, showStore: {tradeShowId} } = this.props;
     const { addTaskModalShown } = this.state;
 
     return (
@@ -29,7 +33,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
         <div className='topBar'>
           <Button icon primary basic labelPosition='left'>
             <Icon name='calendar alternate outline' />
-            2022-Fall (ACY)
+            {tradeShowId}
           </Button>
           <Dropdown labeled button text='Data' className='icon basic primary' iconposition='left' icon='database'>
             <Dropdown.Menu>
@@ -52,7 +56,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
         <div className='topBarCondensed'>
           <Button icon primary basic labelPosition='left'>
             <Icon name='calendar alternate outline' />
-            2022-Fall (ACY)
+            {tradeShowId}
           </Button>
           <Dropdown button className='icon basic primary' iconposition='left' icon='database'>
             <Dropdown.Menu>

@@ -1,9 +1,14 @@
 import React from 'react';
 import './App.css';
 
+// Styling
 import 'semantic-ui-css/semantic.css';
 
-// Temporary includes to just get the examples rendered
+// Data Storage
+import { Provider } from 'mobx-react';
+import { TradeShowStore } from './common/datastore';
+
+// Root-Level Components
 import MenuBar from './displays/menubar';
 import TabArea from './displays/tabarea';
 
@@ -16,10 +21,12 @@ export default class App extends React.Component<any, any> {
 
   render() {
     return (
-      <div className="App">
-        <MenuBar hideCompleted={this.state.hideCompleted} toggleHideCompleted={this.toggleHideCompleted}/>
-        <TabArea hideCompleted={this.state.hideCompleted} />
-      </div>
+      <Provider showStore={TradeShowStore}>
+        <div className="App">
+          <MenuBar hideCompleted={this.state.hideCompleted} toggleHideCompleted={this.toggleHideCompleted}/>
+          <TabArea hideCompleted={this.state.hideCompleted} />
+        </div>
+      </Provider>
     );
   }
 
