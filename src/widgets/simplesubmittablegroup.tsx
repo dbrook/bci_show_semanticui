@@ -6,11 +6,11 @@ import { ISubmittableItem } from '../types/interfaces';
 import SimpleSubmittable from './simplesubmittable';
 
 interface SimpleSubmittableGroupProps {
-  boothNum: number,
-  vendor: string,
-  items: ISubmittableItem[],
-  hideCompleted: boolean,
-  prefix?: string,
+  boothNum: number;
+  vendor: string;
+  items: ISubmittableItem[];
+  hideCompleted: boolean;
+  prefix?: string;
 };
 
 export default class SimpleSubmittableGroup extends React.Component<SimpleSubmittableGroupProps> {

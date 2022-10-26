@@ -6,9 +6,10 @@ import { inject, observer } from 'mobx-react';
 import TaskModal from '../widgets/taskmodal';
 
 interface MenuBarProps {
-  hideCompleted: boolean,
-  toggleHideCompleted: () => void,
-  showStore?: any,
+  hideCompleted: boolean;
+  toggleHideCompleted: () => void;
+//   showStore?: TradeShowData;
+  showStore?: any;  // Workaround for now ... FIXME: How to use a type?
 };
 
 interface MenuBarState {

@@ -4,13 +4,13 @@ import { Button, Icon } from 'semantic-ui-react';
 import TaskModal from './taskmodal';
 
 interface VendorListItemProps {
-  boothId: string,
-  boothNum: number,
-  vendor: string,
+  boothId: string;
+  boothNum: number;
+  vendor: string;
 };
 
 interface VendorListItemState {
-  addTaskModalShown: boolean,
+  addTaskModalShown: boolean;
 };
 
 export default class VendorListItem extends React.Component<VendorListItemProps, VendorListItemState> {

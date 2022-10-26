@@ -3,8 +3,8 @@ import { Button, Label, Icon, SemanticCOLORS, SemanticICONS } from 'semantic-ui-
 import { OpenStockForm } from  '../types/enums';
 
 interface OpenStockProps {
-  formStatus: OpenStockForm,
-  labeled: boolean,
+  formStatus: OpenStockForm;
+  labeled: boolean;
 };
 
 export default class OpenStock extends React.Component<OpenStockProps> {

@@ -2,13 +2,13 @@ import React from 'react';
 import { Button, Form, Icon, TextArea } from 'semantic-ui-react';
 
 interface QuestionAnswerProps {
-  question: string,
-  answer?: string,
+  question: string;
+  answer?: string;
 };
 
 interface QuestionAnswerState {
-  editingQuestion: boolean,
-  editingAnswer: boolean,
+  editingQuestion: boolean;
+  editingAnswer: boolean;
 };
 
 export default class QuestionAnswer extends React.Component<QuestionAnswerProps, QuestionAnswerState> {

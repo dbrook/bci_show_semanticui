@@ -2,9 +2,9 @@ import React from 'react';
 import { Button, Icon, Label } from 'semantic-ui-react';
 
 interface SimpleSubmittableProps {
-  prefix?: string,
-  itemId: string,
-  submitted: boolean,
+  prefix?: string;
+  itemId: string;
+  submitted: boolean;
 };
 
 export default class SimpleSubmittable extends React.Component<SimpleSubmittableProps> {

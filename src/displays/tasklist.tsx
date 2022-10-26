@@ -8,7 +8,7 @@ import VendorActions from '../widgets/vendoractions';
 import { nbAnsweredQuestions, nbSubmitted } from '../common/utils';
 
 interface TaskListProps {
-  hideCompleted?: boolean,
+  hideCompleted?: boolean;
 };
 
 export default class TaskList extends React.Component<TaskListProps> {

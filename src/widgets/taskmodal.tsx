@@ -3,14 +3,14 @@ import { Button, Checkbox, Dropdown, Form, Input, Modal } from 'semantic-ui-reac
 
 interface TaskModalProps {
   open: boolean,
-  closeHander: (arg0: boolean) => any,
-  presetBoothId?: string,
-  presetVendorName?: string,
-  presetItemType?: string,
+  closeHander: (arg0: boolean) => any;
+  presetBoothId?: string;
+  presetVendorName?: string;
+  presetItemType?: string;
 };
 
 interface TaskModalState {
-  itemTypeToAdd: string,
+  itemTypeToAdd: string;
 };
 
 export default class TaskModal extends React.Component<TaskModalProps, TaskModalState> {

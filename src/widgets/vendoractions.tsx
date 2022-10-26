@@ -9,8 +9,8 @@ import OpenStock from './openstock';
 import { nbAnsweredQuestions, nbSubmitted } from '../common/utils';
 
 interface VendorActionsProps {
-  vendorStatus: IVendorStatus,
-  condensed: boolean,
+  vendorStatus: IVendorStatus;
+  condensed: boolean;
 };
 
 export default class VendorActions extends React.Component<VendorActionsProps> {

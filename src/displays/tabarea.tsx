@@ -6,7 +6,7 @@ import TaskList from './tasklist';
 import TaskDetailList from './taskdetaillist';
 
 interface TabAreaProps {
-  hideCompleted: boolean,
+  hideCompleted: boolean;
 };
 
 export default class TabArea extends React.Component<TabAreaProps> {

@@ -3,8 +3,8 @@ import { Button } from 'semantic-ui-react';
 import { VendorVisit } from  '../types/enums';
 
 interface NumericalProgressProps {
-  visitStatus: VendorVisit,
-  mobile?: boolean,
+  visitStatus: VendorVisit;
+  mobile?: boolean;
 };
 
 export default class Visitation extends React.Component<NumericalProgressProps> {

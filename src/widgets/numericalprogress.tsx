@@ -2,9 +2,9 @@ import React from 'react';
 import { Label, SemanticCOLORS } from 'semantic-ui-react';
 
 interface NumericalProgressProps {
-  completed?: number,
-  total?: number,
-  label?: string,
+  completed?: number;
+  total?: number;
+  label?: string;
 };
 
 export default class NumericalProgress extends React.Component<NumericalProgressProps> {

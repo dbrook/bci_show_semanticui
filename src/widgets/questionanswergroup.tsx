@@ -6,10 +6,10 @@ import { IQuestionAnswer } from '../types/interfaces';
 import QuestionAnswer from './questionanswer';
 
 interface QuestionAnswerGroupProps {
-  boothNum: number,
-  vendor: string,
-  items: IQuestionAnswer[],
-  hideCompleted: boolean,
+  boothNum: number;
+  vendor: string;
+  items: IQuestionAnswer[];
+  hideCompleted: boolean;
 };
 
 export default class QuestionAnswerGroup extends React.Component<QuestionAnswerGroupProps> {

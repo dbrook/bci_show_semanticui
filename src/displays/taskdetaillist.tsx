@@ -9,7 +9,7 @@ import QuestionAnswerGroup from '../widgets/questionanswergroup';
 import { nbSubmitted } from '../common/utils';
 
 interface TaskDetailListProps {
-  hideCompleted: boolean,
+  hideCompleted: boolean;
 };
 
 export default class TaskDetailList extends React.Component<TaskDetailListProps> {
