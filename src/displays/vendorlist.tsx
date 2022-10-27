@@ -1,9 +1,7 @@
 import React from 'react';
 
 import { inject, observer } from 'mobx-react';
-import { TradeShowData } from '../common/datastore';
 
-import { IVendorDirectory } from '../types/interfaces';
 import VendorListItem from '../widgets/vendorlistitem';
 
 interface TaskListProps {
@@ -17,8 +15,13 @@ export default class TaskList extends React.Component<TaskListProps> {
     const { showStore: { boothVendors } } = this.props;
 
     // FIXME: Maybe make this whole thing sortable by vendor -OR- booth number?
+    const tempVendorStat = Array.from(boothVendors, ([key, value]) => {
+      return {boothId: key, boothNum: value.boothNum, vendor: value.vendor};
+    });
 
-    let vendorRows = boothVendors.map((x: IVendorDirectory) => {
+    // FIXME: make the result from Array.from() above into a type so a VendorListItem
+    //        won't need to map with just 'any' as the type
+    let vendorRows = tempVendorStat.map((x: any) => {
       return <VendorListItem key={x.boothId} boothId={x.boothId} boothNum={x.boothNum} vendor={x.vendor}/>
     });
 

@@ -2,7 +2,7 @@ import React from 'react';
 import { Tab } from 'semantic-ui-react';
 
 import VendorList from './vendorlist';
-import TaskList from './tasklist';
+import Summary from './summary';
 import TaskDetailList from './taskdetaillist';
 
 interface TabAreaProps {
@@ -37,7 +37,7 @@ export default class TabArea extends React.Component<TabAreaProps> {
         render: () => {
           return (
             <Tab.Pane attached='top' className='innerTabStyle'>
-              <TaskList hideCompleted={this.props.hideCompleted} />
+              <Summary hideCompleted={this.props.hideCompleted} />
             </Tab.Pane>
           );
         },

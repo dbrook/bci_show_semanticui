@@ -5,7 +5,6 @@ import { OpenStockForm, VendorVisit } from './enums';
  */
 
 export interface IVendorDirectory {
-  boothId: string;
   boothNum: number;
   vendor: string;
 };

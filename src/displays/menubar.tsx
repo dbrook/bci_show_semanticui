@@ -25,7 +25,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
   }
 
   render() {
-    const { hideCompleted, toggleHideCompleted, showStore: {tradeShowId} } = this.props;
+    const { hideCompleted, toggleHideCompleted, showStore: { tradeShowId } } = this.props;
     const { addTaskModalShown } = this.state;
 
     return (
