@@ -58,7 +58,9 @@ export default class Summary extends React.Component<TaskListProps> {
               <Table.HeaderCell className='BCItasksum openStockStyle'>Open Stock Form</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
-          {vendorRows}
+          <Table.Body>
+            {vendorRows}
+          </Table.Body>
         </Table>
         <div className='BCImobiletablet'>
           {vendorRowsMobile}
