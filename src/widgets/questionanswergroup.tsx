@@ -1,29 +1,30 @@
 import React from 'react';
 import { Divider, Header } from 'semantic-ui-react';
 
-import { IQuestionAnswer } from '../types/interfaces';
+import { inject, observer } from 'mobx-react';
 
 import QuestionAnswer from './questionanswer';
 
 interface QuestionAnswerGroupProps {
   boothNum: number;
   vendor: string;
-  items: IQuestionAnswer[];
+  items: number[];
   hideCompleted: boolean;
+//   showStore?: TradeShowData;
+  showStore?: any;  // Workaround for now ... FIXME: How to use a type?
 };
 
+@inject('showStore') @observer
 export default class QuestionAnswerGroup extends React.Component<QuestionAnswerGroupProps> {
   render() {
-    const { boothNum, vendor, items, hideCompleted } = this.props;
+    const { boothNum, vendor, items, hideCompleted, showStore: { vendorQuestions } } = this.props;
 
     const itemsAsQuestAns = items.map((x) => {
-      if (hideCompleted && x.answer) {
+      const { answer } = vendorQuestions[x];
+      if (hideCompleted && answer) {
         return null;
       }
-
-      // FIXME: Since the questions will be enhanced/replaced with unique lookup IDs, add
-      //        a key prop here with said identifier when that is implemented.
-      return <QuestionAnswer question={x.question} answer={x.answer}/>;
+      return <QuestionAnswer key={x} questionId={x}/>;
     });
 
     return <div>

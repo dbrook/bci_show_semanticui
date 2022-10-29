@@ -17,21 +17,26 @@ interface TaskModalState {
   boothIdToAdd: string;
   itemTypeToAdd: string;
   keepOpenOnAdd: boolean;
+  inputValue: string,
 };
 
 @inject('showStore') @observer
 export default class TaskModal extends React.Component<TaskModalProps, TaskModalState> {
   constructor(props: TaskModalProps, state: TaskModalState) {
     super(props, state);
+
     this.state = {
       boothIdToAdd: props?.presetBoothId ?? '',
       itemTypeToAdd: props?.presetItemType ?? 'VI',
       keepOpenOnAdd: false,
+      inputValue: '',
     };
+
     this.changeBooth = this.changeBooth.bind(this);
     this.changeItemType = this.changeItemType.bind(this);
     this.setKeepOpened = this.setKeepOpened.bind(this);
     this.addEntry = this.addEntry.bind(this);
+    this.changeInputAreaValue = this.changeInputAreaValue.bind(this);
   }
 
   render() {
@@ -54,7 +59,10 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
       case 'QU':
         entryField = <Form.Group widths='equal'>
             <Form.Field>
-              <Input fluid label={itemTypeToAdd}/>
+              <Input fluid
+                     label={itemTypeToAdd}
+                     value={this.state.inputValue}
+                     onChange={this.changeInputAreaValue} />
             </Form.Field>
           </Form.Group>;
         break;
@@ -139,6 +147,10 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
     this.setState({ itemTypeToAdd: data.value });
   }
 
+  private changeInputAreaValue(e: any, data: any) {
+    this.setState({ inputValue: e.target.value });
+  }
+
   private setKeepOpened(e: any, data: any) {
     this.setState({ keepOpenOnAdd: data.checked });
   }
@@ -151,7 +163,7 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
 
     switch (this.state.itemTypeToAdd) {
       case 'QU':
-        console.error('FIXME Question add feature not implemented');
+        this.props.showStore.addQuestion(this.state.boothIdToAdd, this.state.inputValue);
         break;
       case 'PC':
         console.error('FIXME ProfitCenter add feature not implemented');

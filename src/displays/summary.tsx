@@ -7,7 +7,7 @@ import { OpenStockForm, VendorVisit } from '../types/enums';
 import { IVendorStatus } from '../types/interfaces';
 import VendorActions from '../widgets/vendoractions';
 
-import { nbAnsweredQuestions, nbSubmitted } from '../common/utils';
+import { nbSubmitted } from '../common/utils';
 
 interface TaskListProps {
   hideCompleted?: boolean;
@@ -17,6 +17,11 @@ interface TaskListProps {
 
 @inject('showStore') @observer
 export default class Summary extends React.Component<TaskListProps> {
+  constructor(props: TaskListProps) {
+    super(props);
+    this.vendorCompleted = this.vendorCompleted.bind(this);
+  }
+
   render() {
     const { showStore: { vendorsWithActions } } = this.props;
 
@@ -25,10 +30,10 @@ export default class Summary extends React.Component<TaskListProps> {
     });
 
     let vendorRows = tempVendorStat.map((x: IVendorStatus) => {
-//       if (!this.props.hideCompleted || !this.vendorCompleted(x)) {
+      if (!this.props.hideCompleted || !this.vendorCompleted(x)) {
         return <VendorActions key={x.boothId} vendorStatus={x} condensed={false}/>
-//       }
-//       return null;
+      }
+      return null;
     });
 
     let vendorRowsMobile = tempVendorStat.map((x: IVendorStatus) => {
@@ -68,7 +73,7 @@ export default class Summary extends React.Component<TaskListProps> {
       (vendor.openStockForm !== OpenStockForm.PICK_UP &&
        vendor.openStockForm !== OpenStockForm.RETRIEVED &&
        vendor.openStockForm !== OpenStockForm.FILLED_IN) &&
-      (nbAnsweredQuestions(vendor.questions) === vendor.questions.length) &&
+      (this.props.showStore.nbAnsweredQuestions(vendor.boothId) === vendor.questions.length) &&
       (nbSubmitted(vendor.powerBuys) === vendor.powerBuys.length) &&
       (nbSubmitted(vendor.profitCenters) === vendor.profitCenters.length)
     );
