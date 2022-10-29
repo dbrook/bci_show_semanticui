@@ -136,7 +136,7 @@ class TradeShowData {
     }
   };
 
-  @action public nbAnsweredQuestions = (boothId: number): number => {
+  @action public nbAnsweredQuestions = (boothId: string): number => {
     let answeredQuestions = 0;
     for (const questionId of this.vendorsWithActions.get(boothId).questions) {
       if (this.vendorQuestions[questionId]?.answer !== undefined) {

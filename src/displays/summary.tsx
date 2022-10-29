@@ -37,10 +37,10 @@ export default class Summary extends React.Component<TaskListProps> {
     });
 
     let vendorRowsMobile = tempVendorStat.map((x: IVendorStatus) => {
-//       if (!this.props.hideCompleted || !this.vendorCompleted(x)) {
+      if (!this.props.hideCompleted || !this.vendorCompleted(x)) {
         return <VendorActions key={x.boothId} vendorStatus={x} condensed={true}/>
-//       }
-//       return null;
+      }
+      return null;
     });
 
     // Displays tabular format on wide screens, condensed view on mobiles/tablets

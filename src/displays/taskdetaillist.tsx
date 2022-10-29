@@ -30,7 +30,8 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
         if (hideCompleted && x.questions.length === nbAnsweredQuestions(x.boothId)) {
           return null;
         }
-        return <QuestionAnswerGroup boothNum={x.boothNum}
+        return <QuestionAnswerGroup key={x.boothId}
+                                    boothNum={x.boothNum}
                                     vendor={x.vendor}
                                     items={x.questions}
                                     hideCompleted={hideCompleted}/>
