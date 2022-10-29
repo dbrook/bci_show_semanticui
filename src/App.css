@@ -1,5 +1,6 @@
 #root {
   height: 100%;
+  background-color: #B0B0B0;
 }
 
 /* Overall viewport, 5px padding, take up whole viewport with a vertical flexbox */
@@ -23,6 +24,7 @@
   flex-wrap: wrap;
   padding: 4px 1px 4px 4px;
   margin-bottom: 5px;
+  background-color: white;
 }
 
 .topBarCondensed {
@@ -34,6 +36,7 @@
   flex-wrap: wrap;
   padding: 4px 1px 4px 4px;
   margin-bottom: 5px;
+  background-color: white;
 }
 
 .BCIflexmenubarspacer {
