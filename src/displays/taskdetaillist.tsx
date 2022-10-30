@@ -3,12 +3,9 @@ import { Header } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
-import { OpenStockForm, VendorVisit } from '../types/enums';
 import { IVendorStatus } from '../types/interfaces';
 import SimpleSubmittableGroup from '../widgets/simplesubmittablegroup';
 import QuestionAnswerGroup from '../widgets/questionanswergroup';
-
-import { nbSubmitted } from '../common/utils';
 
 interface TaskDetailListProps {
   hideCompleted: boolean;
@@ -19,7 +16,10 @@ interface TaskDetailListProps {
 @inject('showStore') @observer
 export default class TaskDetailList extends React.Component<TaskDetailListProps> {
   render() {
-    const { hideCompleted, showStore: { vendorsWithActions, nbAnsweredQuestions } } = this.props;
+    const {
+      hideCompleted,
+      showStore: { vendorsWithActions, nbAnsweredQuestions, nbSubmittedPowerBuys, nbSubmittedProfitCenters },
+    } = this.props;
 
     const tempVendorStat = Array.from(vendorsWithActions, ([key, value]) => {
       return value;
@@ -34,53 +34,50 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
                                     boothNum={x.boothNum}
                                     vendor={x.vendor}
                                     items={x.questions}
-                                    hideCompleted={hideCompleted}/>
+                                    hideCompleted={hideCompleted} />
       }
       return null;
     });
 
-//     let profitCenterRows = vendorsWithActions.map((x: IVendorStatus) => {
-//       if (x.profitCenters.length) {
-//         if (hideCompleted && x.profitCenters.length === nbSubmitted(x.profitCenters)) {
-//           return null;
-//         }
-//         return <SimpleSubmittableGroup key={x.boothId}
-//                                        boothNum={x.boothNum}
-//                                        vendor={x.vendor}
-//                                        items={x.profitCenters}
-//                                        hideCompleted={hideCompleted}
-//                                        prefix='PC'/>
-//       }
-//       return null;
-//     });
+    let powerBuyRows = tempVendorStat.map((x: IVendorStatus) => {
+      if (x.powerBuys.length) {
+        if (hideCompleted && x.powerBuys.length === nbSubmittedPowerBuys(x.boothId)) {
+          return null;
+        }
+        return <SimpleSubmittableGroup key={x.boothId}
+                                       boothNum={x.boothNum}
+                                       vendor={x.vendor}
+                                       items={x.powerBuys}
+                                       hideCompleted={hideCompleted}
+                                       prefix='PB' />
+      }
+      return null;
+    });
 
-//     let powerBuyRows = vendorsWithActions.map((x: IVendorStatus) => {
-//       if (x.powerBuys.length) {
-//         if (hideCompleted && x.powerBuys.length === nbSubmitted(x.powerBuys)) {
-//           return null;
-//         }
-//         return <SimpleSubmittableGroup key={x.boothId}
-//                                        boothNum={x.boothNum}
-//                                        vendor={x.vendor}
-//                                        items={x.powerBuys}
-//                                        hideCompleted={hideCompleted}
-//                                        prefix='PB'/>
-//       }
-//       return null;
-//     });
+    let profitCenterRows = tempVendorStat.map((x: IVendorStatus) => {
+      if (x.profitCenters.length) {
+        if (hideCompleted && x.profitCenters.length === nbSubmittedProfitCenters(x.boothId)) {
+          return null;
+        }
+        return <SimpleSubmittableGroup key={x.boothId}
+                                       boothNum={x.boothNum}
+                                       vendor={x.vendor}
+                                       items={x.profitCenters}
+                                       hideCompleted={hideCompleted}
+                                       prefix='PC' />
+      }
+      return null;
+    });
 
     return (
       <div className='tabInnerLayout'>
         <Header as='h2' dividing textAlign='left' color='orange'>Questions</Header>
         {questionRows}
+        <Header as='h2' dividing textAlign='left' color='violet'>Power Buys</Header>
+        {powerBuyRows}
+        <Header as='h2' dividing textAlign='left' color='teal'>Profit Centers</Header>
+        {profitCenterRows}
       </div>
     );
   }
 }
-
-/*
-        <Header as='h2' dividing textAlign='left' color='teal'>Profit Centers</Header>
-        {profitCenterRows}
-        <Header as='h2' dividing textAlign='left' color='violet'>Power Buys</Header>
-        {powerBuyRows}
-*/

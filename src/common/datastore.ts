@@ -1,23 +1,30 @@
-import { action, runInAction, observable } from 'mobx';
+import { action, runInAction, makeObservable, observable } from 'mobx';
 
-import { IVendorDirectory, IQuestionAnswer } from '../types/interfaces';
+import { IVendorDirectory, IQuestionAnswer, ISubmittableItem } from '../types/interfaces';
 import { VendorVisit, OpenStockForm } from '../types/enums';
 
 class TradeShowData {
   // Current Trade Show Database Loaded
   @observable public tradeShowId: string = '2022-Fall-ACY';
 
-  // Vendor - Booth Index List
+  // All Vendors, Booth Index List
   @observable public boothVendors: Map<string, IVendorDirectory>;
 
+  // Vendors With Action Items
   // FIXME: Ideally this is the declaration to use for an observable map, but....
   // @observable public vendorsWithActions: Map<string, IVendorStatus> = new Map<string, IVendorStatus>();
-
   // ... this workaround below is required to make a map "properly" observable
   // https://github.com/mobxjs/mobx-react/issues/398
   public vendorsWithActions = observable.map();
 
+  // Question Data
   @observable public vendorQuestions: Array<IQuestionAnswer|undefined>;
+
+  // Power Buy Data
+  @observable public powerBuys: Array<ISubmittableItem|undefined>;
+
+  // Profit Centers Data
+  @observable public profitCenters: Array<ISubmittableItem|undefined>;
 
   constructor() {
     this.boothVendors = new Map([
@@ -56,42 +63,45 @@ class TradeShowData {
     ]);
 
     this.vendorQuestions = [];
+    this.powerBuys = [];
+    this.profitCenters = [];
+
+    // DO NOT REMOVE! This is needed in mobx 6+ to make observers actually respect the decorator syntax?
+    // More information @ https://mobx.js.org/enabling-decorators.html
+    makeObservable(this);
   }
+
+  private initBoothIfNeeded = (boothId: string) => {
+    if (!this.vendorsWithActions.has(boothId)) {
+      this.vendorsWithActions.set(boothId, {
+        boothId: boothId,
+        boothNum: this.boothVendors.get(boothId)?.boothNum ?? 0,
+        vendor: this.boothVendors.get(boothId)?.vendor ?? '',
+        visit: VendorVisit.DO_NOT_VISIT,
+        questions: [],
+        powerBuys: [],
+        profitCenters: [],
+        openStockForm: OpenStockForm.DO_NOT_GET,
+      });
+    }
+  };
 
   @action public addVisit = (boothId: string) => {
     // FIXME: This is obviously bad to set the map objects like this, but this just gets the stores started
     runInAction(() => {
-      if (!this.vendorsWithActions.has(boothId)) {
-        this.vendorsWithActions.set(boothId, {
-            boothId: boothId,
-            boothNum: this.boothVendors.get(boothId)?.boothNum ?? 0,
-            vendor: this.boothVendors.get(boothId)?.vendor ?? '',
-            visit: VendorVisit.NOT_VISITED,
-            questions: [],
-            powerBuys: [],
-            profitCenters: [],
-            openStockForm: OpenStockForm.DO_NOT_GET,
-        });
-      } else {
-        this.vendorsWithActions.get(boothId).visit = VendorVisit.NOT_VISITED;
-      }
+      this.initBoothIfNeeded(boothId);
+      this.vendorsWithActions.get(boothId).visit = VendorVisit.NOT_VISITED;
     });
   };
 
+
+  /*
+   * Question Maintenance
+   */
+
   @action public addQuestion = (boothId: string, questionText: string) => {
     runInAction(() => {
-      if (!this.vendorsWithActions.has(boothId)) {
-        this.vendorsWithActions.set(boothId, {
-            boothId: boothId,
-            boothNum: this.boothVendors.get(boothId)?.boothNum ?? 0,
-            vendor: this.boothVendors.get(boothId)?.vendor ?? '',
-            visit: VendorVisit.DO_NOT_VISIT,
-            questions: [],
-            powerBuys: [],
-            profitCenters: [],
-            openStockForm: OpenStockForm.DO_NOT_GET,
-        });
-      }
+      this.initBoothIfNeeded(boothId);
       this.vendorQuestions.push({ question: questionText });
       this.vendorsWithActions.get(boothId).questions.push(this.vendorQuestions.length - 1);
     });
@@ -145,6 +155,66 @@ class TradeShowData {
     }
     return answeredQuestions;
   };
+
+
+  /*
+   * Power Buy Maintenance
+   */
+  @action public addPowerBuy = (boothId: string, pbNum: string) => {
+    runInAction(() => {
+      this.initBoothIfNeeded(boothId);
+      this.powerBuys.push({ itemId: pbNum, submitted: false });
+      this.vendorsWithActions.get(boothId).powerBuys.push(this.powerBuys.length - 1);
+    });
+  };
+
+  @action public submitPowerBuy = (pbId: number, submitted: boolean) => {
+    if (pbId >= 0 && pbId < this.powerBuys.length && this.powerBuys[pbId] !== undefined) {
+      // This ignore is needed because the value could be undefined but it was already checked above
+      // @ts-ignore
+      this.powerBuys[pbId].submitted = submitted;
+    }
+  };
+
+  @action public nbSubmittedPowerBuys = (boothId: string): number => {
+    let submitted = 0;
+    for (const questionId of this.vendorsWithActions.get(boothId).powerBuys) {
+      if (this.powerBuys[questionId]?.submitted) {
+        submitted++;
+      }
+    }
+    return submitted;
+  };
+
+  /*
+   * Profit Center Maintenance
+   */
+  @action public addProfitCenter = (boothId: string, pcNum: string) => {
+    runInAction(() => {
+      this.initBoothIfNeeded(boothId);
+      this.profitCenters.push({ itemId: pcNum, submitted: false });
+      this.vendorsWithActions.get(boothId).profitCenters.push(this.profitCenters.length - 1);
+    });
+  };
+
+  @action public submitProfitCenter = (pcId: number, submitted: boolean) => {
+    if (pcId >= 0 && pcId < this.profitCenters.length && this.profitCenters[pcId] !== undefined) {
+      // This ignore is needed because the value could be undefined but it was already checked above
+      // @ts-ignore
+      this.profitCenters[pcId].submitted = submitted;
+    }
+  };
+
+  @action public nbSubmittedProfitCenters = (boothId: string): number => {
+    let submitted = 0;
+    for (const questionId of this.vendorsWithActions.get(boothId).profitCenters) {
+      if (this.profitCenters[questionId]?.submitted) {
+        submitted++;
+      }
+    }
+    return submitted;
+  };
+
 }
 
 const store = new TradeShowData();

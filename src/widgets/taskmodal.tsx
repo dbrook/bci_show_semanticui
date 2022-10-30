@@ -71,7 +71,11 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
         const inputStyle = { width: '8em' };
         entryField = <Form.Group widths='equal'>
             <Form.Field>
-              <Input fluid label={itemTypeToAdd} style={inputStyle}/>
+              <Input fluid
+                     label={itemTypeToAdd}
+                     style={inputStyle}
+                     value={this.state.inputValue}
+                     onChange={this.changeInputAreaValue} />
             </Form.Field>
           </Form.Group>;
         break;
@@ -114,16 +118,16 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
               </Form.Field>
               <Form.Field>
                 <Checkbox radio
-                          label='Profit Center'
-                          value='PC'
-                          checked={itemTypeToAdd === 'PC'}
+                          label='Power Buy'
+                          value='PB'
+                          checked={itemTypeToAdd === 'PB'}
                           onChange={this.changeItemType} />
               </Form.Field>
               <Form.Field>
                 <Checkbox radio
-                          label='Power Buy'
-                          value='PB'
-                          checked={itemTypeToAdd === 'PB'}
+                          label='Profit Center'
+                          value='PC'
+                          checked={itemTypeToAdd === 'PC'}
                           onChange={this.changeItemType} />
               </Form.Field>
             </Form.Group>
@@ -165,11 +169,11 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
       case 'QU':
         this.props.showStore.addQuestion(this.state.boothIdToAdd, this.state.inputValue);
         break;
-      case 'PC':
-        console.error('FIXME ProfitCenter add feature not implemented');
-        break;
       case 'PB':
-        console.error('FIXME PowerBuy add feature not implemented');
+        this.props.showStore.addPowerBuy(this.state.boothIdToAdd, this.state.inputValue);
+        break;
+      case 'PC':
+        this.props.showStore.addProfitCenter(this.state.boothIdToAdd, this.state.inputValue);
         break;
       case 'VI':
         this.props.showStore.addVisit(this.state.boothIdToAdd);

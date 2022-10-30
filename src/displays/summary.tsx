@@ -7,8 +7,6 @@ import { OpenStockForm, VendorVisit } from '../types/enums';
 import { IVendorStatus } from '../types/interfaces';
 import VendorActions from '../widgets/vendoractions';
 
-import { nbSubmitted } from '../common/utils';
-
 interface TaskListProps {
   hideCompleted?: boolean;
 //   showStore?: TradeShowData;
@@ -76,8 +74,8 @@ export default class Summary extends React.Component<TaskListProps> {
        vendor.openStockForm !== OpenStockForm.RETRIEVED &&
        vendor.openStockForm !== OpenStockForm.FILLED_IN) &&
       (this.props.showStore.nbAnsweredQuestions(vendor.boothId) === vendor.questions.length) &&
-      (nbSubmitted(vendor.powerBuys) === vendor.powerBuys.length) &&
-      (nbSubmitted(vendor.profitCenters) === vendor.profitCenters.length)
+      (this.props.showStore.nbSubmittedPowerBuys(vendor.boothId) === vendor.powerBuys.length) &&
+      (this.props.showStore.nbSubmittedProfitCenters(vendor.boothId) === vendor.profitCenters.length)
     );
   }
 }

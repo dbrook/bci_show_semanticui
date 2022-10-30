@@ -8,8 +8,6 @@ import NumericalProgress from './numericalprogress';
 import Visitation from './visitation';
 import OpenStock from './openstock';
 
-import { nbSubmitted } from '../common/utils';
-
 interface VendorActionsProps {
   vendorStatus: IVendorStatus;
   condensed: boolean;
@@ -30,7 +28,7 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
       profitCenters,
       openStockForm
     } = this.props.vendorStatus;
-    const { nbAnsweredQuestions } = this.props.showStore;
+    const { nbAnsweredQuestions, nbSubmittedPowerBuys, nbSubmittedProfitCenters } = this.props.showStore;
     const condensedView = this.props.condensed;
 
     if (condensedView) {
@@ -39,8 +37,8 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
           <div className='BCImobilevendorstatus'>
             <Visitation visitStatus={visit} mobile />
             <NumericalProgress label='QU' completed={nbAnsweredQuestions(boothId)} total={questions.length}/>
-            <NumericalProgress label='PB' completed={nbSubmitted(powerBuys)} total={powerBuys.length}/>
-            <NumericalProgress label='PC' completed={nbSubmitted(profitCenters)} total={profitCenters.length}/>
+            <NumericalProgress label='PB' completed={nbSubmittedPowerBuys(boothId)} total={powerBuys.length}/>
+            <NumericalProgress label='PC' completed={nbSubmittedProfitCenters(boothId)} total={profitCenters.length}/>
             <OpenStock formStatus={openStockForm} labeled={true}/>
           </div>
           <Divider />
@@ -51,8 +49,8 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
           <Table.Cell>{vendor}</Table.Cell>
           <Table.Cell><Visitation visitStatus={visit}/></Table.Cell>
           <Table.Cell><NumericalProgress completed={nbAnsweredQuestions(boothId)} total={questions.length}/></Table.Cell>
-          <Table.Cell><NumericalProgress completed={nbSubmitted(powerBuys)} total={powerBuys.length}/></Table.Cell>
-          <Table.Cell><NumericalProgress completed={nbSubmitted(profitCenters)} total={profitCenters.length}/></Table.Cell>
+          <Table.Cell><NumericalProgress completed={nbSubmittedPowerBuys(boothId)} total={powerBuys.length}/></Table.Cell>
+          <Table.Cell><NumericalProgress completed={nbSubmittedProfitCenters(boothId)} total={profitCenters.length}/></Table.Cell>
           <Table.Cell><OpenStock formStatus={openStockForm} labeled={false}/></Table.Cell>
         </Table.Row>;
     }
