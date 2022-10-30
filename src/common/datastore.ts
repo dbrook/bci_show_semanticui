@@ -86,11 +86,21 @@ class TradeShowData {
     }
   };
 
+
+  /*
+   * Booth Visit Changes
+   */
   @action public addVisit = (boothId: string) => {
     // FIXME: This is obviously bad to set the map objects like this, but this just gets the stores started
     runInAction(() => {
       this.initBoothIfNeeded(boothId);
       this.vendorsWithActions.get(boothId).visit = VendorVisit.NOT_VISITED;
+    });
+  };
+
+  @action public setVisitMode = (boothId: string, visitStatus: VendorVisit) => {
+    runInAction(() => {
+      this.vendorsWithActions.get(boothId).visit = visitStatus;
     });
   };
 
@@ -219,6 +229,12 @@ class TradeShowData {
   /*
    * Open Stock Form Progress Handling
    */
+  @action public setOpenStock = (boothId: string, osStatus: OpenStockForm) => {
+    runInAction(() => {
+      this.vendorsWithActions.get(boothId).openStockForm = osStatus;
+    });
+  };
+
   @action public advanceOpenStockStatus = (boothId: string) => {
     if (this.vendorsWithActions.has(boothId)) {
       const osState = this.vendorsWithActions.get(boothId).openStockForm;

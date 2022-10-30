@@ -109,6 +109,15 @@
 }
 
 
+/* Visitation Modal Quick-Action Items */
+.BCIvendorquickactions {
+  display: flex;
+  row-gap: 5px;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
 /* INDIVIDUAL ITEMS */
 /* Vendor List */
 .BCIvendorListStyle {

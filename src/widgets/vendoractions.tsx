@@ -35,7 +35,7 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
       return <div>
           <Header as='h3'>{boothNum} - {vendor}</Header>
           <div className='BCImobilevendorstatus'>
-            <Visitation visitStatus={visit} mobile />
+            <Visitation boothId={boothId} visitStatus={visit} mobile />
             <NumericalProgress label='QU' completed={nbAnsweredQuestions(boothId)} total={questions.length}/>
             <NumericalProgress label='PB' completed={nbSubmittedPowerBuys(boothId)} total={powerBuys.length}/>
             <NumericalProgress label='PC' completed={nbSubmittedProfitCenters(boothId)} total={profitCenters.length}/>
@@ -47,7 +47,7 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
       return <Table.Row>
           <Table.Cell textAlign='center'><b>{boothNum}</b></Table.Cell>
           <Table.Cell>{vendor}</Table.Cell>
-          <Table.Cell><Visitation visitStatus={visit}/></Table.Cell>
+          <Table.Cell><Visitation boothId={boothId} visitStatus={visit}/></Table.Cell>
           <Table.Cell><NumericalProgress completed={nbAnsweredQuestions(boothId)} total={questions.length}/></Table.Cell>
           <Table.Cell><NumericalProgress completed={nbSubmittedPowerBuys(boothId)} total={powerBuys.length}/></Table.Cell>
           <Table.Cell><NumericalProgress completed={nbSubmittedProfitCenters(boothId)} total={profitCenters.length}/></Table.Cell>
