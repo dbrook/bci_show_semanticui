@@ -215,6 +215,43 @@ class TradeShowData {
     return submitted;
   };
 
+
+  /*
+   * Open Stock Form Progress Handling
+   */
+  @action public advanceOpenStockStatus = (boothId: string) => {
+    if (this.vendorsWithActions.has(boothId)) {
+      const osState = this.vendorsWithActions.get(boothId).openStockForm;
+      let osNext: OpenStockForm = OpenStockForm.DO_NOT_GET;
+      switch (osState) {
+        case OpenStockForm.DO_NOT_GET:
+          osNext = OpenStockForm.PICK_UP;
+          break;
+        case OpenStockForm.PICK_UP:
+          osNext = OpenStockForm.RETRIEVED;
+          break;
+        case OpenStockForm.RETRIEVED:
+          osNext = OpenStockForm.FILLED_IN;
+          break;
+        case OpenStockForm.FILLED_IN:
+          osNext = OpenStockForm.SUBMITTED;
+          break;
+        default:
+          osNext = OpenStockForm.DO_NOT_GET;
+          break;
+      }
+      runInAction(() => {
+        // Progress the status of the form
+        this.vendorsWithActions.get(boothId).openStockForm = osNext;
+      });
+    }
+  };
+
+  @action public abandonOpenStock = (boothId: string) => {
+    if (this.vendorsWithActions.has(boothId)) {
+      this.vendorsWithActions.get(boothId).openStockForm = OpenStockForm.ABANDONED;
+    }
+  };
 }
 
 const store = new TradeShowData();

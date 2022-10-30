@@ -154,6 +154,10 @@
 }
 
 /* Open Stock */
+.BCIopenstockmobilegroup {
+  width: 222px;
+}
+
 .BCIunlabeledopenstock {
   text-align: center;
   width: 6em;

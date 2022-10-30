@@ -39,7 +39,7 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
             <NumericalProgress label='QU' completed={nbAnsweredQuestions(boothId)} total={questions.length}/>
             <NumericalProgress label='PB' completed={nbSubmittedPowerBuys(boothId)} total={powerBuys.length}/>
             <NumericalProgress label='PC' completed={nbSubmittedProfitCenters(boothId)} total={profitCenters.length}/>
-            <OpenStock formStatus={openStockForm} labeled={true}/>
+            <OpenStock boothId={boothId} formStatus={openStockForm} labeled={true}/>
           </div>
           <Divider />
         </div>;
@@ -51,7 +51,7 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
           <Table.Cell><NumericalProgress completed={nbAnsweredQuestions(boothId)} total={questions.length}/></Table.Cell>
           <Table.Cell><NumericalProgress completed={nbSubmittedPowerBuys(boothId)} total={powerBuys.length}/></Table.Cell>
           <Table.Cell><NumericalProgress completed={nbSubmittedProfitCenters(boothId)} total={profitCenters.length}/></Table.Cell>
-          <Table.Cell><OpenStock formStatus={openStockForm} labeled={false}/></Table.Cell>
+          <Table.Cell><OpenStock boothId={boothId} formStatus={openStockForm} labeled={false}/></Table.Cell>
         </Table.Row>;
     }
   }

@@ -1,12 +1,19 @@
 import React from 'react';
 import { Button, Label, Icon, SemanticCOLORS, SemanticICONS } from 'semantic-ui-react';
+
+import { inject, observer } from 'mobx-react';
+
 import { OpenStockForm } from  '../types/enums';
 
 interface OpenStockProps {
   formStatus: OpenStockForm;
   labeled: boolean;
+  boothId: string;
+//   showStore?: TradeShowData;
+  showStore?: any;  // Workaround for now ... FIXME: How to use a type?
 };
 
+@inject('showStore') @observer
 export default class OpenStock extends React.Component<OpenStockProps> {
   render() {
     const { formStatus, labeled } = this.props;
@@ -65,17 +72,19 @@ export default class OpenStock extends React.Component<OpenStockProps> {
     };
 
     const deleteBtn = !deleteBtnDisable ?
-      <Button icon basic color='red'><Icon name='trash alternate outline'/></Button> :
+      <Button icon basic color='red' onClick={this.abandonButtonAction}>
+        <Icon name='trash alternate outline'/>
+      </Button> :
       <Button disabled icon basic color='red'><Icon name='trash alternate outline'/></Button>;
 
     if (labeled) {
-      button = <div>
+      button = <div className='BCIopenstockmobilegroup'>
           <Label size='large' {...mainProps}>
             OS
             <Label.Detail className='BCIunlabeledopenstock'>{currentStateStr}</Label.Detail>
           </Label>
           <Button.Group>
-            <Button icon basic color={nextColor}>
+            <Button icon basic color={nextColor} onClick={this.advanceButtonAction}>
               <Icon name={nextIcon}/>
             </Button>
             {deleteBtn}
@@ -85,7 +94,7 @@ export default class OpenStock extends React.Component<OpenStockProps> {
       button = <div>
           <Label {...mainProps} size='large' className='BCIlabeledopenstock'>{currentStateStr}</Label>
           <Button.Group>
-            <Button icon basic color={nextColor}>
+            <Button icon basic color={nextColor} onClick={this.advanceButtonAction}>
               <Icon name={nextIcon}/>
             </Button>
             {deleteBtn}
@@ -94,5 +103,13 @@ export default class OpenStock extends React.Component<OpenStockProps> {
     }
 
     return button;
+  }
+
+  private advanceButtonAction = (e: any, data: any) => {
+    this.props.showStore.advanceOpenStockStatus(this.props.boothId);
+  }
+
+  private abandonButtonAction = (e: any, data: any) => {
+    this.props.showStore.abandonOpenStock(this.props.boothId);
   }
 }
