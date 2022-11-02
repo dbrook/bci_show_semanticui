@@ -57,7 +57,7 @@ export default class VisitModal extends React.Component<VisitModalProps, VisitMo
 
     return (
       <Modal open={open}>
-        <Modal.Header>{vendorName}</Modal.Header>
+        <Modal.Header>{vendorName} ({boothId})</Modal.Header>
         <Modal.Content>
           <Form>
             <Form.Group widths='equal'>
@@ -140,6 +140,7 @@ export default class VisitModal extends React.Component<VisitModalProps, VisitMo
   };
 
   private updateVendorAction = (e: any, data: any) => {
+    console.log(e, data);
     this.props.showStore.setVisitMode(this.props.boothId, this.state.visitation);
 
     // Workaround: open modal after changing open stock form widget - original state at

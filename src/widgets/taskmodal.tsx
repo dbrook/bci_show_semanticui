@@ -180,6 +180,8 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
         break;
     }
 
+    this.setState({ inputValue: '' });
+
     if (!this.state.keepOpenOnAdd) {
       this.props.closeHander(false);
     }
