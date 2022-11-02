@@ -30,6 +30,7 @@ export default class QuestionAnswer extends React.Component<QuestionAnswerProps,
     this.toggleAnswerEdit = this.toggleAnswerEdit.bind(this);
     this.updatedQuestionText = this.updatedQuestionText.bind(this);
     this.updatedAnswerText = this.updatedAnswerText.bind(this);
+    this.deleteQuestion = this.deleteQuestion.bind(this);
   }
 
   render() {
@@ -45,7 +46,7 @@ export default class QuestionAnswer extends React.Component<QuestionAnswerProps,
     const answerIcon = editingAnswer ? 'save' : answer !== undefined ? 'check' : 'arrow alternate circle right';
 
     return <div className={outerClass}>
-        <p className='BCIindividualquestion'>
+        <div className='BCIindividualquestion'>
           <Button basic icon
                   color={questionBtnColor}
                   className='BCIquestionanswerbtn'
@@ -53,7 +54,8 @@ export default class QuestionAnswer extends React.Component<QuestionAnswerProps,
             <Icon name={questionIcon}/>
           </Button>
           {
-            (!editingQuestion) ? question :
+            (!editingQuestion) ?
+            <div className='BCIquestionanswerform'>{question}</div> :
             <Form className='BCIquestionanswerform'>
               <TextArea rows={2}
                         className='BCIquestionanswerinput'
@@ -61,8 +63,14 @@ export default class QuestionAnswer extends React.Component<QuestionAnswerProps,
                         onChange={this.updatedQuestionText} />
             </Form>
           }
-        </p>
-        <p className='BCIindividualquestion'>
+          <Button basic icon
+                  className='BCIquestiondeletebtn'
+                  color='red'
+                  onClick={this.deleteQuestion}>
+            <Icon name='trash alternate outline'/>
+          </Button>
+        </div>
+        <div className='BCIindividualquestion'>
           <Button basic icon
                   color={answerBtnColor}
                   className='BCIquestionanswerbtn'
@@ -78,7 +86,7 @@ export default class QuestionAnswer extends React.Component<QuestionAnswerProps,
                         onChange={this.updatedAnswerText} />
             </Form>
           }
-        </p>
+        </div>
       </div>;
   }
 
@@ -118,5 +126,9 @@ export default class QuestionAnswer extends React.Component<QuestionAnswerProps,
 
   private updatedAnswerText(e: any, data: any) {
     this.setState({ newAnswerText: e.target.value });
+  }
+
+  private deleteQuestion(e: any, data: any) {
+    this.props.showStore.removeQuestion(this.props.questionId);
   }
 }

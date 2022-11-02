@@ -37,7 +37,7 @@ export default class SimpleSubmittable extends React.Component<SimpleSubmittable
             <Button icon color='green' onClick={this.toggleSubmitted}>
               <Icon name='check circle'/>
             </Button>
-            <Button icon basic color='red'><Icon name='trash alternate outline'/></Button>
+            <Button icon basic color='red' disabled><Icon name='trash alternate outline'/></Button>
           </Button>
         </Button.Group>;
     } else {
@@ -47,7 +47,9 @@ export default class SimpleSubmittable extends React.Component<SimpleSubmittable
             <Button icon basic color='grey' onClick={this.toggleSubmitted}>
               <Icon name='circle outline'/>
             </Button>
-            <Button icon basic color='red'><Icon name='trash alternate outline'/></Button>
+            <Button icon basic color='red' onClick={this.deleteItem}>
+              <Icon name='trash alternate outline'/>
+            </Button>
           </Button>
         </Button.Group>;
     }
@@ -68,4 +70,20 @@ export default class SimpleSubmittable extends React.Component<SimpleSubmittable
         break;
     }
   };
+
+  private deleteItem = (e: any, data: any) => {
+    const {
+      prefix,
+      itemIdx,
+      showStore: { removePowerBuy, removeProfitCenter },
+    } = this.props;
+    switch (prefix) {
+      case 'PB':
+        removePowerBuy(itemIdx);
+        break;
+      case 'PC':
+        removeProfitCenter(itemIdx);
+        break;
+    }
+  }
 }

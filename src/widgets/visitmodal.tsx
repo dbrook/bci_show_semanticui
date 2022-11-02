@@ -67,8 +67,8 @@ export default class VisitModal extends React.Component<VisitModalProps, VisitMo
                   <Button basic color='orange' onClick={this.getOSLater}>Get OS Later</Button>
                   <Button basic color='purple' onClick={this.pickupOS}>Picked Up OS</Button>
                   <Button basic color='green' onClick={this.submitOS}>Submitted OS</Button>
+                  <Button basic color='red' onClick={this.nothingMore}>Skip OS</Button>
                   <Button basic color='pink' onClick={this.revistWithQ}>Question & Revisit</Button>
-                  <Button basic color='red' onClick={this.nothingMore}>Nothing Further</Button>
                 </Form.Field>
               </Form.Field>
             </Form.Group>
@@ -140,7 +140,6 @@ export default class VisitModal extends React.Component<VisitModalProps, VisitMo
   };
 
   private updateVendorAction = (e: any, data: any) => {
-    console.log(e, data);
     this.props.showStore.setVisitMode(this.props.boothId, this.state.visitation);
 
     // Workaround: open modal after changing open stock form widget - original state at

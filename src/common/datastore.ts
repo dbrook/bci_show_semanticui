@@ -1,6 +1,6 @@
 import { action, runInAction, makeObservable, observable } from 'mobx';
 
-import { IVendorDirectory, IQuestionAnswer, ISubmittableItem } from '../types/interfaces';
+import { IVendorDirectory, IVendorStatus, IQuestionAnswer, ISubmittableItem } from '../types/interfaces';
 import { VendorVisit, OpenStockForm } from '../types/enums';
 
 class TradeShowData {
@@ -86,6 +86,20 @@ class TradeShowData {
     }
   };
 
+  private cleanupBoothAuto = (boothId: string) => {
+    // Checks the boothId contents to see if it can be removed from the "vendorWithActions" data set
+    if (this.vendorsWithActions.has(boothId)) {
+      const booth: IVendorStatus = this.vendorsWithActions.get(boothId);
+      if (booth.visit === VendorVisit.DO_NOT_VISIT &&
+          booth.questions.length === 0 &&
+          booth.powerBuys.length === 0 &&
+          booth.profitCenters.length === 0 &&
+          booth.openStockForm === OpenStockForm.DO_NOT_GET) {
+        this.vendorsWithActions.delete(boothId);
+      }
+    }
+  }
+
 
   /*
    * Booth Visit Changes
@@ -101,6 +115,7 @@ class TradeShowData {
   @action public setVisitMode = (boothId: string, visitStatus: VendorVisit) => {
     runInAction(() => {
       this.vendorsWithActions.get(boothId).visit = visitStatus;
+      this.cleanupBoothAuto(boothId);
     });
   };
 
@@ -117,20 +132,20 @@ class TradeShowData {
     });
   };
 
-  // @action public removeQuestion = (questionId: number) => {
-  //   // Unlink the question from the vendorsWithActions
-  //   this.vendorsWithActions.forEach((value, key) => {
-  //     const questionIdxFound = this.vendorsWithActions.get(key).questions.indexOf(questionId);
-  //     if (questionIdxFound !== -1) {
-  //       this.vendorsWithActions.get(key).questions[questionIdxFound] = undefined;
-  //       console.log('Successfully removed!');
-  //     }
-  //   });
-  //
-  //   if (questionId >= 0 && questionId < this.vendorQuestions.length) {
-  //     this.vendorQuestions[questionId] = undefined;
-  //   }
-  // }
+  @action public removeQuestion = (questionId: number) => {
+    if (questionId >= 0 && questionId < this.vendorQuestions.length) {
+      let boothIdFound: string = '';
+      this.vendorsWithActions.forEach((value, key) => {
+        const idxFound = this.vendorsWithActions.get(key).questions.indexOf(questionId);
+        if (idxFound !== -1) {
+          this.vendorsWithActions.get(key).questions.splice(idxFound, 1);
+          boothIdFound = key;
+        }
+      });
+      this.vendorQuestions[questionId] = undefined;
+      this.cleanupBoothAuto(boothIdFound);
+    }
+  }
 
   @action public changeQuestion = (questionId: number, questionText: string) => {
     if (questionId >= 0 &&
@@ -178,6 +193,21 @@ class TradeShowData {
     });
   };
 
+  @action public removePowerBuy = (pbId: number) => {
+    if (pbId >= 0 && pbId < this.powerBuys.length) {
+      let boothIdFound: string = '';
+      this.vendorsWithActions.forEach((value, key) => {
+        const idxFound = this.vendorsWithActions.get(key).powerBuys.indexOf(pbId);
+        if (idxFound !== -1) {
+          this.vendorsWithActions.get(key).powerBuys.splice(idxFound, 1);
+          boothIdFound = key;
+        }
+      });
+      this.powerBuys[pbId] = undefined;
+      this.cleanupBoothAuto(boothIdFound);
+    }
+  }
+
   @action public submitPowerBuy = (pbId: number, submitted: boolean) => {
     if (pbId >= 0 && pbId < this.powerBuys.length && this.powerBuys[pbId] !== undefined) {
       // This ignore is needed because the value could be undefined but it was already checked above
@@ -206,6 +236,21 @@ class TradeShowData {
       this.vendorsWithActions.get(boothId).profitCenters.push(this.profitCenters.length - 1);
     });
   };
+
+  @action public removeProfitCenter = (pcId: number) => {
+    if (pcId >= 0 && pcId < this.profitCenters.length) {
+      let boothIdFound: string = '';
+      this.vendorsWithActions.forEach((value, key) => {
+        const idxFound = this.vendorsWithActions.get(key).profitCenters.indexOf(pcId);
+        if (idxFound !== -1) {
+          this.vendorsWithActions.get(key).profitCenters.splice(idxFound, 1);
+          boothIdFound = key;
+        }
+      });
+      this.profitCenters[pcId] = undefined;
+      this.cleanupBoothAuto(boothIdFound);
+    }
+  }
 
   @action public submitProfitCenter = (pcId: number, submitted: boolean) => {
     if (pcId >= 0 && pcId < this.profitCenters.length && this.profitCenters[pcId] !== undefined) {
@@ -259,6 +304,7 @@ class TradeShowData {
       runInAction(() => {
         // Progress the status of the form
         this.vendorsWithActions.get(boothId).openStockForm = osNext;
+        this.cleanupBoothAuto(boothId);
       });
     }
   };

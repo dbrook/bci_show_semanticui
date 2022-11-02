@@ -214,6 +214,9 @@
 .ui.basic.icon.button.BCIquestionanswerbtn {
   margin-right: 10px;
 }
+.ui.basic.icon.button.BCIquestiondeletebtn {
+  margin-left: 10px;
+}
 .BCIquestionanswerform {
   flex-grow: 1;
 }
