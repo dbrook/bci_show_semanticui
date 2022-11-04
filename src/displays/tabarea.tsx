@@ -2,6 +2,7 @@ import React from 'react';
 import { Tab } from 'semantic-ui-react';
 
 import VendorList from './vendorlist';
+import FloorPlan from './floorplan';
 import Summary from './summary';
 import TaskDetailList from './taskdetaillist';
 
@@ -27,7 +28,7 @@ export default class TabArea extends React.Component<TabAreaProps> {
         render: () => {
           return (
             <Tab.Pane attached='top' className='innerTabStyle'>
-              Trade Show Floor Map Placeholder
+              <FloorPlan />
             </Tab.Pane>
           );
         },

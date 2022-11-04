@@ -31,9 +31,8 @@ export default class VendorListItem extends React.Component<VendorListItemProps,
                    presetItemType='VI'
                    presetBoothId={boothId}
                    presetVendorName={vendor} />
-        <Button icon primary basic button labelPosition='left' onClick={this.openTaskModal}>
+        <Button icon primary basic button onClick={this.openTaskModal}>
           <Icon name='plus square outline' />
-          Add...
         </Button>
         <span className='BCIvendorBoothNumStyle'>{boothNum}</span>
         <span className='BCIvendorListName'>{vendor}</span>
