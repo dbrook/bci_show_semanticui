@@ -12,7 +12,7 @@ interface TaskListProps {
 @inject('showStore') @observer
 export default class TaskList extends React.Component<TaskListProps> {
   render() {
-    const { showStore: { boothVendors } } = this.props;
+    const { showStore: { boothVendors, vendorsWithActions } } = this.props;
 
     // FIXME: Maybe make this whole thing sortable by vendor -OR- booth number?
     const tempVendorStat = Array.from(boothVendors, ([key, value]) => {
@@ -22,11 +22,16 @@ export default class TaskList extends React.Component<TaskListProps> {
     // FIXME: make the result from Array.from() above into a type so a VendorListItem
     //        won't need to map with just 'any' as the type
     let vendorRows = tempVendorStat.map((x: any) => {
-      return <VendorListItem key={x.boothId} boothId={x.boothId} boothNum={x.boothNum} vendor={x.vendor}/>
+      const vendorHasActions = vendorsWithActions.has(x.boothId);
+      return <VendorListItem key={x.boothId}
+                             boothId={x.boothId}
+                             boothNum={x.boothNum}
+                             vendor={x.vendor}
+                             hasActions={vendorHasActions}/>
     });
 
     return (
-      <div className='tabInnerLayout'>
+      <div className='tabInnerLayout BCIouterVendorList'>
         {vendorRows}
       </div>
     );

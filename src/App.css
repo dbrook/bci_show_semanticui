@@ -120,9 +120,15 @@
 
 /* INDIVIDUAL ITEMS */
 /* Vendor List */
+.tabInnerLayout.BCIouterVendorList {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+}
 .BCIvendorListStyle {
   display: flex;
-  width: 100%;
+  width: 512px;
   margin-bottom: 5px;
   align-items: center;
   column-gap: 5px;
@@ -134,6 +140,10 @@
   padding: 5px;
   width: 3em;
   flex-shrink: 0;
+}
+.BCIvendorBoothNumStyle.actioned {
+  background-color: #6435C9;
+  color: white;
 }
 .BCIvendorListName {
   text-align: left;

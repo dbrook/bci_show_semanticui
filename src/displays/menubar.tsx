@@ -4,6 +4,7 @@ import { Button, Dropdown, Icon } from 'semantic-ui-react';
 import { inject, observer } from 'mobx-react';
 
 import TaskModal from '../widgets/taskmodal';
+import DataModal from '../widgets/datamodal';
 
 interface MenuBarProps {
   hideCompleted: boolean;
@@ -14,27 +15,33 @@ interface MenuBarProps {
 
 interface MenuBarState {
   addTaskModalShown: boolean,
+  dataModalShown: boolean,
 };
 
 @inject('showStore') @observer
 export default class MenuBar extends React.Component<MenuBarProps, MenuBarState> {
   constructor(props: any) {
     super(props);
-    this.state = { addTaskModalShown: false };
+    this.state = {
+      addTaskModalShown: false,
+      dataModalShown: false
+    };
     this.showAddTaskModal = this.showAddTaskModal.bind(this);
+    this.showDataModal = this.showDataModal.bind(this);
   }
 
   render() {
     const { hideCompleted, toggleHideCompleted, showStore: { tradeShowId } } = this.props;
-    const { addTaskModalShown } = this.state;
+    const { addTaskModalShown, dataModalShown } = this.state;
 
     return (
       <>
+        <DataModal open={dataModalShown} closeHander={this.showDataModal}/>
         <TaskModal open={addTaskModalShown} closeHander={this.showAddTaskModal} presetItemType='VI'/>
         <div className='topBar'>
-          <Button icon primary basic labelPosition='left'>
+          <Button icon primary basic labelPosition='left' onClick={() => this.showDataModal(true)}>
             <Icon name='calendar alternate outline' />
-            {tradeShowId}
+            {tradeShowId ?? 'Load Show Data...'}
           </Button>
           <Dropdown labeled button text='Data' className='icon basic primary' iconposition='left' icon='database'>
             <Dropdown.Menu>
@@ -55,9 +62,9 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
           </Button>
         </div>
         <div className='topBarCondensed'>
-          <Button icon primary basic labelPosition='left'>
+          <Button icon primary basic labelPosition='left' onClick={() => this.showDataModal(true)}>
             <Icon name='calendar alternate outline' />
-            {tradeShowId}
+            {tradeShowId ?? 'Load Show Data...'}
           </Button>
           <Dropdown button className='icon basic primary' iconposition='left' icon='database'>
             <Dropdown.Menu>
@@ -81,6 +88,11 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
 
   private showAddTaskModal(showIt: boolean): any {
     this.setState({ addTaskModalShown: showIt });
+    return;
+  }
+
+  private showDataModal(showIt: boolean): any {
+    this.setState({ dataModalShown: showIt });
     return;
   }
 }

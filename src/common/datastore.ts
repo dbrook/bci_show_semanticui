@@ -5,7 +5,7 @@ import { VendorVisit, OpenStockForm } from '../types/enums';
 
 class TradeShowData {
   // Current Trade Show Database Loaded
-  @observable public tradeShowId: string = '2022-Fall-ACY';
+  @observable public tradeShowId: string|undefined = undefined;
 
   // All Vendors, Booth Index List
   @observable public boothVendors: Map<string, IVendorDirectory>;
@@ -27,49 +27,38 @@ class TradeShowData {
   @observable public profitCenters: Array<ISubmittableItem|undefined>;
 
   constructor() {
-    this.boothVendors = new Map([
-      ['100-0', {
-        boothNum: 100,
-        vendor: 'Initial Added',
-      }],
-      ['196-0', {
-        boothNum: 196,
-        vendor: 'Company Foo',
-      }],
-      ['205-0', {
-        boothNum: 205,
-        vendor: 'Bar, Inc.',
-      }],
-      ['212-0', {
-        boothNum: 212,
-        vendor: 'Another Industries Inc, a DEWARTIMER enterprises subsidiary',
-      }],
-      ['222-0', {
-        boothNum: 222,
-        vendor: 'Yet Another, Inc.',
-      }],
-      ['222-1', {
-        boothNum: 222,
-        vendor: 'Visited Co.',
-      }],
-      ['998-0', {
-        boothNum: 998,
-        vendor: 'Everything, Inc.',
-      }],
-      ['999-0', {
-        boothNum: 999,
-        vendor: 'Power Corporation',
-      }],
-    ]);
-
+    this.boothVendors = new Map();
     this.vendorQuestions = [];
     this.powerBuys = [];
     this.profitCenters = [];
 
-    // DO NOT REMOVE! This is needed in mobx 6+ to make observers actually respect the decorator syntax?
+    // DO NOT REMOVE! This is needed in MobX 6+ to make observers actually respect the decorator syntax?
     // More information @ https://mobx.js.org/enabling-decorators.html
     makeObservable(this);
   }
+
+  @action public loadAvailableShows = (): Promise<string[]> => {
+    return fetch('show_vendors/all_shows.json')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        return responseJson.shows;
+      });
+  };
+
+  @action public loadShowData = (): Promise<any> => {
+    return fetch(`show_vendors/${this.tradeShowId}.json`)
+      .then((response) => response.json())
+      .then((responseJson) => {
+        console.log(responseJson);
+        runInAction(() => {
+          this.boothVendors = new Map(Object.entries(responseJson));
+        });
+      });
+  };
+
+  @action public setCurrentShow = (newShowId: string) => {
+    this.tradeShowId = newShowId;
+  };
 
   private initBoothIfNeeded = (boothId: string) => {
     if (!this.vendorsWithActions.has(boothId)) {
@@ -127,6 +116,7 @@ class TradeShowData {
   @action public addQuestion = (boothId: string, questionText: string) => {
     runInAction(() => {
       this.initBoothIfNeeded(boothId);
+      // FIXME: Recycle any undefined positions before just pushing
       this.vendorQuestions.push({ question: questionText });
       this.vendorsWithActions.get(boothId).questions.push(this.vendorQuestions.length - 1);
     });
@@ -188,6 +178,7 @@ class TradeShowData {
   @action public addPowerBuy = (boothId: string, pbNum: string) => {
     runInAction(() => {
       this.initBoothIfNeeded(boothId);
+      // FIXME: Recycle any undefined positions before just pushing
       this.powerBuys.push({ itemId: pbNum, submitted: false });
       this.vendorsWithActions.get(boothId).powerBuys.push(this.powerBuys.length - 1);
     });
@@ -232,6 +223,7 @@ class TradeShowData {
   @action public addProfitCenter = (boothId: string, pcNum: string) => {
     runInAction(() => {
       this.initBoothIfNeeded(boothId);
+      // FIXME: Recycle any undefined positions before just pushing
       this.profitCenters.push({ itemId: pcNum, submitted: false });
       this.vendorsWithActions.get(boothId).profitCenters.push(this.profitCenters.length - 1);
     });

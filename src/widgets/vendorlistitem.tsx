@@ -7,6 +7,7 @@ interface VendorListItemProps {
   boothId: string;
   boothNum: number;
   vendor: string;
+  hasActions: boolean;
 };
 
 interface VendorListItemState {
@@ -22,8 +23,10 @@ export default class VendorListItem extends React.Component<VendorListItemProps,
   }
 
   render() {
-    const { boothId, boothNum, vendor } = this.props;
+    const { boothId, boothNum, vendor, hasActions } = this.props;
     const { addTaskModalShown } = this.state;
+
+    const boothClassName = hasActions ? 'BCIvendorBoothNumStyle actioned': 'BCIvendorBoothNumStyle';
 
     return <div className='BCIvendorListStyle'>
         <TaskModal open={addTaskModalShown}
@@ -34,7 +37,7 @@ export default class VendorListItem extends React.Component<VendorListItemProps,
         <Button icon primary basic button onClick={this.openTaskModal}>
           <Icon name='plus square outline' />
         </Button>
-        <span className='BCIvendorBoothNumStyle'>{boothNum}</span>
+        <span className={boothClassName}>{boothNum}</span>
         <span className='BCIvendorListName'>{vendor}</span>
       </div>;
   }
