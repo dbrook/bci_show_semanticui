@@ -25,6 +25,8 @@ export default class Summary extends React.Component<TaskListProps> {
 
     const tempVendorStat = Array.from(vendorsWithActions, ([key, value]) => {
       return value;
+    }).sort((a: IVendorStatus, b: IVendorStatus) => {
+      return a.boothNum < b.boothNum ? -1 : (a.boothNum > b.boothNum ? 1 : 0);
     });
 
     let vendorRows = tempVendorStat.map((x: IVendorStatus) => {
