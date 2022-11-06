@@ -49,7 +49,6 @@ class TradeShowData {
     return fetch(`show_vendors/${this.tradeShowId}.json`)
       .then((response) => response.json())
       .then((responseJson) => {
-        console.log(responseJson);
         runInAction(() => {
           this.boothVendors = new Map(Object.entries(responseJson));
         });

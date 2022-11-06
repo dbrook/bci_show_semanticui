@@ -124,11 +124,10 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  justify-content: center;
 }
 .BCIvendorListStyle {
   display: flex;
-  width: 512px;
+  width: 500px;
   margin-bottom: 5px;
   align-items: center;
   column-gap: 5px;

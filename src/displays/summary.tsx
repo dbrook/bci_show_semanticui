@@ -8,7 +8,8 @@ import { IVendorStatus } from '../types/interfaces';
 import VendorActions from '../widgets/vendoractions';
 
 interface TaskListProps {
-  hideCompleted?: boolean;
+  hideCompleted: boolean;
+  alphaSort: boolean;
 //   showStore?: TradeShowData;
   showStore?: any;  // Workaround for now ... FIXME: How to use a type?
 };
@@ -21,12 +22,15 @@ export default class Summary extends React.Component<TaskListProps> {
   }
 
   render() {
-    const { showStore: { vendorsWithActions } } = this.props;
+    const { alphaSort, showStore: { vendorsWithActions } } = this.props;
 
     const tempVendorStat = Array.from(vendorsWithActions, ([key, value]) => {
       return value;
     }).sort((a: IVendorStatus, b: IVendorStatus) => {
-      return a.boothNum < b.boothNum ? -1 : (a.boothNum > b.boothNum ? 1 : 0);
+      if (alphaSort) {
+        return a.vendor < b.vendor ? -1 : (a.vendor > b.vendor ? 1 : 0);
+      }
+      return a.boothId < b.boothId ? -1 : (a.boothId > b.boothId ? 1 : 0);
     });
 
     let vendorRows = tempVendorStat.map((x: IVendorStatus) => {

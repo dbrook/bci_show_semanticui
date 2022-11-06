@@ -8,6 +8,7 @@ import TaskDetailList from './taskdetaillist';
 
 interface TabAreaProps {
   hideCompleted: boolean;
+  alphaSort: boolean;
 };
 
 export default class TabArea extends React.Component<TabAreaProps> {
@@ -18,7 +19,7 @@ export default class TabArea extends React.Component<TabAreaProps> {
         render: () => {
           return (
             <Tab.Pane attached='top' className='innerTabStyle'>
-              <VendorList />
+              <VendorList alphaSort={this.props.alphaSort} />
             </Tab.Pane>
           );
         },
@@ -38,7 +39,7 @@ export default class TabArea extends React.Component<TabAreaProps> {
         render: () => {
           return (
             <Tab.Pane attached='top' className='innerTabStyle'>
-              <Summary hideCompleted={this.props.hideCompleted} />
+              <Summary hideCompleted={this.props.hideCompleted} alphaSort={this.props.alphaSort} />
             </Tab.Pane>
           );
         },
@@ -48,7 +49,7 @@ export default class TabArea extends React.Component<TabAreaProps> {
         render: () => {
           return (
             <Tab.Pane attached='top' className='innerTabStyle'>
-              <TaskDetailList hideCompleted={this.props.hideCompleted} />
+              <TaskDetailList hideCompleted={this.props.hideCompleted} alphaSort={this.props.alphaSort} />
             </Tab.Pane>
           );
         },

@@ -9,6 +9,7 @@ import QuestionAnswerGroup from '../widgets/questionanswergroup';
 
 interface TaskDetailListProps {
   hideCompleted: boolean;
+  alphaSort: boolean;
 //   showStore?: TradeShowData;
   showStore?: any;  // Workaround for now ... FIXME: How to use a type?
 };
@@ -18,11 +19,17 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
   render() {
     const {
       hideCompleted,
+      alphaSort,
       showStore: { vendorsWithActions, nbAnsweredQuestions, nbSubmittedPowerBuys, nbSubmittedProfitCenters },
     } = this.props;
 
     const tempVendorStat = Array.from(vendorsWithActions, ([key, value]) => {
       return value;
+    }).sort((a: IVendorStatus, b: IVendorStatus) => {
+      if (alphaSort) {
+        return a.vendor < b.vendor ? -1 : (a.vendor > b.vendor ? 1 : 0);
+      }
+      return a.boothId < b.boothId ? -1 : (a.boothId > b.boothId ? 1 : 0);
     });
 
     let questionRows = tempVendorStat.map((x) => {
