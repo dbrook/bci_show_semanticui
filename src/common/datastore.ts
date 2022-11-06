@@ -1,4 +1,4 @@
-import { action, runInAction, makeObservable, observable } from 'mobx';
+import { action, computed, runInAction, makeObservable, observable } from 'mobx';
 
 import { IVendorDirectory, IVendorStatus, IQuestionAnswer, ISubmittableItem } from '../types/interfaces';
 import { VendorVisit, OpenStockForm } from '../types/enums';
@@ -57,7 +57,19 @@ class TradeShowData {
 
   @action public setCurrentShow = (newShowId: string) => {
     this.tradeShowId = newShowId;
+
+    // Blow away all the existing data, it is invalidated when a new show is loaded
+    runInAction(() => {
+      this.vendorQuestions = [];
+      this.powerBuys = [];
+      this.profitCenters = [];
+      this.vendorsWithActions.clear();
+    });
   };
+
+  @computed get nbVendorActions() {
+    return this.vendorsWithActions.size;
+  }
 
   private initBoothIfNeeded = (boothId: string) => {
     if (!this.vendorsWithActions.has(boothId)) {
@@ -111,6 +123,16 @@ class TradeShowData {
   /*
    * Question Maintenance
    */
+
+  @computed get nbQuestions() {
+    let nbDefined = 0;
+    for (const question of this.vendorQuestions) {
+      if (question !== undefined) {
+        nbDefined++;
+      }
+    }
+    return nbDefined;
+  }
 
   @action public addQuestion = (boothId: string, questionText: string) => {
     runInAction(() => {
@@ -174,6 +196,16 @@ class TradeShowData {
   /*
    * Power Buy Maintenance
    */
+  @computed get nbPowerBuys() {
+    let nbDefined = 0;
+    for (const pb of this.powerBuys) {
+      if (pb !== undefined) {
+        nbDefined++;
+      }
+    }
+    return nbDefined;
+  }
+
   @action public addPowerBuy = (boothId: string, pbNum: string) => {
     runInAction(() => {
       this.initBoothIfNeeded(boothId);
@@ -219,6 +251,16 @@ class TradeShowData {
   /*
    * Profit Center Maintenance
    */
+  @computed get nbProfitCenters() {
+    let nbDefined = 0;
+    for (const pc of this.profitCenters) {
+      if (pc !== undefined) {
+        nbDefined++;
+      }
+    }
+    return nbDefined;
+  }
+
   @action public addProfitCenter = (boothId: string, pcNum: string) => {
     runInAction(() => {
       this.initBoothIfNeeded(boothId);

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button, Dropdown, DropdownItemProps, Form, Message, Modal } from 'semantic-ui-react';
+import { Button, Divider, Dropdown, DropdownItemProps, Form, Message, Modal, Tab } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
@@ -28,39 +28,95 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
   }
 
   render() {
-    const { open, closeHander, showStore: { tradeShowId } } = this.props;
+    const {
+      open,
+      closeHander,
+      showStore: {
+        tradeShowId,
+        nbVendorActions,
+        nbQuestions,
+        nbPowerBuys,
+        nbProfitCenters,
+      },
+    } = this.props;
+    const { selectedShow } = this.state;
+
+    const showDataTab = <Tab.Pane>
+        <Form>
+          <Form.Group widths='equal'>
+            <Form.Field>
+              <label>Select Trade Show Vendor Data to Load:</label>
+              <Dropdown selection
+                        options={this.state.availableShows}
+                        placeholder='Available shows in this drop-down'
+                        defaultValue={selectedShow ?? tradeShowId}
+                        onChange={this.newShowSelected} />
+            </Form.Field>
+          </Form.Group>
+          <Button color='red'
+                  disabled={selectedShow === undefined || tradeShowId === selectedShow}
+                  onClick={this.loadSelectedShow}>
+            Switch Show
+          </Button>
+        </Form>
+        <Message warning>
+          <Message.Header>Data Loss Warning!</Message.Header>
+          <p>
+            This application is designed to work offline after initially loading the Core
+            Vendor Data. As such, <b>all your data is maintained on your device and is
+            not saved or uploaded anywhere</b>.
+          </p>
+          <p>
+            Changing the Core Vendor Data will erase this local device storage, so if
+            you wish to save your existing data, you should switch to the Local Show Data
+            tab and export it to save it first.
+          </p>
+        </Message>
+      </Tab.Pane>;
+
+    const localDataTab = <Tab.Pane>
+        <Form>
+          <Form.Group widths='equal'>
+            <Form.Field>
+              <p>Vendors with Actions: <b>{nbVendorActions}</b></p>
+              <p>Number of Questions: <b>{nbQuestions}</b></p>
+              <p>Number of Power Buys: <b>{nbPowerBuys}</b></p>
+              <p>Number of Profit Centers: <b>{nbProfitCenters}</b></p>
+            </Form.Field>
+          </Form.Group>
+          <Divider />
+          <Form.Group widths='equal'>
+            <Form.Field>
+              <label>Local Show Data Actions</label>
+              <Form.Field className='BCIvendorquickactions'>
+                <Button basic color='orange'>Import...</Button>
+                <Button basic color='purple'>Export...</Button>
+                <Button basic color='red'>Clear...</Button>
+              </Form.Field>
+            </Form.Field>
+          </Form.Group>
+        </Form>
+      </Tab.Pane>;
+
+    const dataPanes = [
+      {menuItem: 'Core Vendor Data', render: () => showDataTab},
+      {menuItem: 'Local Show Data', render: () => localDataTab},
+    ];
 
     return (
-      <Modal open={open} onMount={this.requestLoadAvailableShows}>
-        <Modal.Header>Load New Trade Show Vendor Data</Modal.Header>
+      <Modal open={open} centered={false} onMount={this.requestLoadAvailableShows}>
+        <Modal.Header>Trade Show Vendor Data Management</Modal.Header>
         <Modal.Content>
-          <Message warning>
-            <Message.Header>Data Loss Warning</Message.Header>
-            <p>
-              Loading a new Trade Show data set will erase any current data installed in your
-              browser! If you have data from a previous show you would like to save, click
-              the <b>Close</b> button below and use the Data menu to save the existing data.
-            </p>
-          </Message>
           <Form>
             <Form.Group widths='equal'>
               <Form.Field>
-                <label>Currently-loaded Show Data:</label>{tradeShowId ?? 'None'}
-              </Form.Field>
-            </Form.Group>
-            <Form.Group widths='equal'>
-              <Form.Field>
-                <label>Trade Show Year/Season to Load</label>
-                <Dropdown selection
-                          options={this.state.availableShows}
-                          defaultValue={tradeShowId}
-                          onChange={this.newShowSelected} />
+                <label>Currently-loaded Trade Show Vendor Data:</label>{tradeShowId ?? 'None'}
               </Form.Field>
             </Form.Group>
           </Form>
+          <Tab panes={dataPanes} />
         </Modal.Content>
         <Modal.Actions>
-          <Button basic color='green' onClick={this.loadSelectedShow}>Load</Button>
           <Button basic color='grey' onClick={() => closeHander(false)}>Close</Button>
         </Modal.Actions>
       </Modal>
@@ -84,6 +140,5 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
   private loadSelectedShow = (e: any, data: any) => {
     this.props.showStore.setCurrentShow(this.state.selectedShow);
     this.props.showStore.loadShowData();
-    this.props.closeHander(false);
   };
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Dropdown, Icon } from 'semantic-ui-react';
+import { Button, Icon } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
@@ -28,8 +28,6 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
       addTaskModalShown: false,
       dataModalShown: false
     };
-    this.showAddTaskModal = this.showAddTaskModal.bind(this);
-    this.showDataModal = this.showDataModal.bind(this);
   }
 
   render() {
@@ -55,14 +53,6 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
             <Icon name='calendar alternate outline' />
             {tradeShowId ?? 'Load Show Data...'}
           </Button>
-          <Dropdown labeled button text='Data' className='icon basic primary' iconposition='left' icon='database'>
-            <Dropdown.Menu>
-              <Dropdown.Item>Import...</Dropdown.Item>
-              <Dropdown.Item>Export...</Dropdown.Item>
-              <Dropdown.Divider />
-              <Dropdown.Item>Clear...</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
           <Button icon primary basic button labelPosition='left' onClick={() => this.showAddTaskModal(true)}>
             <Icon name='plus square outline' />
             Add...
@@ -82,14 +72,6 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
             <Icon name='calendar alternate outline' />
             {tradeShowId ?? 'Load Show Data...'}
           </Button>
-          <Dropdown button className='icon basic primary' iconposition='left' icon='database'>
-            <Dropdown.Menu>
-              <Dropdown.Item>Import...</Dropdown.Item>
-              <Dropdown.Item>Export...</Dropdown.Item>
-              <Dropdown.Divider />
-              <Dropdown.Item>Clear...</Dropdown.Item>
-            </Dropdown.Menu>
-          </Dropdown>
           <Button icon primary basic button onClick={() => this.showAddTaskModal(true)}>
             <Icon name='plus square outline' />
           </Button>
@@ -105,12 +87,12 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
     );
   }
 
-  private showAddTaskModal(showIt: boolean): any {
+  private showAddTaskModal = (showIt: boolean) => {
     this.setState({ addTaskModalShown: showIt });
     return;
   }
 
-  private showDataModal(showIt: boolean): any {
+  private showDataModal = (showIt: boolean) => {
     this.setState({ dataModalShown: showIt });
     return;
   }

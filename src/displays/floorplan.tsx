@@ -10,9 +10,21 @@ interface FloorPlanProps {
 @inject('showStore') @observer
 export default class FloorPlan extends React.Component<FloorPlanProps> {
   render() {
+    const { tradeShowId } = this.props.showStore;
+
+    if (tradeShowId === undefined) {
+      return (
+        <div className='tabInnerLayout'>
+          <p>Select a Trade Show to use the flooplan feature.</p>
+        </div>
+      );
+    }
+
+    const imageSource = `show_vendors/${tradeShowId}.png`;
+
     return (
       <div className='tabInnerLayout'>
-        <img src='show_vendors/2022-Fall-ACY.png' alt='Trade Show Flor Map' width='1600' />
+        <img src={imageSource} alt='Trade Show Flor Map' width='1600' />
       </div>
     );
   }
