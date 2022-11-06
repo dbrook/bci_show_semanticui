@@ -120,11 +120,11 @@
 
 /* INDIVIDUAL ITEMS */
 /* Vendor List */
-.tabInnerLayout.BCIouterVendorList {
+.BCIouterVendorList {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  align-content: start;
+  align-content: flex-start;
 }
 .BCIvendorListStyle {
   display: flex;
