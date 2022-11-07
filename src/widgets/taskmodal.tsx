@@ -137,7 +137,7 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
         <Modal.Actions>
           <Checkbox checked={keepOpenOnAdd} onChange={this.setKeepOpened} label='Keep Open'/>
           <Button basic color='green' onClick={this.addEntry}>Add</Button>
-          <Button basic color='grey' onClick={() => closeHander(false)}>Discard</Button>
+          <Button basic color='grey' onClick={() => closeHander(false)}>Close</Button>
         </Modal.Actions>
       </Modal>
     );

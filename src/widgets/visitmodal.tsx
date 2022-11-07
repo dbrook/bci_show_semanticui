@@ -95,7 +95,7 @@ export default class VisitModal extends React.Component<VisitModalProps, VisitMo
         </Modal.Content>
         <Modal.Actions>
           <Button basic color='green' onClick={this.updateVendorAction}>Update</Button>
-          <Button basic color='grey' onClick={() => closeHander(false)}>Discard</Button>
+          <Button basic color='grey' onClick={() => closeHander(false)}>Close</Button>
         </Modal.Actions>
       </Modal>
     );

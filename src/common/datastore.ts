@@ -35,6 +35,13 @@ class TradeShowData {
     // DO NOT REMOVE! This is needed in MobX 6+ to make observers actually respect the decorator syntax?
     // More information @ https://mobx.js.org/enabling-decorators.html
     makeObservable(this);
+
+    // Restore Local Storage Information
+    const currentShowFromStorage = localStorage.getItem('BciTradeShowCurrent');
+    if (currentShowFromStorage !== null) {
+      this.tradeShowId = currentShowFromStorage;
+      this.loadShowData();
+    }
   }
 
   @action public loadAvailableShows = (): Promise<string[]> => {
@@ -55,8 +62,13 @@ class TradeShowData {
       });
   };
 
-  @action public setCurrentShow = (newShowId: string) => {
+  @action public setCurrentShow = (newShowId: string|undefined) => {
     this.tradeShowId = newShowId;
+    if (newShowId !== undefined) {
+      localStorage.setItem('BciTradeShowCurrent', newShowId);
+    } else {
+      localStorage.removeItem('BciTradeShowCurrent');
+    }
 
     // Blow away all the existing data, it is invalidated when a new show is loaded
     runInAction(() => {
@@ -64,6 +76,9 @@ class TradeShowData {
       this.powerBuys = [];
       this.profitCenters = [];
       this.vendorsWithActions.clear();
+      if (newShowId === undefined) {
+        this.boothVendors = new Map();
+      }
     });
   };
 

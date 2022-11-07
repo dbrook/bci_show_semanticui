@@ -53,10 +53,13 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
                         onChange={this.newShowSelected} />
             </Form.Field>
           </Form.Group>
-          <Button color='red'
+          <Button color='purple'
                   disabled={selectedShow === undefined || tradeShowId === selectedShow}
                   onClick={this.loadSelectedShow}>
             Switch Show
+          </Button>
+          <Button color='red' onClick={this.eraseSelectedShow}>
+            Reset All Data
           </Button>
         </Form>
         <Message warning>
@@ -105,7 +108,7 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
 
     return (
       <Modal open={open} centered={false} onMount={this.requestLoadAvailableShows}>
-        <Modal.Header>Trade Show Vendor Data Management</Modal.Header>
+        <Modal.Header>Data Management</Modal.Header>
         <Modal.Content>
           <Form>
             <Form.Group widths='equal'>
@@ -140,5 +143,9 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
   private loadSelectedShow = (e: any, data: any) => {
     this.props.showStore.setCurrentShow(this.state.selectedShow);
     this.props.showStore.loadShowData();
+  };
+
+  private eraseSelectedShow = (e: any, data: any) => {
+    this.props.showStore.setCurrentShow(undefined);
   };
 }
