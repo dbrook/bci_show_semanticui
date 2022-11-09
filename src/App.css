@@ -140,6 +140,7 @@
   padding: 5px;
   width: 3em;
   flex-shrink: 0;
+  display: inline-block;
 }
 .BCIvendorBoothNumStyle.actioned {
   background-color: #6435C9;

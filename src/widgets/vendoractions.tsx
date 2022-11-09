@@ -1,9 +1,10 @@
 import React from 'react';
-import { Divider, Header, Table } from 'semantic-ui-react';
+import { Button, Divider, Header, Icon, Table } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
 import { IVendorStatus } from '../types/interfaces';
+import TaskModal from '../widgets/taskmodal';
 import NumericalProgress from './numericalprogress';
 import Visitation from './visitation';
 import OpenStock from './openstock';
@@ -15,8 +16,19 @@ interface VendorActionsProps {
   showStore?: any;  // Workaround for now ... FIXME: How to use a type?
 };
 
+interface VendorActionsState {
+  addTaskModalShown: boolean;
+};
+
 @inject('showStore') @observer
-export default class VendorActions extends React.Component<VendorActionsProps> {
+export default class VendorActions extends React.Component<VendorActionsProps, VendorActionsState> {
+  constructor(props: any, state: any) {
+    super(props, state);
+    this.state = {
+      addTaskModalShown: false,
+    };
+  }
+
   render() {
     const {
       boothId,
@@ -30,22 +42,38 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
     } = this.props.vendorStatus;
     const { nbAnsweredQuestions, nbSubmittedPowerBuys, nbSubmittedProfitCenters } = this.props.showStore;
     const condensedView = this.props.condensed;
+    const { addTaskModalShown } = this.state;
 
     if (condensedView) {
       return <div>
           <Header as='h3'>{boothNum} - {vendor}</Header>
+          <TaskModal open={addTaskModalShown}
+                     closeHander={this.showAddTaskModal}
+                     presetBoothId={boothId}
+                     presetVendorName={vendor} />
           <div className='BCImobilevendorstatus'>
             <Visitation boothId={boothId} visitStatus={visit} mobile />
             <NumericalProgress label='QU' completed={nbAnsweredQuestions(boothId)} total={questions.length}/>
             <NumericalProgress label='PB' completed={nbSubmittedPowerBuys(boothId)} total={powerBuys.length}/>
             <NumericalProgress label='PC' completed={nbSubmittedProfitCenters(boothId)} total={profitCenters.length}/>
             <OpenStock boothId={boothId} formStatus={openStockForm} labeled={true}/>
+            <Button icon primary basic button onClick={() => this.showAddTaskModal(true)}>
+              <Icon name='plus square outline' />
+            </Button>
           </div>
           <Divider />
         </div>;
     } else {
       return <Table.Row>
-          <Table.Cell textAlign='center'><b>{boothNum}</b></Table.Cell>
+          <TaskModal open={addTaskModalShown}
+                     closeHander={this.showAddTaskModal}
+                     presetBoothId={boothId}
+                     presetVendorName={vendor} />
+          <Table.Cell textAlign='center'>
+            <Button onClick={() => this.showAddTaskModal(true)}>
+              {boothNum}
+            </Button>
+          </Table.Cell>
           <Table.Cell>{vendor}</Table.Cell>
           <Table.Cell><Visitation boothId={boothId} visitStatus={visit}/></Table.Cell>
           <Table.Cell><NumericalProgress completed={nbAnsweredQuestions(boothId)} total={questions.length}/></Table.Cell>
@@ -54,5 +82,10 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
           <Table.Cell><OpenStock boothId={boothId} formStatus={openStockForm} labeled={false}/></Table.Cell>
         </Table.Row>;
     }
+  }
+
+  private showAddTaskModal = (showIt: boolean) => {
+    this.setState({ addTaskModalShown: showIt });
+    return;
   }
 }
