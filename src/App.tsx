@@ -4,6 +4,8 @@ import './App.css';
 // Styling
 import 'semantic-ui-css/semantic.css';
 
+import { Message } from 'semantic-ui-react';
+
 // Data Storage
 import { Provider } from 'mobx-react';
 import { TradeShowStore } from './common/datastore';
@@ -18,30 +20,41 @@ export default class App extends React.Component<any, any> {
     this.state = {
       hideCompleted: false,
       alphaSort: false,
+      indexedDbSupport: ('indexedDB' in window),
     };
-    this.toggleHideCompleted = this.toggleHideCompleted.bind(this);
-    this.toggleAlphabetical = this.toggleAlphabetical.bind(this);
   }
 
   render() {
-    return (
-      <Provider showStore={TradeShowStore}>
+    if (this.state.indexedDbSupport) {
+      return (
+        <Provider showStore={TradeShowStore}>
+          <div className="App">
+            <MenuBar hideCompleted={this.state.hideCompleted}
+                    toggleHideCompleted={this.toggleHideCompleted}
+                    alphaSort={this.state.alphaSort}
+                    toggleAlphaSort={this.toggleAlphabetical} />
+            <TabArea hideCompleted={this.state.hideCompleted}
+                    alphaSort={this.state.alphaSort} />
+          </div>
+        </Provider>
+      );
+    } else {
+      return (
         <div className="App">
-          <MenuBar hideCompleted={this.state.hideCompleted}
-                   toggleHideCompleted={this.toggleHideCompleted}
-                   alphaSort={this.state.alphaSort}
-                   toggleAlphaSort={this.toggleAlphabetical} />
-          <TabArea hideCompleted={this.state.hideCompleted} alphaSort={this.state.alphaSort} />
+          <Message error>
+            <p>A browser with IndexedDB support is required to use this application.</p>
+            <p><a href='https://caniuse.com/indexeddb'>Click here to see web browser IndexedDB support.</a></p>
+          </Message>
         </div>
-      </Provider>
-    );
+      );
+    }
   }
 
-  public toggleHideCompleted() {
+  public toggleHideCompleted = () => {
     this.setState({ hideCompleted: !this.state.hideCompleted });
   }
 
-  public toggleAlphabetical() {
+  public toggleAlphabetical = () => {
     this.setState({ alphaSort: !this.state.alphaSort });
   }
 }
