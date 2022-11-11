@@ -1,3 +1,7 @@
+/*
+ * Data Types
+ */
+
 export enum VendorVisit {
   DO_NOT_VISIT = 0,
   NOT_VISITED = 1,
@@ -12,4 +16,14 @@ export enum OpenStockForm {
   FILLED_IN = 3,
   SUBMITTED = 4,
   ABANDONED = 5,
+};
+
+
+/*
+ * State-Tracking Types
+ */
+export enum DataLoad {
+  NONE = 0,
+  SUCCESS = 1,
+  FAILURE = 2,
 };

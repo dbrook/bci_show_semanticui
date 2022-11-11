@@ -62,13 +62,13 @@ export default class VisitModal extends React.Component<VisitModalProps, VisitMo
           <Form>
             <Form.Group widths='equal'>
               <Form.Field>
-                <label>Quick Actions (sets and submits)</label>
+                <label>Mark visited and:</label>
                 <Form.Field className='BCIvendorquickactions'>
                   <Button basic color='orange' onClick={this.getOSLater}>Get OS Later</Button>
-                  <Button basic color='purple' onClick={this.pickupOS}>Picked Up OS</Button>
-                  <Button basic color='green' onClick={this.submitOS}>Submitted OS</Button>
-                  <Button basic color='red' onClick={this.nothingMore}>Skip OS</Button>
-                  <Button basic color='pink' onClick={this.revistWithQ}>Question & Revisit</Button>
+                  <Button basic color='purple' onClick={this.pickupOS}>Pick Up OS</Button>
+                  <Button basic color='green' onClick={this.submitOS}>Submit OS</Button>
+                  <Button basic color='red' onClick={this.nothingMore}>Nothing Else</Button>
+                  <Button basic color='pink' onClick={this.revistWithQ}>Add Question, Flag Revisit</Button>
                 </Form.Field>
               </Form.Field>
             </Form.Group>
