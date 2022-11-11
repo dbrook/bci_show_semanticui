@@ -13,6 +13,10 @@ export interface IVendorDirectory {
   height: number;
 };
 
+export interface DBVendorDirectory extends IVendorDirectory {
+  boothId: string;
+}
+
 
 /*
  * Display Model Interfaces

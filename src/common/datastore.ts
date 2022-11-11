@@ -2,6 +2,7 @@ import { action, computed, runInAction, makeObservable, observable } from 'mobx'
 
 import { IVendorDirectory, IVendorStatus, IQuestionAnswer, ISubmittableItem } from '../types/interfaces';
 import { VendorVisit, OpenStockForm } from '../types/enums';
+import ShowDatabase from './showdatabase';
 
 class TradeShowData {
   // Current Trade Show Database Loaded
@@ -26,6 +27,8 @@ class TradeShowData {
   // Profit Centers Data
   @observable public profitCenters: Array<ISubmittableItem|undefined>;
 
+  public db: ShowDatabase;
+
   constructor() {
     this.boothVendors = new Map();
     this.vendorQuestions = [];
@@ -35,6 +38,8 @@ class TradeShowData {
     // DO NOT REMOVE! This is needed in MobX 6+ to make observers actually respect the decorator syntax?
     // More information @ https://mobx.js.org/enabling-decorators.html
     makeObservable(this);
+
+    this.db = new ShowDatabase();
 
     // Restore Local Storage Information
     const currentShowFromStorage = localStorage.getItem('BciTradeShowCurrent');
@@ -53,13 +58,29 @@ class TradeShowData {
   };
 
   @action public loadShowData = (): Promise<any> => {
-    return fetch(`show_vendors/${this.tradeShowId}.json`)
-      .then((response) => response.json())
-      .then((responseJson) => {
-        runInAction(() => {
-          this.boothVendors = new Map(Object.entries(responseJson));
+    return this.db.nbBoothVendors.then((nbVendorsInDb) => {
+      // Look for local show database first, otherwise pull from server
+      if (nbVendorsInDb === 0) {
+        console.log('Loading vendors from the server!');
+        fetch(`show_vendors/${this.tradeShowId}.json`)
+          .then((response) => response.json())
+          .then((responseJson) => {
+            runInAction(() => {
+              this.boothVendors = new Map(Object.entries(responseJson));
+            });
+            const tempDbMap: Map<string, IVendorDirectory> = new Map(Object.entries(responseJson));
+            this.db.clearBoothVendors();
+            this.db.putBoothVendors(tempDbMap);
+          });
+      } else {
+        console.log('Loading vendors from the local database!');
+        this.db.getBoothVendors().then((dataMap) => {
+          runInAction(() => {
+            this.boothVendors = dataMap;
+          });
         });
-      });
+      }
+    });
   };
 
   @action public setCurrentShow = (newShowId: string|undefined) => {
@@ -69,6 +90,9 @@ class TradeShowData {
     } else {
       localStorage.removeItem('BciTradeShowCurrent');
     }
+
+    // Erase the local database
+    this.db.clearBoothVendors();
 
     // Blow away all the existing data, it is invalidated when a new show is loaded
     runInAction(() => {
