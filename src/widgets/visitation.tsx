@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from 'semantic-ui-react';
 
 import { VendorVisit } from  '../types/enums';
-import VisitModal from './visitmodal';
+import VisitModal from '../modals/visitmodal';
 
 interface VisitationProps {
   boothId: string;

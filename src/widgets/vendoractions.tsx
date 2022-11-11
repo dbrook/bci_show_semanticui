@@ -4,7 +4,7 @@ import { Button, Divider, Header, Icon, Table } from 'semantic-ui-react';
 import { inject, observer } from 'mobx-react';
 
 import { IVendorStatus } from '../types/interfaces';
-import TaskModal from '../widgets/taskmodal';
+import TaskModal from '../modals/taskmodal';
 import NumericalProgress from './numericalprogress';
 import Visitation from './visitation';
 import OpenStock from './openstock';

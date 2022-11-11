@@ -3,8 +3,8 @@ import { Button, Icon } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
-import TaskModal from '../widgets/taskmodal';
-import DataModal from '../widgets/datamodal';
+import TaskModal from '../modals/taskmodal';
+import DataModal from '../modals/datamodal';
 
 interface MenuBarProps {
   hideCompleted: boolean;

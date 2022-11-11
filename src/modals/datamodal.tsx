@@ -102,8 +102,8 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       </Tab.Pane>;
 
     const dataPanes = [
-      {menuItem: 'Core Vendor Data', render: () => showDataTab},
-      {menuItem: 'Local Show Data', render: () => localDataTab},
+      {menuItem: 'Vendor Data', render: () => showDataTab},
+      {menuItem: 'On-Device Data', render: () => localDataTab},
     ];
 
     return (

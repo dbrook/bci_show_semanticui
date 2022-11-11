@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button, Icon } from 'semantic-ui-react';
 
-import TaskModal from './taskmodal';
+import TaskModal from '../modals/taskmodal';
 
 interface VendorListItemProps {
   boothId: string;
