@@ -15,7 +15,7 @@ export interface IVendorDirectory {
 
 export interface DBVendorDirectory extends IVendorDirectory {
   boothId: string;
-}
+};
 
 
 /*
@@ -27,9 +27,17 @@ export interface IQuestionAnswer {
   answer?: string;
 };
 
+export interface DBQuestionAnswer extends IQuestionAnswer {
+  qIdx: number;
+};
+
 export interface ISubmittableItem {
   itemId: string;
   submitted: boolean;
+};
+
+export interface DBSubmittableItem extends ISubmittableItem {
+  itmIdx: number;
 };
 
 export interface IVendorStatus {

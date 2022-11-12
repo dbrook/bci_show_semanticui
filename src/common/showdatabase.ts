@@ -1,14 +1,29 @@
 import Dexie from 'dexie';
 
-import { DBVendorDirectory, IVendorDirectory } from '../types/interfaces';
+import {
+  DBVendorDirectory,
+  IVendorDirectory,
+  IVendorStatus,
+  IQuestionAnswer,
+  DBQuestionAnswer,
+  DBSubmittableItem,
+} from '../types/interfaces';
 
 export default class ShowDatabase extends Dexie {
   vendors!: Dexie.Table<DBVendorDirectory>;
+  actions!: Dexie.Table<IVendorStatus>;
+  questions!: Dexie.Table<DBQuestionAnswer>;
+  pwrBuys!: Dexie.Table<DBSubmittableItem>;
+  prfCtrs!: Dexie.Table<DBSubmittableItem>;
 
   constructor() {
     super('ShowDatabase');
     this.version(1).stores({
       vendors: 'boothId, boothNum, vendor, x1, y1, width, height',
+      actions: 'boothId, boothNum, vendor, visit, questions, powerBuys, profitCenters, openStockForm',
+      questions: 'qIdx, question, answer',
+      pwrBuys: 'itmIdx, itemId, submitted',
+      prfCtrs: 'itmIdx, itemId, submitted',
     });
   }
 
@@ -48,4 +63,77 @@ export default class ShowDatabase extends Dexie {
       });
     });
   };
+
+  public putVendorAction = (action: IVendorStatus) => {
+    this.actions.put(action).then((keyname) => {
+      // console.log('Added', keyname);
+    });
+  };
+
+  public deleteVendorAction = (boothId: string) => {
+    this.actions.delete(boothId).then((recordsRemoved) => {
+      // console.log(`Deleted: ${recordsRemoved} recs`);
+    });
+  };
+
+  public getVendorActions = (): Promise<Map<string, IVendorStatus>> => {
+    return new Promise((resolve, reject) => {
+      this.actions.toArray().then((outputArray) => {
+        let outputMap: Map<string, IVendorStatus> = new Map();
+        for (const item of outputArray) {
+          outputMap.set(item.boothId, {
+            boothId: item.boothId,
+            boothNum: item.boothNum,
+            vendor: item.vendor,
+            visit: item.visit,
+            questions: item.questions,
+            powerBuys: item.powerBuys,
+            profitCenters: item.profitCenters,
+            openStockForm: item.openStockForm,
+          });
+        }
+        resolve(outputMap);
+      });
+    });
+  };
+
+  public clearVendorActions = () => {
+    this.actions.clear();
+  };
+
+  /*
+  questions!: Dexie.Table<DBQuestionAnswer>;
+  */
+  public putQuestion = (qIdx: number, qa: IQuestionAnswer) => {
+    this.questions.put({ qIdx: qIdx, ...qa }).then((keyname) => {
+      // console.log('Added', keyname);
+    });
+  };
+
+  public deleteQuestion = (qIdx: number) => {
+    this.questions.delete(qIdx).then((keyname) => {
+      // console.log('Added', keyname);
+    });
+  };
+
+  public getQuestions = (): Promise<IQuestionAnswer[]> => {
+    return new Promise((resolve, reject) => {
+      this.questions.toArray().then((srcArr) => {
+        let tmpArr: IQuestionAnswer[] = [];
+        for (const item of srcArr) {
+          tmpArr[item.qIdx] = { question: item.question, answer: item.answer };
+        }
+        resolve(tmpArr);
+      });
+    });
+  };
+
+  public clearQuestions = () => {
+    this.questions.clear();
+  };
+
+  /*
+  pwrBuys!: Dexie.Table<DBSubmittableItem>;
+  prfCtrs!: Dexie.Table<DBSubmittableItem>;
+  */
 }

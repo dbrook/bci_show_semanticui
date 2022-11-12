@@ -1,4 +1,4 @@
-import { action, computed, runInAction, makeObservable, observable } from 'mobx';
+import { action, computed, runInAction, makeObservable, observable, toJS } from 'mobx';
 
 import { IVendorDirectory, IVendorStatus, IQuestionAnswer, ISubmittableItem } from '../types/interfaces';
 import { VendorVisit, OpenStockForm } from '../types/enums';
@@ -46,6 +46,8 @@ class TradeShowData {
     if (currentShowFromStorage !== null) {
       this.tradeShowId = currentShowFromStorage;
       this.loadShowData();
+      this.loadProgressData();
+      this.loadQuestionsData();
     }
   }
 
@@ -93,6 +95,8 @@ class TradeShowData {
 
     // Erase the local database
     this.db.clearBoothVendors();
+    this.db.clearVendorActions();
+    this.db.clearQuestions();
 
     // Blow away all the existing data, it is invalidated when a new show is loaded
     runInAction(() => {
@@ -103,6 +107,22 @@ class TradeShowData {
       if (newShowId === undefined) {
         this.boothVendors = new Map();
       }
+    });
+  };
+
+  private loadProgressData = () => {
+    this.db.getVendorActions().then((dataMap) => {
+      runInAction(() => {
+        this.vendorsWithActions = observable.map(dataMap);
+      });
+    });
+  };
+
+  private loadQuestionsData = () => {
+    this.db.getQuestions().then((qArray) => {
+      runInAction(() => {
+        this.vendorQuestions = qArray;
+      });
     });
   };
 
@@ -135,20 +155,32 @@ class TradeShowData {
           booth.profitCenters.length === 0 &&
           booth.openStockForm === OpenStockForm.DO_NOT_GET) {
         this.vendorsWithActions.delete(boothId);
+        this.db.deleteVendorAction(boothId);
+      } else {
+        this.saveActionToDatabase(boothId);
       }
     }
   }
 
 
   /*
+   * Propagate data changes to the database
+   */
+  private saveActionToDatabase = (boothId: string) => {
+    const stat: IVendorStatus = toJS(this.vendorsWithActions.get(boothId));
+    this.db.putVendorAction(stat);
+  };
+
+
+  /*
    * Booth Visit Changes
    */
   @action public addVisit = (boothId: string) => {
-    // FIXME: This is obviously bad to set the map objects like this, but this just gets the stores started
     runInAction(() => {
       this.initBoothIfNeeded(boothId);
       this.vendorsWithActions.get(boothId).visit = VendorVisit.NOT_VISITED;
     });
+    this.saveActionToDatabase(boothId);
   };
 
   @action public setVisitMode = (boothId: string, visitStatus: VendorVisit) => {
@@ -180,6 +212,8 @@ class TradeShowData {
       this.vendorQuestions.push({ question: questionText });
       this.vendorsWithActions.get(boothId).questions.push(this.vendorQuestions.length - 1);
     });
+    this.saveActionToDatabase(boothId);
+    this.db.putQuestion(this.vendorQuestions.length - 1, { question: questionText });
   };
 
   @action public removeQuestion = (questionId: number) => {
@@ -194,6 +228,7 @@ class TradeShowData {
       });
       this.vendorQuestions[questionId] = undefined;
       this.cleanupBoothAuto(boothIdFound);
+      this.db.deleteQuestion(questionId);
     }
   }
 
@@ -203,6 +238,8 @@ class TradeShowData {
         this.vendorQuestions[questionId] !== undefined) {
       // FIXME: Should probably sanitize the input!
       this.vendorQuestions[questionId] = { ...this.vendorQuestions[questionId], question: questionText };
+      // @ts-ignore
+      this.db.putQuestion(questionId, { question: questionText, answer: this.vendorQuestions[questionId].answer });
     }
   };
 
@@ -212,11 +249,15 @@ class TradeShowData {
         this.vendorQuestions[questionId] !== undefined) {
       if (answerText === '') {
         delete this.vendorQuestions[questionId]?.answer
+        // @ts-ignore
+        this.db.putQuestion(questionId, { question: this.vendorQuestions[questionId].question, answer: undefined });
       } else {
         // FIXME: Should probably sanitize the input!
         // This ignore is needed because the value could be undefined but it was already checked above
         // @ts-ignore
         this.vendorQuestions[questionId].answer = answerText;
+        // @ts-ignore
+        this.db.putQuestion(questionId, { question: this.vendorQuestions[questionId].question, answer: answerText });
       }
     }
   };
@@ -252,6 +293,7 @@ class TradeShowData {
       this.powerBuys.push({ itemId: pbNum, submitted: false });
       this.vendorsWithActions.get(boothId).powerBuys.push(this.powerBuys.length - 1);
     });
+    this.saveActionToDatabase(boothId);
   };
 
   @action public removePowerBuy = (pbId: number) => {
@@ -307,6 +349,7 @@ class TradeShowData {
       this.profitCenters.push({ itemId: pcNum, submitted: false });
       this.vendorsWithActions.get(boothId).profitCenters.push(this.profitCenters.length - 1);
     });
+    this.saveActionToDatabase(boothId);
   };
 
   @action public removeProfitCenter = (pcId: number) => {
@@ -349,6 +392,7 @@ class TradeShowData {
   @action public setOpenStock = (boothId: string, osStatus: OpenStockForm) => {
     runInAction(() => {
       this.vendorsWithActions.get(boothId).openStockForm = osStatus;
+      this.cleanupBoothAuto(boothId);
     });
   };
 
@@ -384,6 +428,7 @@ class TradeShowData {
   @action public abandonOpenStock = (boothId: string) => {
     if (this.vendorsWithActions.has(boothId)) {
       this.vendorsWithActions.get(boothId).openStockForm = OpenStockForm.ABANDONED;
+      this.saveActionToDatabase(boothId);
     }
   };
 }
