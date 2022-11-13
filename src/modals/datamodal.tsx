@@ -1,10 +1,13 @@
 import React from 'react';
+import { ChangeEvent } from 'react';
 
-import { Button, Divider, Dropdown, DropdownItemProps, Form, Icon, Message, Modal, Tab } from 'semantic-ui-react';
+import { Button, Divider, Dropdown, DropdownItemProps, Form, Message, Modal, Tab } from 'semantic-ui-react';
 
+import { toJS } from 'mobx';
 import { inject, observer } from 'mobx-react';
 
 import { DataLoad } from '../types/enums';
+import { DataBackup } from '../types/interfaces';
 
 interface DataModalProps {
   open: boolean,
@@ -17,6 +20,10 @@ interface DataModalState {
   selectedShow: string|undefined;
   availableShows: DropdownItemProps[];
   remoteVendorLoad: DataLoad;
+  exportJson: Blob|undefined;
+  importingFile: boolean;
+  errorImportingFile: boolean;
+  clearerOpen: boolean;
 };
 
 @inject('showStore') @observer
@@ -28,6 +35,10 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       selectedShow: undefined,
       availableShows: [],
       remoteVendorLoad: DataLoad.NONE,
+      exportJson: undefined,
+      importingFile: false,
+      errorImportingFile: false,
+      clearerOpen: false,
     };
   }
 
@@ -43,7 +54,7 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
         nbProfitCenters,
       },
     } = this.props;
-    const { selectedShow, remoteVendorLoad } = this.state;
+    const { selectedShow, remoteVendorLoad, exportJson, importingFile, clearerOpen } = this.state;
 
     let vendorDataButtons = <>
         <Button color='purple'
@@ -51,14 +62,10 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
                           tradeShowId === selectedShow ||
                           remoteVendorLoad === DataLoad.FAILURE}
                 onClick={this.loadSelectedShow}>
-          Switch Show
+          Load
         </Button>
-        <Button icon color='red' onClick={this.eraseSelectedShow}>
-          <Icon name='trash alternate outline' />
-        </Button>
-        <Button icon primary onClick={this.requestLoadAvailableShows}>
-          <Icon name='refresh' />
-        </Button>
+        <Button color='red' onClick={this.eraseSelectedShow}>Erase</Button>
+        <Button primary onClick={this.requestLoadAvailableShows}>Reload List</Button>
       </>;
 
     let dataDropdown;
@@ -107,11 +114,26 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
         </Message>
       </Tab.Pane>;
 
+    const downloader = exportJson ? <>
+      <p>Export of local data created, click to download:</p>
+      <a download={`${tradeShowId}.json`} href={URL.createObjectURL(exportJson)}>
+        {`${tradeShowId}.json`}
+      </a></> : null;
+
+    const importer = importingFile ? <>
+        <p>WARNING: Importing a file will overwrite all existing data!</p>
+        <input type='file' onChange={this.processImportFile} accept='text/json' />
+      </> : null;
+
+    const clearer = clearerOpen ? <>
+        <p>To erase your local progress data, press 'Clear...' again</p>
+      </> : null;
+
     const localDataTab = <Tab.Pane>
         <Form>
           <Form.Group widths='equal'>
             <Form.Field>
-              <p>Vendors with Actions: <b>{nbVendorActions}</b></p>
+              <p>Vendors with Actions: <b>{nbVendorActions()}</b></p>
               <p>Number of Questions: <b>{nbQuestions}</b></p>
               <p>Number of Power Buys: <b>{nbPowerBuys}</b></p>
               <p>Number of Profit Centers: <b>{nbProfitCenters}</b></p>
@@ -122,9 +144,18 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
             <Form.Field>
               <label>Local Show Data Actions</label>
               <Form.Field className='BCIvendorquickactions'>
-                <Button basic color='orange'>Import...</Button>
-                <Button basic color='purple'>Export...</Button>
-                <Button basic color='red'>Clear...</Button>
+                <Button basic color='blue' onClick={this.exportData}>Export...</Button>
+                <Button basic color='pink' onClick={this.openImporter}>Import...</Button>
+                <Button basic={!clearerOpen}
+                        color='red'
+                        onClick={clearerOpen ? this.reallyClear : this.openClearer}>
+                  Clear...
+                </Button>
+              </Form.Field>
+              <Form.Field>
+                {downloader}
+                {importer}
+                {clearer}
               </Form.Field>
             </Form.Field>
           </Form.Group>
@@ -136,8 +167,12 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       {menuItem: 'On-Device Data', render: () => localDataTab},
     ];
 
+    // FIXME: do something on dismount to clear the existing save data?
     return (
-      <Modal open={open} centered={false} onMount={this.requestLoadAvailableShows}>
+      <Modal open={open}
+             centered={false}
+             onMount={this.requestLoadAvailableShows}
+             onUnmount={this.clearLocalState}>
         <Modal.Header>Data Management</Modal.Header>
         <Modal.Content>
           <Form>
@@ -155,6 +190,18 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       </Modal>
     );
   }
+
+  private clearLocalState = () => {
+    this.setState({
+      selectedShow: undefined,
+      availableShows: [],
+      remoteVendorLoad: DataLoad.NONE,
+      exportJson: undefined,
+      importingFile: false,
+      errorImportingFile: false,
+      clearerOpen: false,
+    });
+  };
 
   private requestLoadAvailableShows = (e: any, data: any) => {
     // FIXME: for some reason this gets called 2x when the modal is opened?
@@ -186,6 +233,80 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
 
   private eraseSelectedShow = (e: any, data: any) => {
     this.props.showStore.setCurrentShow(undefined);
+    this.props.closeHander(false);
+  };
+
+  private openImporter = (e: any, data: any) => {
+    this.setState({
+      importingFile: true,
+      exportJson: undefined,
+      errorImportingFile: false,
+      clearerOpen: false,
+    });
+  };
+
+  private processImportFile = (e: ChangeEvent<HTMLInputElement>) => {
+    console.log(e.target.files);
+    //@ts-ignore
+    const file: File = e.target.files[0];
+    const inFile: FileReader = new FileReader();
+    inFile.readAsDataURL(file);
+    inFile.onload = () => {
+      file.text().then((inputText: string) => {
+        try {
+          const inputObj: DataBackup = JSON.parse(inputText);
+          this.props.showStore.eraseAndImportData(inputObj);
+          console.log(inputObj);
+        } catch (e) {
+          console.error('Failed to parse imported JSON file', e);
+          // FIXME: purge all local data anyway?
+          this.setState({
+            errorImportingFile: true,
+          });
+        }
+      });
+    };
+  };
+
+  private exportData = (e: any, data: any) => {
+    const {
+      tradeShowId,
+      boothVendors,
+      vendorsWithActions,
+      vendorQuestions,
+      powerBuys,
+      profitCenters,
+    } = this.props.showStore;
+
+    const backupObj: DataBackup = {
+      tradeShowId: tradeShowId,
+      boothVendors: Object.fromEntries(toJS(boothVendors)),
+      vendorsWithActions: Object.fromEntries(toJS(vendorsWithActions)),
+      vendorQuestions: toJS(vendorQuestions),
+      powerBuys: toJS(powerBuys),
+      profitCenters: toJS(profitCenters),
+    };
+
+    this.setState({
+      exportJson: new Blob([JSON.stringify(backupObj, null, 2)], { type: 'text/json' }),
+      importingFile: false,
+      errorImportingFile: false,
+      clearerOpen: false,
+    });
+  };
+
+  private openClearer = (e: any, data: any) => {
+    this.setState({
+      exportJson: undefined,
+      importingFile: false,
+      errorImportingFile: false,
+      clearerOpen: true,
+    });
+  };
+
+  private reallyClear = (e: any, data: any) => {
+    this.props.showStore.setCurrentShow(this.props.showStore.tradeShowId);
+    this.props.showStore.loadShowData();
     this.props.closeHander(false);
   };
 }

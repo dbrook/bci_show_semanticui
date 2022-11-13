@@ -19,6 +19,20 @@ export interface DBVendorDirectory extends IVendorDirectory {
 
 
 /*
+ * Data Export/Import Interfaces
+ */
+
+export interface DataBackup {
+  tradeShowId: string;
+  boothVendors: { [key: string]: IVendorDirectory };
+  vendorsWithActions: { [key: string]: IVendorStatus };
+  vendorQuestions: IQuestionAnswer[];
+  powerBuys: ISubmittableItem[];
+  profitCenters: ISubmittableItem[];
+};
+
+
+/*
  * Display Model Interfaces
  */
 

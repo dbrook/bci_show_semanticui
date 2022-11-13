@@ -15,7 +15,7 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
     if (tradeShowId === undefined) {
       return (
         <div className='tabInnerLayout'>
-          <p>Select a Trade Show to use the flooplan feature.</p>
+          <p>Select a Trade Show to use the floorplan feature.</p>
         </div>
       );
     }
@@ -24,7 +24,7 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
 
     return (
       <div className='tabInnerLayout'>
-        <img src={imageSource} alt='Trade Show Flor Map' width='1600' />
+        <img src={imageSource} alt='Trade Show Floor Map' width='1600' />
       </div>
     );
   }

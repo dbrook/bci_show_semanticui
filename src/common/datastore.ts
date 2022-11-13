@@ -1,6 +1,6 @@
 import { action, computed, runInAction, makeObservable, observable, toJS } from 'mobx';
 
-import { IVendorDirectory, IVendorStatus, IQuestionAnswer, ISubmittableItem } from '../types/interfaces';
+import { DataBackup, IVendorDirectory, IVendorStatus, IQuestionAnswer, ISubmittableItem } from '../types/interfaces';
 import { VendorVisit, OpenStockForm } from '../types/enums';
 import ShowDatabase from './showdatabase';
 
@@ -27,7 +27,7 @@ class TradeShowData {
   // Profit Centers Data
   @observable public profitCenters: Array<ISubmittableItem|undefined>;
 
-  public db: ShowDatabase;
+  private db: ShowDatabase;
 
   constructor() {
     this.boothVendors = new Map();
@@ -52,6 +52,53 @@ class TradeShowData {
       this.loadProfitCenters();
     }
   }
+
+  @action public eraseAndImportData = (dataBackup: DataBackup) => {
+    runInAction(() => {
+      // Import the provided Trade Show ID
+      this.setCurrentShow(dataBackup.tradeShowId);
+
+      // Import the Booth-Vendor Data
+      const tempDbMap = new Map(Object.entries(dataBackup.boothVendors))
+      this.boothVendors = tempDbMap;
+      this.db.clearBoothVendors();
+      this.db.putBoothVendors(tempDbMap);
+
+      // Import the Vendors with vendors with actions
+      const tempVwaMap = new Map(Object.entries(dataBackup.vendorsWithActions));
+      this.vendorsWithActions = observable.map(tempVwaMap);
+      tempVwaMap.forEach((value, key) => {
+        this.saveActionToDatabase(key);
+      });
+
+      // Import the Questions
+      const tempQuestions = dataBackup.vendorQuestions;
+      this.vendorQuestions = tempQuestions;
+      tempQuestions.forEach((elem, index) => {
+        if (elem !== null) {
+          this.db.putQuestion(index, elem);
+        }
+      });
+
+      // Import the Power Buys
+      const tempPBs = dataBackup.powerBuys;
+      this.powerBuys = tempPBs;
+      tempPBs.forEach((elem, index) => {
+        if (elem !== null) {
+          this.db.putPB(index, elem);
+        }
+      });
+
+      // Import the Profit Centers
+      const tempPCs = dataBackup.profitCenters;
+      this.profitCenters = tempPCs;
+      tempPCs.forEach((elem, index) => {
+        if (elem !== null) {
+          this.db.putPC(index, elem);
+        }
+      });
+    });
+  };
 
   @action public loadAvailableShows = (): Promise<string[]> => {
     return fetch('show_vendors/all_shows.json')
@@ -88,6 +135,7 @@ class TradeShowData {
   };
 
   @action public setCurrentShow = (newShowId: string|undefined) => {
+    const oldShowId = this.tradeShowId;
     this.tradeShowId = newShowId;
     if (newShowId !== undefined) {
       localStorage.setItem('BciTradeShowCurrent', newShowId);
@@ -96,7 +144,9 @@ class TradeShowData {
     }
 
     // Erase the local database
-    this.db.clearBoothVendors();
+    if (newShowId !== oldShowId) {
+      this.db.clearBoothVendors();
+    }
     this.db.clearVendorActions();
     this.db.clearQuestions();
     this.db.clearPBs();
@@ -108,7 +158,7 @@ class TradeShowData {
       this.powerBuys = [];
       this.profitCenters = [];
       this.vendorsWithActions.clear();
-      if (newShowId === undefined) {
+      if (newShowId !== oldShowId) {
         this.boothVendors = new Map();
       }
     });
@@ -146,7 +196,7 @@ class TradeShowData {
     });
   };
 
-  @computed get nbVendorActions() {
+  @action public nbVendorActions = () => {
     return this.vendorsWithActions.size;
   }
 
