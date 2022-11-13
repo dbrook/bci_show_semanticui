@@ -44,12 +44,14 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
     const sortingIconName = alphaSort ? 'sort alphabet down' : 'sort numeric down';
     const sortingIconText = alphaSort ? 'Sort: Vendor' : 'Sort: Booth';
 
+    const vendorsPresent = tradeShowId !== undefined;
+
     return (
       <>
         <DataModal open={dataModalShown} closeHander={this.showDataModal}/>
         <TaskModal open={addTaskModalShown} closeHander={this.showAddTaskModal} presetItemType='VI'/>
         <div className='topBar'>
-          <Button icon primary basic labelPosition='left' onClick={() => this.showDataModal(true)}>
+          <Button icon primary basic={vendorsPresent} labelPosition='left' onClick={() => this.showDataModal(true)}>
             <Icon name='calendar alternate outline' />
             {tradeShowId ?? 'Load Show Data...'}
           </Button>
@@ -68,7 +70,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
           </Button>
         </div>
         <div className='topBarCondensed'>
-          <Button icon primary basic labelPosition='left' onClick={() => this.showDataModal(true)}>
+          <Button icon primary basic={vendorsPresent} labelPosition='left' onClick={() => this.showDataModal(true)}>
             <Icon name='calendar alternate outline' />
             {tradeShowId ?? 'Load Show Data...'}
           </Button>
