@@ -48,6 +48,8 @@ class TradeShowData {
       this.loadShowData();
       this.loadProgressData();
       this.loadQuestionsData();
+      this.loadPowerBuys();
+      this.loadProfitCenters();
     }
   }
 
@@ -97,6 +99,8 @@ class TradeShowData {
     this.db.clearBoothVendors();
     this.db.clearVendorActions();
     this.db.clearQuestions();
+    this.db.clearPBs();
+    this.db.clearPCs();
 
     // Blow away all the existing data, it is invalidated when a new show is loaded
     runInAction(() => {
@@ -122,6 +126,22 @@ class TradeShowData {
     this.db.getQuestions().then((qArray) => {
       runInAction(() => {
         this.vendorQuestions = qArray;
+      });
+    });
+  };
+
+  private loadPowerBuys = () => {
+    this.db.getPBs().then((pbArray) => {
+      runInAction(() => {
+        this.powerBuys = pbArray;
+      });
+    });
+  };
+
+  private loadProfitCenters = () => {
+    this.db.getPCs().then((pcArray) => {
+      runInAction(() => {
+        this.profitCenters = pcArray;
       });
     });
   };
@@ -293,6 +313,7 @@ class TradeShowData {
       this.powerBuys.push({ itemId: pbNum, submitted: false });
       this.vendorsWithActions.get(boothId).powerBuys.push(this.powerBuys.length - 1);
     });
+    this.db.putPB(this.powerBuys.length - 1, { itemId: pbNum, submitted: false });
     this.saveActionToDatabase(boothId);
   };
 
@@ -307,6 +328,7 @@ class TradeShowData {
         }
       });
       this.powerBuys[pbId] = undefined;
+      this.db.deletePB(pbId);
       this.cleanupBoothAuto(boothIdFound);
     }
   }
@@ -316,6 +338,8 @@ class TradeShowData {
       // This ignore is needed because the value could be undefined but it was already checked above
       // @ts-ignore
       this.powerBuys[pbId].submitted = submitted;
+      // @ts-ignore
+      this.db.putPB(pbId, { itemId: this.powerBuys[pbId].itemId, submitted: submitted });
     }
   };
 
@@ -349,6 +373,7 @@ class TradeShowData {
       this.profitCenters.push({ itemId: pcNum, submitted: false });
       this.vendorsWithActions.get(boothId).profitCenters.push(this.profitCenters.length - 1);
     });
+    this.db.putPC(this.profitCenters.length - 1, { itemId: pcNum, submitted: false });
     this.saveActionToDatabase(boothId);
   };
 
@@ -363,6 +388,7 @@ class TradeShowData {
         }
       });
       this.profitCenters[pcId] = undefined;
+      this.db.deletePC(pcId);
       this.cleanupBoothAuto(boothIdFound);
     }
   }
@@ -372,6 +398,8 @@ class TradeShowData {
       // This ignore is needed because the value could be undefined but it was already checked above
       // @ts-ignore
       this.profitCenters[pcId].submitted = submitted;
+      // @ts-ignore
+      this.db.putPC(pcId, { itemId: this.profitCenters[pcId].itemId, submitted: submitted });
     }
   };
 

@@ -6,6 +6,7 @@ import {
   IVendorStatus,
   IQuestionAnswer,
   DBQuestionAnswer,
+  ISubmittableItem,
   DBSubmittableItem,
 } from '../types/interfaces';
 
@@ -134,6 +135,63 @@ export default class ShowDatabase extends Dexie {
 
   /*
   pwrBuys!: Dexie.Table<DBSubmittableItem>;
+  */
+  public putPB = (pbIdx: number, pb: ISubmittableItem) => {
+    this.pwrBuys.put({ itmIdx: pbIdx, ...pb }).then((keyname) => {
+      // console.log('Added', keyname);
+    });
+  };
+
+  public deletePB = (pbIdx: number) => {
+    this.pwrBuys.delete(pbIdx).then((keyname) => {
+      // console.log('Added', keyname);
+    });
+  };
+
+  public getPBs = (): Promise<ISubmittableItem[]> => {
+    return new Promise((resolve, reject) => {
+      this.pwrBuys.toArray().then((srcArr) => {
+        let tmpArr: ISubmittableItem[] = [];
+        for (const item of srcArr) {
+          tmpArr[item.itmIdx] = { itemId: item.itemId, submitted: item.submitted };
+        }
+        resolve(tmpArr);
+      });
+    });
+  };
+
+  public clearPBs = () => {
+    this.pwrBuys.clear();
+  };
+
+  /*
   prfCtrs!: Dexie.Table<DBSubmittableItem>;
   */
+  public putPC = (pcIdx: number, pc: ISubmittableItem) => {
+    this.prfCtrs.put({ itmIdx: pcIdx, ...pc }).then((keyname) => {
+      // console.log('Added', keyname);
+    });
+  };
+
+  public deletePC = (pcIdx: number) => {
+    this.prfCtrs.delete(pcIdx).then((keyname) => {
+      // console.log('Added', keyname);
+    });
+  };
+
+  public getPCs = (): Promise<ISubmittableItem[]> => {
+    return new Promise((resolve, reject) => {
+      this.prfCtrs.toArray().then((srcArr) => {
+        let tmpArr: ISubmittableItem[] = [];
+        for (const item of srcArr) {
+          tmpArr[item.itmIdx] = { itemId: item.itemId, submitted: item.submitted };
+        }
+        resolve(tmpArr);
+      });
+    });
+  };
+
+  public clearPCs = () => {
+    this.prfCtrs.clear();
+  };
 }
