@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Button, Divider, Dropdown, DropdownItemProps, Form, Message, Modal, Tab } from 'semantic-ui-react';
+import { Button, Divider, Dropdown, DropdownItemProps, Form, Icon, Message, Modal, Tab } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
@@ -53,8 +53,12 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
                 onClick={this.loadSelectedShow}>
           Switch Show
         </Button>
-        <Button color='red' onClick={this.eraseSelectedShow}>Reset All Data</Button>
-        <Button color='orange' onClick={this.requestLoadAvailableShows}>Reload Shows</Button>
+        <Button icon color='red' onClick={this.eraseSelectedShow}>
+          <Icon name='trash alternate outline' />
+        </Button>
+        <Button icon primary onClick={this.requestLoadAvailableShows}>
+          <Icon name='refresh' />
+        </Button>
       </>;
 
     let dataDropdown;
