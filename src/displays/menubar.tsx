@@ -55,7 +55,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
             <Icon name='calendar alternate outline' />
             {tradeShowId ?? 'Load Show Data...'}
           </Button>
-          <Button icon primary basic button labelPosition='left' onClick={() => this.showAddTaskModal(true)}>
+          <Button icon primary basic button disabled={!vendorsPresent} labelPosition='left' onClick={() => this.showAddTaskModal(true)}>
             <Icon name='plus square outline' />
             Add...
           </Button>
@@ -74,7 +74,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
             <Icon name='calendar alternate outline' />
             {tradeShowId ?? 'Load Show Data...'}
           </Button>
-          <Button icon primary basic button onClick={() => this.showAddTaskModal(true)}>
+          <Button icon primary basic button disabled={!vendorsPresent} onClick={() => this.showAddTaskModal(true)}>
             <Icon name='plus square outline' />
           </Button>
           <div className='BCIflexmenubarspacer' />
