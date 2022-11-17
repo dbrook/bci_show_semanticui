@@ -10,17 +10,11 @@ import VendorActions from '../widgets/vendoractions';
 interface TaskListProps {
   hideCompleted: boolean;
   alphaSort: boolean;
-//   showStore?: TradeShowData;
-  showStore?: any;  // Workaround for now ... FIXME: How to use a type?
+  showStore?: any;
 };
 
 @inject('showStore') @observer
 export default class Summary extends React.Component<TaskListProps> {
-  constructor(props: TaskListProps) {
-    super(props);
-    this.vendorCompleted = this.vendorCompleted.bind(this);
-  }
-
   render() {
     const { alphaSort, showStore: { vendorsWithActions } } = this.props;
 
@@ -73,7 +67,7 @@ export default class Summary extends React.Component<TaskListProps> {
     );
   }
 
-  private vendorCompleted(vendor: IVendorStatus): boolean {
+  private vendorCompleted = (vendor: IVendorStatus): boolean => {
     return (
       (vendor.visit !== VendorVisit.NOT_VISITED && vendor.visit !== VendorVisit.NEED_REVISIT) &&
       (vendor.openStockForm !== OpenStockForm.PICK_UP &&

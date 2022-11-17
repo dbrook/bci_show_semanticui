@@ -1,12 +1,12 @@
 import React from 'react';
-import { Button, Form, Icon, TextArea } from 'semantic-ui-react';
+import { SyntheticEvent } from 'react';
+import { Button, Form, Icon, TextArea, TextAreaProps } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
 interface QuestionAnswerProps {
   questionId: number;
-//   showStore?: TradeShowData;
-  showStore?: any;  // Workaround for now ... FIXME: How to use a type?
+  showStore?: any;
 };
 
 interface QuestionAnswerState {
@@ -18,19 +18,14 @@ interface QuestionAnswerState {
 
 @inject('showStore') @observer
 export default class QuestionAnswer extends React.Component<QuestionAnswerProps, QuestionAnswerState> {
-  constructor(props: any) {
-    super(props);
+  constructor(props: QuestionAnswerProps, state: QuestionAnswerState) {
+    super(props, state);
     this.state = {
       editingQuestion: false,
       editingAnswer: false,
       newQuestionText: undefined,
       newAnswerText: undefined,
     };
-    this.toggleQuestionEdit = this.toggleQuestionEdit.bind(this);
-    this.toggleAnswerEdit = this.toggleAnswerEdit.bind(this);
-    this.updatedQuestionText = this.updatedQuestionText.bind(this);
-    this.updatedAnswerText = this.updatedAnswerText.bind(this);
-    this.deleteQuestion = this.deleteQuestion.bind(this);
   }
 
   render() {
@@ -90,7 +85,7 @@ export default class QuestionAnswer extends React.Component<QuestionAnswerProps,
       </div>;
   }
 
-  private toggleQuestionEdit() {
+  private toggleQuestionEdit = () => {
     if (this.state.editingQuestion) {
       this.props.showStore.changeQuestion(this.props.questionId, this.state.newQuestionText);
       this.setState({
@@ -105,7 +100,7 @@ export default class QuestionAnswer extends React.Component<QuestionAnswerProps,
     }
   }
 
-  private toggleAnswerEdit() {
+  private toggleAnswerEdit = () => {
     if (this.state.editingAnswer) {
       this.props.showStore.answerQuestion(this.props.questionId, this.state.newAnswerText);
       this.setState({
@@ -120,15 +115,15 @@ export default class QuestionAnswer extends React.Component<QuestionAnswerProps,
     }
   }
 
-  private updatedQuestionText(e: any, data: any) {
-    this.setState({ newQuestionText: e.target.value });
+  private updatedQuestionText = (e: SyntheticEvent, data: TextAreaProps) => {
+    this.setState({ newQuestionText: data.value as string });
   }
 
-  private updatedAnswerText(e: any, data: any) {
-    this.setState({ newAnswerText: e.target.value });
+  private updatedAnswerText = (e: SyntheticEvent, data: TextAreaProps) => {
+    this.setState({ newAnswerText: data.value as string });
   }
 
-  private deleteQuestion(e: any, data: any) {
+  private deleteQuestion = () => {
     this.props.showStore.removeQuestion(this.props.questionId);
   }
 }

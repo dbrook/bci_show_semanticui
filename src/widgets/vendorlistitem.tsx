@@ -15,11 +15,9 @@ interface VendorListItemState {
 };
 
 export default class VendorListItem extends React.Component<VendorListItemProps, VendorListItemState> {
-  constructor(props: any) {
-    super(props);
+  constructor(props: VendorListItemProps, state: VendorListItemState) {
+    super(props, state);
     this.state = { addTaskModalShown: false };
-    this.showAddTaskModal = this.showAddTaskModal.bind(this);
-    this.openTaskModal = this.openTaskModal.bind(this);
   }
 
   render() {
@@ -42,11 +40,11 @@ export default class VendorListItem extends React.Component<VendorListItemProps,
       </div>;
   }
 
-  private openTaskModal() {
+  private openTaskModal = () => {
     this.showAddTaskModal(true);
   }
 
-  private showAddTaskModal(showIt: boolean) {
+  private showAddTaskModal = (showIt: boolean) => {
     this.setState({ addTaskModalShown: showIt });
     return;
   }

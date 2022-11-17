@@ -11,8 +11,7 @@ interface MenuBarProps {
   toggleHideCompleted: () => void;
   alphaSort: boolean;
   toggleAlphaSort: () => void;
-//   showStore?: TradeShowData;
-  showStore?: any;  // Workaround for now ... FIXME: How to use a type?
+  showStore?: any;
 };
 
 interface MenuBarState {
@@ -22,8 +21,8 @@ interface MenuBarState {
 
 @inject('showStore') @observer
 export default class MenuBar extends React.Component<MenuBarProps, MenuBarState> {
-  constructor(props: any) {
-    super(props);
+  constructor(props: MenuBarProps, state: MenuBarState) {
+    super(props, state);
     this.state = {
       addTaskModalShown: false,
       dataModalShown: false

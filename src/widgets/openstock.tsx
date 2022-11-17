@@ -9,8 +9,7 @@ interface OpenStockProps {
   formStatus: OpenStockForm;
   labeled: boolean;
   boothId: string;
-//   showStore?: TradeShowData;
-  showStore?: any;  // Workaround for now ... FIXME: How to use a type?
+  showStore?: any;
 };
 
 @inject('showStore') @observer
@@ -105,11 +104,11 @@ export default class OpenStock extends React.Component<OpenStockProps> {
     return button;
   }
 
-  private advanceButtonAction = (e: any, data: any) => {
+  private advanceButtonAction = () => {
     this.props.showStore.advanceOpenStockStatus(this.props.boothId);
   }
 
-  private abandonButtonAction = (e: any, data: any) => {
+  private abandonButtonAction = () => {
     this.props.showStore.abandonOpenStock(this.props.boothId);
   }
 }

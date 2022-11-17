@@ -1,5 +1,6 @@
 import React from 'react';
-import { Button, Divider, Dropdown, Form, Modal } from 'semantic-ui-react';
+import { SyntheticEvent } from 'react';
+import { Button, Divider, Dropdown, DropdownProps, Form, Modal } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
@@ -9,8 +10,7 @@ interface VisitModalProps {
   open: boolean,
   closeHander: (arg0: boolean) => any;
   boothId: string;
-//   showStore?: TradeShowData;
-  showStore?: any;  // Workaround for now ... FIXME: How to use a type?
+  showStore?: any;
 };
 
 interface VisitModalState {
@@ -101,12 +101,12 @@ export default class VisitModal extends React.Component<VisitModalProps, VisitMo
     );
   }
 
-  private newVisit = (e: any, data: any) => {
-    this.setState({ visitation: data.value });
+  private newVisit = (e: SyntheticEvent, data: DropdownProps) => {
+    this.setState({ visitation: data.value as VendorVisit });
   };
 
-  private newOpenStock = (e: any, data: any) => {
-    this.setState({ openStock: data.value, openStockChanged: true });
+  private newOpenStock = (e: SyntheticEvent, data: DropdownProps) => {
+    this.setState({ openStock: data.value as OpenStockForm, openStockChanged: true });
   };
 
   private getOSLater = () => {
@@ -139,7 +139,7 @@ export default class VisitModal extends React.Component<VisitModalProps, VisitMo
     this.props.closeHander(false);
   };
 
-  private updateVendorAction = (e: any, data: any) => {
+  private updateVendorAction = () => {
     this.props.showStore.setVisitMode(this.props.boothId, this.state.visitation);
 
     // Workaround: open modal after changing open stock form widget - original state at

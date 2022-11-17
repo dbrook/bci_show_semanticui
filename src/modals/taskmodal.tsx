@@ -1,5 +1,16 @@
 import React from 'react';
-import { Button, Checkbox, Dropdown, Form, Input, Modal } from 'semantic-ui-react';
+import { SyntheticEvent } from 'react';
+import {
+  Button,
+  Checkbox,
+  CheckboxProps,
+  Dropdown,
+  DropdownProps,
+  Form,
+  Input,
+  InputProps,
+  Modal,
+} from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
@@ -9,8 +20,7 @@ interface TaskModalProps {
   presetBoothId?: string;
   presetVendorName?: string;
   presetItemType?: string;
-//   showStore?: TradeShowData;
-  showStore?: any;  // Workaround for now ... FIXME: How to use a type?
+  showStore?: any;
 };
 
 interface TaskModalState {
@@ -31,12 +41,6 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
       keepOpenOnAdd: false,
       inputValue: '',
     };
-
-    this.changeBooth = this.changeBooth.bind(this);
-    this.changeItemType = this.changeItemType.bind(this);
-    this.setKeepOpened = this.setKeepOpened.bind(this);
-    this.addEntry = this.addEntry.bind(this);
-    this.changeInputAreaValue = this.changeInputAreaValue.bind(this);
   }
 
   render() {
@@ -143,23 +147,23 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
     );
   }
 
-  private changeBooth(e: any, data: any) {
-    this.setState({ boothIdToAdd: data.value });
+  private changeBooth = (e: SyntheticEvent, data: DropdownProps) => {
+    this.setState({ boothIdToAdd: data.value as string });
   }
 
-  private changeItemType(e: any, data: any) {
-    this.setState({ itemTypeToAdd: data.value });
+  private changeItemType = (e: SyntheticEvent, data: CheckboxProps) => {
+    this.setState({ itemTypeToAdd: data.value as string });
   }
 
-  private changeInputAreaValue(e: any, data: any) {
-    this.setState({ inputValue: e.target.value });
+  private changeInputAreaValue = (e: SyntheticEvent, data: InputProps) => {
+    this.setState({ inputValue: data.value });
   }
 
-  private setKeepOpened(e: any, data: any) {
-    this.setState({ keepOpenOnAdd: data.checked });
+  private setKeepOpened = (e: SyntheticEvent, data: CheckboxProps) => {
+    this.setState({ keepOpenOnAdd: data.checked as boolean });
   }
 
-  private addEntry(e: any, data: any) {
+  private addEntry = () => {
     if (this.state.boothIdToAdd === '' || this.state.boothIdToAdd === undefined) {
       console.error('FIXME (make a warning): Unable to add item as booth was not set!');
       return;

@@ -15,7 +15,7 @@ interface VisitationState {
 };
 
 export default class Visitation extends React.Component<VisitationProps, VisitationState> {
-  constructor(props: any, state: any) {
+  constructor(props: VisitationProps, state: VisitationState) {
     super(props, state);
     this.state = { visitModalShown: false };
   }

@@ -6,8 +6,7 @@ import { inject, observer } from 'mobx-react';
 interface SimpleSubmittableProps {
   prefix: string;
   itemIdx: number;
-//   showStore?: TradeShowData;
-  showStore?: any;  // Workaround for now ... FIXME: How to use a type?
+  showStore?: any;
 };
 
 @inject('showStore') @observer
@@ -55,7 +54,7 @@ export default class SimpleSubmittable extends React.Component<SimpleSubmittable
     }
   }
 
-  private toggleSubmitted = (e: any, data: any) => {
+  private toggleSubmitted = () => {
     const {
       prefix,
       itemIdx,
@@ -71,7 +70,7 @@ export default class SimpleSubmittable extends React.Component<SimpleSubmittable
     }
   };
 
-  private deleteItem = (e: any, data: any) => {
+  private deleteItem = () => {
     const {
       prefix,
       itemIdx,

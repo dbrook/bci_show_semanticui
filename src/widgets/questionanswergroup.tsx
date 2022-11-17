@@ -10,8 +10,7 @@ interface QuestionAnswerGroupProps {
   vendor: string;
   items: number[];
   hideCompleted: boolean;
-//   showStore?: TradeShowData;
-  showStore?: any;  // Workaround for now ... FIXME: How to use a type?
+  showStore?: any;
 };
 
 @inject('showStore') @observer

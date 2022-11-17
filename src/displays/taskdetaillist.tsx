@@ -10,8 +10,7 @@ import QuestionAnswerGroup from '../widgets/questionanswergroup';
 interface TaskDetailListProps {
   hideCompleted: boolean;
   alphaSort: boolean;
-//   showStore?: TradeShowData;
-  showStore?: any;  // Workaround for now ... FIXME: How to use a type?
+  showStore?: any;
 };
 
 @inject('showStore') @observer

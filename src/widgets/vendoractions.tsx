@@ -12,8 +12,7 @@ import OpenStock from './openstock';
 interface VendorActionsProps {
   vendorStatus: IVendorStatus;
   condensed: boolean;
-//   showStore?: TradeShowData;
-  showStore?: any;  // Workaround for now ... FIXME: How to use a type?
+  showStore?: any;
 };
 
 interface VendorActionsState {
@@ -22,7 +21,7 @@ interface VendorActionsState {
 
 @inject('showStore') @observer
 export default class VendorActions extends React.Component<VendorActionsProps, VendorActionsState> {
-  constructor(props: any, state: any) {
+  constructor(props: VendorActionsProps, state: VendorActionsState) {
     super(props, state);
     this.state = {
       addTaskModalShown: false,

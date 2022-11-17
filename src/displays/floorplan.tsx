@@ -3,8 +3,7 @@ import React from 'react';
 import { inject, observer } from 'mobx-react';
 
 interface FloorPlanProps {
-//   showStore?: TradeShowData;
-  showStore?: any;  // Workaround for now ... FIXME: How to use a type?
+  showStore?: any;
 }
 
 @inject('showStore') @observer

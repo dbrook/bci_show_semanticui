@@ -11,8 +11,7 @@ interface SimpleSubmittableGroupProps {
   items: number[];
   hideCompleted: boolean;
   prefix: string;
-//   showStore?: TradeShowData;
-  showStore?: any;  // Workaround for now ... FIXME: How to use a type?
+  showStore?: any;
 };
 
 @inject('showStore') @observer

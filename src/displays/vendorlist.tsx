@@ -1,6 +1,7 @@
 import React from 'react';
+import { SyntheticEvent } from 'react';
 
-import { Input } from 'semantic-ui-react';
+import { Input, InputProps } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
@@ -8,8 +9,7 @@ import VendorListItem from '../widgets/vendorlistitem';
 
 interface VendorListProps {
   alphaSort: boolean;
-//   showStore?: TradeShowData;
-  showStore?: any;  // Workaround for now ... FIXME: How to use a type?
+  showStore?: any;
 }
 
 interface VendorListState {
@@ -18,7 +18,7 @@ interface VendorListState {
 
 @inject('showStore') @observer
 export default class VendorList extends React.Component<VendorListProps, VendorListState> {
-  constructor(props: any, state: any) {
+  constructor(props: VendorListProps, state: VendorListState) {
     super(props, state);
     this.state = { filterText: '' };
   }
@@ -68,11 +68,11 @@ export default class VendorList extends React.Component<VendorListProps, VendorL
     );
   }
 
-  private updateFilterText = (e: any, data: any) => {
-    this.setState({ filterText: e.target.value });
+  private updateFilterText = (e: SyntheticEvent, data: InputProps) => {
+    this.setState({ filterText: data.value });
   };
 
-  private clearFilterText = (e: any, data: any) => {
+  private clearFilterText = (e: SyntheticEvent, data: InputProps) => {
     this.setState({ filterText: '' });
   };
 }

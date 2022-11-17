@@ -1,7 +1,17 @@
 import React from 'react';
-import { ChangeEvent } from 'react';
+import { ChangeEvent, SyntheticEvent } from 'react';
 
-import { Button, Divider, Dropdown, DropdownItemProps, Form, Message, Modal, Tab } from 'semantic-ui-react';
+import {
+  Button,
+  Divider,
+  Dropdown,
+  DropdownProps,
+  DropdownItemProps,
+  Form,
+  Message,
+  Modal,
+  Tab,
+} from 'semantic-ui-react';
 
 import { toJS } from 'mobx';
 import { inject, observer } from 'mobx-react';
@@ -12,8 +22,7 @@ import { DataBackup } from '../types/interfaces';
 interface DataModalProps {
   open: boolean,
   closeHander: (arg0: boolean) => any;
-//   showStore?: TradeShowData;
-  showStore?: any;  // Workaround for now ... FIXME: How to use a type?
+  showStore?: any;
 };
 
 interface DataModalState {
@@ -203,7 +212,7 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
     });
   };
 
-  private requestLoadAvailableShows = (e: any, data: any) => {
+  private requestLoadAvailableShows = () => {
     // FIXME: for some reason this gets called 2x when the modal is opened?
     this.props.showStore.loadAvailableShows().then((shows: string[]) => {
       const tempAvailableShows = shows.map((showItem, index) => {
@@ -221,22 +230,22 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
     });
   };
 
-  private newShowSelected = (e: any, data: any) => {
-    this.setState({ selectedShow: data.value });
+  private newShowSelected = (e: SyntheticEvent, data: DropdownProps) => {
+    this.setState({ selectedShow: `${data.value}` });
   };
 
-  private loadSelectedShow = (e: any, data: any) => {
+  private loadSelectedShow = () => {
     this.props.showStore.setCurrentShow(this.state.selectedShow);
     this.props.showStore.loadShowData();
     this.props.closeHander(false);
   };
 
-  private eraseSelectedShow = (e: any, data: any) => {
+  private eraseSelectedShow = () => {
     this.props.showStore.setCurrentShow(undefined);
     this.props.closeHander(false);
   };
 
-  private openImporter = (e: any, data: any) => {
+  private openImporter = () => {
     this.setState({
       importingFile: true,
       exportJson: undefined,
@@ -268,7 +277,7 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
     };
   };
 
-  private exportData = (e: any, data: any) => {
+  private exportData = () => {
     const {
       tradeShowId,
       boothVendors,
@@ -295,7 +304,7 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
     });
   };
 
-  private openClearer = (e: any, data: any) => {
+  private openClearer = () => {
     this.setState({
       exportJson: undefined,
       importingFile: false,
@@ -304,7 +313,7 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
     });
   };
 
-  private reallyClear = (e: any, data: any) => {
+  private reallyClear = () => {
     this.props.showStore.setCurrentShow(this.props.showStore.tradeShowId);
     this.props.showStore.loadShowData();
     this.props.closeHander(false);
