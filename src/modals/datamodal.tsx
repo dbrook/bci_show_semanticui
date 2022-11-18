@@ -65,17 +65,17 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
     } = this.props;
     const { selectedShow, remoteVendorLoad, exportJson, importingFile, clearerOpen } = this.state;
 
-    let vendorDataButtons = <>
+    let vendorDataButtons = <div className='BCIvendorquickactions'>
         <Button color='purple'
                 disabled={selectedShow === undefined ||
                           tradeShowId === selectedShow ||
                           remoteVendorLoad === DataLoad.FAILURE}
                 onClick={this.loadSelectedShow}>
-          Load
+          Load Selected
         </Button>
-        <Button color='red' onClick={this.eraseSelectedShow}>Erase</Button>
-        <Button primary onClick={this.requestLoadAvailableShows}>Reload List</Button>
-      </>;
+        <Button color='red' onClick={this.eraseSelectedShow}>Erase Current Show</Button>
+        <Button primary onClick={this.requestLoadAvailableShows}>Reload Trade Show List</Button>
+      </div>;
 
     let dataDropdown;
     switch (remoteVendorLoad) {
@@ -110,15 +110,12 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
     const showDataTab = <Tab.Pane>
         {dataDropdown}
         <Message warning>
-          <Message.Header>Data Loss Warning!</Message.Header>
+          <Message.Header>Data Loss Warning</Message.Header>
           <p>
-            This application keeps all progress tracking data on your device.
-            <b> None of your data is uploaded or backed-up anywhere</b>.
-          </p>
-          <p>
-            <b>Changing the Vendor Data will erase this local device storage</b>.
-            If you wish to save your existing data, you should switch to the
-            On-Device Data tab and export it to save it first.
+            This is a web app that keeps your vendor progress data on your device.
+            Clearing browser website data/settings will erase this data. If you wish
+            to backup your data for use on another device, go to "On-Device Data" and
+            choose "Export".
           </p>
         </Message>
       </Tab.Pane>;
@@ -229,17 +226,17 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
   };
 
   private newShowSelected = (e: SyntheticEvent, data: DropdownProps) => {
-    this.setState({ selectedShow: `${data.value}` });
+    this.setState({ selectedShow: data.value as string });
   };
 
   private loadSelectedShow = () => {
-    this.props.showStore.setCurrentShow(this.state.selectedShow);
+    this.props.showStore.setCurrentShow(this.state.selectedShow, false);
     this.props.showStore.loadShowData();
     this.props.closeHander(false);
   };
 
   private eraseSelectedShow = () => {
-    this.props.showStore.setCurrentShow(undefined);
+    this.props.showStore.setCurrentShow(undefined, true);
     this.props.closeHander(false);
   };
 
@@ -312,7 +309,7 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
   };
 
   private reallyClear = () => {
-    this.props.showStore.setCurrentShow(this.props.showStore.tradeShowId);
+    this.props.showStore.setCurrentShow(this.props.showStore.tradeShowId, true);
     this.props.showStore.loadShowData();
     this.props.closeHander(false);
   };

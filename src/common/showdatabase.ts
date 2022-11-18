@@ -17,8 +17,8 @@ export default class ShowDatabase extends Dexie {
   pwrBuys!: Dexie.Table<DBSubmittableItem>;
   prfCtrs!: Dexie.Table<DBSubmittableItem>;
 
-  constructor() {
-    super('ShowDatabase');
+  constructor(showId: string) {
+    super(showId);
     this.version(1).stores({
       vendors: 'boothId, boothNum, vendor, x1, y1, width, height',
       actions: 'boothId, boothNum, vendor, visit, questions, powerBuys, profitCenters, openStockForm',

@@ -39,29 +39,31 @@ class TradeShowData {
     // More information @ https://mobx.js.org/enabling-decorators.html
     makeObservable(this);
 
-    this.db = new ShowDatabase();
 
     // Restore Local Storage Information
     const currentShowFromStorage = localStorage.getItem('BciTradeShowCurrent');
     if (currentShowFromStorage !== null) {
       this.tradeShowId = currentShowFromStorage;
+      this.db = new ShowDatabase(currentShowFromStorage);
       this.loadShowData();
       this.loadProgressData();
       this.loadQuestionsData();
       this.loadPowerBuys();
       this.loadProfitCenters();
+    } else {
+      this.db = new ShowDatabase('');
     }
   }
 
   @action public eraseAndImportData = (dataBackup: DataBackup) => {
     runInAction(() => {
       // Import the provided Trade Show ID
-      this.setCurrentShow(dataBackup.tradeShowId);
+      this.setCurrentShow(dataBackup.tradeShowId, true);
+      this.db = new ShowDatabase(dataBackup.tradeShowId);
 
       // Import the Booth-Vendor Data
-      const tempDbMap = new Map(Object.entries(dataBackup.boothVendors))
+      const tempDbMap = new Map(Object.entries(dataBackup.boothVendors));
       this.boothVendors = tempDbMap;
-      this.db.clearBoothVendors();
       this.db.putBoothVendors(tempDbMap);
 
       // Import the Vendors with vendors with actions
@@ -134,25 +136,23 @@ class TradeShowData {
     });
   };
 
-  @action public setCurrentShow = (newShowId: string|undefined) => {
+  @action public setCurrentShow = (newShowId: string|undefined, skipDbLoad: boolean) => {
     const oldShowId = this.tradeShowId;
     this.tradeShowId = newShowId;
     if (newShowId !== undefined) {
       localStorage.setItem('BciTradeShowCurrent', newShowId);
     } else {
       localStorage.removeItem('BciTradeShowCurrent');
-    }
 
-    // Erase the local database
-    if (newShowId !== oldShowId) {
+      // Erase the local database
       this.db.clearBoothVendors();
+      this.db.clearVendorActions();
+      this.db.clearQuestions();
+      this.db.clearPBs();
+      this.db.clearPCs();
     }
-    this.db.clearVendorActions();
-    this.db.clearQuestions();
-    this.db.clearPBs();
-    this.db.clearPCs();
 
-    // Blow away all the existing data, it is invalidated when a new show is loaded
+    // Blow away all the existing JavaScript objects
     runInAction(() => {
       this.vendorQuestions = [];
       this.powerBuys = [];
@@ -162,6 +162,15 @@ class TradeShowData {
         this.boothVendors = new Map();
       }
     });
+
+    // If there is data from the newly-loaded show in the IndexedDB, load it up
+    if (newShowId !== undefined && !skipDbLoad) {
+      this.db = new ShowDatabase(newShowId);
+      this.loadProgressData();
+      this.loadQuestionsData();
+      this.loadPowerBuys();
+      this.loadProfitCenters();
+    }
   };
 
   private loadProgressData = () => {
