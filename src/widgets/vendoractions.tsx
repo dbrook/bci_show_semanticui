@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Divider, Header, Icon, Table } from 'semantic-ui-react';
+import { Button, Divider, Header, Table } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
@@ -44,8 +44,11 @@ export default class VendorActions extends React.Component<VendorActionsProps, V
     const { addTaskModalShown } = this.state;
 
     if (condensedView) {
-      return <div>
-          <Header as='h3'>{boothNum} - {vendor}</Header>
+      return (
+        <div>
+          <Header as='h3' color='blue' dividing onClick={() => this.showAddTaskModal(true)}>
+            {boothNum} - {vendor}
+          </Header>
           <TaskModal open={addTaskModalShown}
                      closeHander={this.showAddTaskModal}
                      presetBoothId={boothId}
@@ -56,20 +59,19 @@ export default class VendorActions extends React.Component<VendorActionsProps, V
             <NumericalProgress label='PB' completed={nbSubmittedPowerBuys(boothId)} total={powerBuys.length}/>
             <NumericalProgress label='PC' completed={nbSubmittedProfitCenters(boothId)} total={profitCenters.length}/>
             <OpenStock boothId={boothId} formStatus={openStockForm} labeled={true}/>
-            <Button icon primary basic button onClick={() => this.showAddTaskModal(true)}>
-              <Icon name='plus square outline' />
-            </Button>
           </div>
           <Divider />
-        </div>;
+        </div>
+      );
     } else {
-      return <Table.Row>
+      return (
+        <Table.Row>
           <TaskModal open={addTaskModalShown}
                      closeHander={this.showAddTaskModal}
                      presetBoothId={boothId}
                      presetVendorName={vendor} />
           <Table.Cell textAlign='center'>
-            <Button onClick={() => this.showAddTaskModal(true)}>
+            <Button primary basic onClick={() => this.showAddTaskModal(true)}>
               {boothNum}
             </Button>
           </Table.Cell>
@@ -79,7 +81,8 @@ export default class VendorActions extends React.Component<VendorActionsProps, V
           <Table.Cell><NumericalProgress completed={nbSubmittedPowerBuys(boothId)} total={powerBuys.length}/></Table.Cell>
           <Table.Cell><NumericalProgress completed={nbSubmittedProfitCenters(boothId)} total={profitCenters.length}/></Table.Cell>
           <Table.Cell><OpenStock boothId={boothId} formStatus={openStockForm} labeled={false}/></Table.Cell>
-        </Table.Row>;
+        </Table.Row>
+      );
     }
   }
 

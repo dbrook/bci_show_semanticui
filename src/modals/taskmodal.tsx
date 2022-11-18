@@ -45,7 +45,7 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
 
   render() {
     const { open, closeHander, presetBoothId, presetVendorName, showStore: { boothVendors } } = this.props;
-    const { itemTypeToAdd, keepOpenOnAdd } = this.state;
+    const { itemTypeToAdd, keepOpenOnAdd, boothIdToAdd } = this.state;
 
     let vendorMenu: any = [];
     if (presetBoothId === undefined) {
@@ -140,7 +140,12 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
         </Modal.Content>
         <Modal.Actions>
           <Checkbox checked={keepOpenOnAdd} onChange={this.setKeepOpened} label='Keep Open'/>
-          <Button basic color='green' onClick={this.addEntry}>Add</Button>
+          <Button basic
+                  color='green'
+                  onClick={this.addEntry}
+                  disabled={boothIdToAdd === '' || boothIdToAdd === undefined}>
+            Add
+          </Button>
           <Button basic color='grey' onClick={() => closeHander(false)}>Close</Button>
         </Modal.Actions>
       </Modal>
@@ -164,11 +169,6 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
   }
 
   private addEntry = () => {
-    if (this.state.boothIdToAdd === '' || this.state.boothIdToAdd === undefined) {
-      console.error('FIXME (make a warning): Unable to add item as booth was not set!');
-      return;
-    }
-
     switch (this.state.itemTypeToAdd) {
       case 'QU':
         this.props.showStore.addQuestion(this.state.boothIdToAdd, this.state.inputValue);

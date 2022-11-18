@@ -306,8 +306,8 @@ class TradeShowData {
     if (questionId >= 0 &&
         questionId < this.vendorQuestions.length &&
         this.vendorQuestions[questionId] !== undefined) {
-      // FIXME: Should probably sanitize the input!
       this.vendorQuestions[questionId] = { ...this.vendorQuestions[questionId], question: questionText };
+      // This ignore is needed because the value could be undefined but it was already checked above
       // @ts-ignore
       this.db.putQuestion(questionId, { question: questionText, answer: this.vendorQuestions[questionId].answer });
     }
@@ -322,8 +322,6 @@ class TradeShowData {
         // @ts-ignore
         this.db.putQuestion(questionId, { question: this.vendorQuestions[questionId].question, answer: undefined });
       } else {
-        // FIXME: Should probably sanitize the input!
-        // This ignore is needed because the value could be undefined but it was already checked above
         // @ts-ignore
         this.vendorQuestions[questionId].answer = answerText;
         // @ts-ignore
@@ -514,5 +512,5 @@ class TradeShowData {
 const store = new TradeShowData();
 export { TradeShowData, store as TradeShowStore };
 
-// FIXME: Remove this direct console access port
+// FIXME: Remove this direct console access port (at some point)
 (window as any).__DATA = store;

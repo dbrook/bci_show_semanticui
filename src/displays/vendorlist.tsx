@@ -28,7 +28,7 @@ export default class VendorList extends React.Component<VendorListProps, VendorL
     const { filterText } = this.state;
     const lowerFilterText = filterText.toLowerCase();
 
-    // FIXME: Maybe make this whole thing sortable by vendor -OR- booth number?
+    // Filter results by vendor and sort them according to the global sort setting
     const tempVendorStat = Array.from(boothVendors, ([key, value]) => {
       return {boothId: key, boothNum: value.boothNum, vendor: value.vendor};
     }).filter((item: any) => {

@@ -1,6 +1,6 @@
 #root {
   height: 100%;
-  background-color: #BABABA;
+  background-color: #999999;
 }
 
 /* Overall viewport, 5px padding, take up whole viewport with a vertical flexbox */
@@ -9,34 +9,32 @@
   height: 100%;
   display: flex;
   flex-direction: column;
-  padding: 5px;
+  padding: 0 1px 5px 0;  /* Tab area is too wide and causes mini-scrolling without a right-pad */
 }
 
 /* * * * * * * * * * * *
  * Menu Bar Styling
  * * * * * * * * * * * */
 .topBar {
-  border: 1px solid #D4D4D5;  /* Grey color taken from Semantic UI */
-  border-radius: 4px;
+  border-bottom: 1px solid black;
   display: flex;
   width: 100%;
   flex-direction: row;
   flex-wrap: wrap;
   padding: 4px 1px 4px 4px;
   margin-bottom: 5px;
-  background-color: white;
+  background-color: #EEEEEE;
 }
 
 .topBarCondensed {
-  border: 1px solid #D4D4D5;  /* Grey color taken from Semantic UI */
-  border-radius: 4px;
+  border-bottom: 1px solid black;
   display: flex;
   width: 100%;
   flex-direction: row;
   flex-wrap: wrap;
   padding: 4px 1px 4px 4px;
   margin-bottom: 5px;
-  background-color: white;
+  background-color: #EEEEEE;
 }
 
 .BCIflexmenubarspacer {
@@ -51,15 +49,19 @@
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+  margin: 0 5px;
 }
 
 .ui.top.attached.segment.active.tab.innerTabStyle {
+  border: 1px solid black;
   flex-grow: 1;
+  row-gap: 5px;
   display: flex;
   flex-direction: column;
   padding: 5px;
   height: 0px;
   overflow-y: auto;
+  background-color: #EEEEEE;
 }
 
 /* Allow scrolling of contents if they exceed the height of the viewport */
@@ -67,6 +69,7 @@
   flex-grow: 1;
   height: 0px;
   overflow-y: auto;
+  background-color: #EEEEEE;
 }
 
 
@@ -77,6 +80,8 @@
 /* DESKTOP - Tabular Variant of the Summary */
 .ui.celled.unstackable.table.BCIdesktop {
   margin: 0;
+  background-color: #EEEEEE;
+  border: 1px solid black;
 }
 .BCItasksum.stickyTableHead {
   position: sticky;
@@ -102,7 +107,7 @@
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: center;
   align-items: center;
   row-gap: 10px;
   column-gap: 10px;
@@ -134,7 +139,7 @@
   column-gap: 5px;
 }
 .BCIvendorBoothNumStyle {
-  border: 1px solid #D4D4D5;
+  border: 1px solid black;
   background-color: #D4D4D5;
   border-radius: 4px;
   padding: 5px;
@@ -156,7 +161,7 @@
   flex-shrink: 0;
 }
 .BCImobilesinglevendorvisit {
-  width: 10.2em;
+  width: 10em;
   flex-shrink: 0;
 }
 
@@ -202,7 +207,7 @@
   margin-bottom: 10px;
   display: flex;
   flex-direction: column;
-  border: 1px solid #D4D4D5;  /* Grey color taken from Semantic UI */
+  border: 1px solid black;
   border-radius: 4px;
   padding: 5px;
   row-gap: 5px;

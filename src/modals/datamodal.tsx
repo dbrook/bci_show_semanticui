@@ -176,7 +176,6 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       {menuItem: 'On-Device Data', render: () => localDataTab},
     ];
 
-    // FIXME: do something on dismount to clear the existing save data?
     return (
       <Modal open={open}
              centered={false}
@@ -213,7 +212,6 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
   };
 
   private requestLoadAvailableShows = () => {
-    // FIXME: for some reason this gets called 2x when the modal is opened?
     this.props.showStore.loadAvailableShows().then((shows: string[]) => {
       const tempAvailableShows = shows.map((showItem, index) => {
         return {key: index, text: showItem, value: showItem};
