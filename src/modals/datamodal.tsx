@@ -18,6 +18,7 @@ import { inject, observer } from 'mobx-react';
 
 import { DataLoad } from '../types/enums';
 import { DataBackup } from '../types/interfaces';
+import AboutPanel from '../widgets/aboutpanel';
 
 interface DataModalProps {
   open: boolean,
@@ -168,9 +169,14 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
         </Form>
       </Tab.Pane>;
 
+    const aboutApp = <Tab.Pane>
+        <AboutPanel />
+      </Tab.Pane>;
+
     const dataPanes = [
       {menuItem: 'Vendor Data', render: () => showDataTab},
       {menuItem: 'On-Device Data', render: () => localDataTab},
+      {menuItem: 'About', render: () => aboutApp},
     ];
 
     return (
