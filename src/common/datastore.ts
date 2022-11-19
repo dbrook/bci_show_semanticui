@@ -39,7 +39,6 @@ class TradeShowData {
     // More information @ https://mobx.js.org/enabling-decorators.html
     makeObservable(this);
 
-
     // Restore Local Storage Information
     const currentShowFromStorage = localStorage.getItem('BciTradeShowCurrent');
     if (currentShowFromStorage !== null) {
@@ -136,6 +135,28 @@ class TradeShowData {
     });
   };
 
+  @action public clearDatabases = (eraseBoothVendors: boolean) => {
+    if (eraseBoothVendors) {
+      this.db.clearBoothVendors();
+    }
+    this.db.clearVendorActions();
+    this.db.clearQuestions();
+    this.db.clearPBs();
+    this.db.clearPCs();
+  };
+
+  @action public clearJSObjects = (eraseBoothVendors: boolean) => {
+    runInAction(() => {
+      this.vendorQuestions = [];
+      this.powerBuys = [];
+      this.profitCenters = [];
+      this.vendorsWithActions.clear();
+      if (eraseBoothVendors) {
+        this.boothVendors = new Map();
+      }
+    });
+  };
+
   @action public setCurrentShow = (newShowId: string|undefined, skipDbLoad: boolean) => {
     const oldShowId = this.tradeShowId;
     this.tradeShowId = newShowId;
@@ -143,25 +164,10 @@ class TradeShowData {
       localStorage.setItem('BciTradeShowCurrent', newShowId);
     } else {
       localStorage.removeItem('BciTradeShowCurrent');
-
-      // Erase the local database
-      this.db.clearBoothVendors();
-      this.db.clearVendorActions();
-      this.db.clearQuestions();
-      this.db.clearPBs();
-      this.db.clearPCs();
+      this.clearDatabases(true);
     }
 
-    // Blow away all the existing JavaScript objects
-    runInAction(() => {
-      this.vendorQuestions = [];
-      this.powerBuys = [];
-      this.profitCenters = [];
-      this.vendorsWithActions.clear();
-      if (newShowId !== oldShowId) {
-        this.boothVendors = new Map();
-      }
-    });
+    this.clearJSObjects(newShowId !== oldShowId);
 
     // If there is data from the newly-loaded show in the IndexedDB, load it up
     if (newShowId !== undefined && !skipDbLoad) {
@@ -285,14 +291,21 @@ class TradeShowData {
   }
 
   @action public addQuestion = (boothId: string, questionText: string) => {
-    runInAction(() => {
-      this.initBoothIfNeeded(boothId);
-      // FIXME: Recycle any undefined positions before just pushing
-      this.vendorQuestions.push({ question: questionText });
-      this.vendorsWithActions.get(boothId).questions.push(this.vendorQuestions.length - 1);
+    const nextQIdx = this.vendorQuestions.indexOf(undefined);
+    const newQIdx = nextQIdx !== -1 ? nextQIdx : this.vendorQuestions.length;
+    this.db.putQuestion(newQIdx, { question: questionText }).then(() => {
+      runInAction(() => {
+        this.initBoothIfNeeded(boothId);
+        if (nextQIdx !== -1) {
+          this.vendorQuestions[nextQIdx] = { question: questionText };
+          this.vendorsWithActions.get(boothId).questions.push(nextQIdx);
+        } else {
+          this.vendorQuestions.push({ question: questionText });
+          this.vendorsWithActions.get(boothId).questions.push(this.vendorQuestions.length - 1);
+        }
+      });
+      this.saveActionToDatabase(boothId);
     });
-    this.saveActionToDatabase(boothId);
-    this.db.putQuestion(this.vendorQuestions.length - 1, { question: questionText });
   };
 
   @action public removeQuestion = (questionId: number) => {
@@ -306,8 +319,8 @@ class TradeShowData {
         }
       });
       this.vendorQuestions[questionId] = undefined;
-      this.cleanupBoothAuto(boothIdFound);
       this.db.deleteQuestion(questionId);
+      this.cleanupBoothAuto(boothIdFound);
     }
   }
 
@@ -364,14 +377,21 @@ class TradeShowData {
   }
 
   @action public addPowerBuy = (boothId: string, pbNum: string) => {
-    runInAction(() => {
-      this.initBoothIfNeeded(boothId);
-      // FIXME: Recycle any undefined positions before just pushing
-      this.powerBuys.push({ itemId: pbNum, submitted: false });
-      this.vendorsWithActions.get(boothId).powerBuys.push(this.powerBuys.length - 1);
+    const nextPbIdx = this.powerBuys.indexOf(undefined);
+    const newPbIdx = nextPbIdx !== -1 ? nextPbIdx : this.powerBuys.length;
+    this.db.putPB(newPbIdx, { itemId: pbNum, submitted: false }).then(() => {
+      runInAction(() => {
+        this.initBoothIfNeeded(boothId);
+        if (nextPbIdx !== -1) {
+          this.powerBuys[nextPbIdx] = { itemId: pbNum, submitted: false };
+          this.vendorsWithActions.get(boothId).powerBuys.push(nextPbIdx);
+        } else {
+          this.powerBuys.push({ itemId: pbNum, submitted: false });
+          this.vendorsWithActions.get(boothId).powerBuys.push(this.powerBuys.length - 1);
+        }
+      });
+      this.saveActionToDatabase(boothId);
     });
-    this.db.putPB(this.powerBuys.length - 1, { itemId: pbNum, submitted: false });
-    this.saveActionToDatabase(boothId);
   };
 
   @action public removePowerBuy = (pbId: number) => {
@@ -394,9 +414,10 @@ class TradeShowData {
     if (pbId >= 0 && pbId < this.powerBuys.length && this.powerBuys[pbId] !== undefined) {
       // This ignore is needed because the value could be undefined but it was already checked above
       // @ts-ignore
-      this.powerBuys[pbId].submitted = submitted;
-      // @ts-ignore
-      this.db.putPB(pbId, { itemId: this.powerBuys[pbId].itemId, submitted: submitted });
+      this.db.putPB(pbId, { itemId: this.powerBuys[pbId].itemId, submitted: submitted }).then(() => {
+        // @ts-ignore
+        this.powerBuys[pbId].submitted = submitted;
+      });
     }
   };
 
@@ -424,14 +445,21 @@ class TradeShowData {
   }
 
   @action public addProfitCenter = (boothId: string, pcNum: string) => {
-    runInAction(() => {
-      this.initBoothIfNeeded(boothId);
-      // FIXME: Recycle any undefined positions before just pushing
-      this.profitCenters.push({ itemId: pcNum, submitted: false });
-      this.vendorsWithActions.get(boothId).profitCenters.push(this.profitCenters.length - 1);
+    const nextPcIdx = this.profitCenters.indexOf(undefined);
+    const newPcIdx = nextPcIdx !== -1 ? nextPcIdx : this.profitCenters.length;
+    this.db.putPC(newPcIdx, { itemId: pcNum, submitted: false }).then(() => {
+      runInAction(() => {
+        this.initBoothIfNeeded(boothId);
+        if (nextPcIdx !== -1) {
+          this.profitCenters[nextPcIdx] = { itemId: pcNum, submitted: false };
+          this.vendorsWithActions.get(boothId).profitCenters.push(nextPcIdx);
+        } else {
+          this.profitCenters.push({ itemId: pcNum, submitted: false });
+          this.vendorsWithActions.get(boothId).profitCenters.push(this.profitCenters.length - 1);
+        }
+      });
+      this.saveActionToDatabase(boothId);
     });
-    this.db.putPC(this.profitCenters.length - 1, { itemId: pcNum, submitted: false });
-    this.saveActionToDatabase(boothId);
   };
 
   @action public removeProfitCenter = (pcId: number) => {
@@ -454,9 +482,10 @@ class TradeShowData {
     if (pcId >= 0 && pcId < this.profitCenters.length && this.profitCenters[pcId] !== undefined) {
       // This ignore is needed because the value could be undefined but it was already checked above
       // @ts-ignore
-      this.profitCenters[pcId].submitted = submitted;
-      // @ts-ignore
-      this.db.putPC(pcId, { itemId: this.profitCenters[pcId].itemId, submitted: submitted });
+      this.db.putPC(pcId, { itemId: this.profitCenters[pcId].itemId, submitted: submitted }).then(() => {
+        // @ts-ignore
+        this.profitCenters[pcId].submitted = submitted;
+      });
     }
   };
 

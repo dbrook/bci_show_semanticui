@@ -76,6 +76,8 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
         entryField = <Form.Group widths='equal'>
             <Form.Field>
               <Input fluid
+                     type='text'
+                     maxLength={4}
                      label={itemTypeToAdd}
                      style={inputStyle}
                      value={this.state.inputValue}

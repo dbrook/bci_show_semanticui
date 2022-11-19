@@ -105,10 +105,8 @@ export default class ShowDatabase extends Dexie {
   /*
   questions!: Dexie.Table<DBQuestionAnswer>;
   */
-  public putQuestion = (qIdx: number, qa: IQuestionAnswer) => {
-    this.questions.put({ qIdx: qIdx, ...qa }).then((keyname) => {
-      // console.log('Added', keyname);
-    });
+  public putQuestion = (qIdx: number, qa: IQuestionAnswer): Promise<IQuestionAnswer[]> => {
+    return this.questions.put({ qIdx: qIdx, ...qa });
   };
 
   public deleteQuestion = (qIdx: number) => {
@@ -136,16 +134,12 @@ export default class ShowDatabase extends Dexie {
   /*
   pwrBuys!: Dexie.Table<DBSubmittableItem>;
   */
-  public putPB = (pbIdx: number, pb: ISubmittableItem) => {
-    this.pwrBuys.put({ itmIdx: pbIdx, ...pb }).then((keyname) => {
-      // console.log('Added', keyname);
-    });
+  public putPB = (pbIdx: number, pb: ISubmittableItem): Promise<number> => {
+    return this.pwrBuys.put({ itmIdx: pbIdx, ...pb });
   };
 
   public deletePB = (pbIdx: number) => {
-    this.pwrBuys.delete(pbIdx).then((keyname) => {
-      // console.log('Added', keyname);
-    });
+    this.pwrBuys.delete(pbIdx);
   };
 
   public getPBs = (): Promise<ISubmittableItem[]> => {
@@ -167,16 +161,12 @@ export default class ShowDatabase extends Dexie {
   /*
   prfCtrs!: Dexie.Table<DBSubmittableItem>;
   */
-  public putPC = (pcIdx: number, pc: ISubmittableItem) => {
-    this.prfCtrs.put({ itmIdx: pcIdx, ...pc }).then((keyname) => {
-      // console.log('Added', keyname);
-    });
+  public putPC = (pcIdx: number, pc: ISubmittableItem): Promise<number> => {
+    return this.prfCtrs.put({ itmIdx: pcIdx, ...pc });
   };
 
   public deletePC = (pcIdx: number) => {
-    this.prfCtrs.delete(pcIdx).then((keyname) => {
-      // console.log('Added', keyname);
-    });
+    this.prfCtrs.delete(pcIdx);
   };
 
   public getPCs = (): Promise<ISubmittableItem[]> => {

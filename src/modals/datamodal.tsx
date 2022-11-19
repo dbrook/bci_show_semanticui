@@ -261,12 +261,11 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
           const inputObj: DataBackup = JSON.parse(inputText);
           this.props.showStore.eraseAndImportData(inputObj);
           console.log(inputObj);
+          this.props.closeHander(false);
         } catch (e) {
           console.error('Failed to parse imported JSON file', e);
           // FIXME: purge all local data anyway?
-          this.setState({
-            errorImportingFile: true,
-          });
+          this.setState({ errorImportingFile: true });
         }
       });
     };
@@ -309,7 +308,8 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
   };
 
   private reallyClear = () => {
-    this.props.showStore.setCurrentShow(this.props.showStore.tradeShowId, true);
+    this.props.showStore.clearDatabases(false);
+    this.props.showStore.clearJSObjects(true);
     this.props.showStore.loadShowData();
     this.props.closeHander(false);
   };
