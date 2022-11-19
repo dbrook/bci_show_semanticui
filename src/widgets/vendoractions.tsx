@@ -46,14 +46,15 @@ export default class VendorActions extends React.Component<VendorActionsProps, V
     if (condensedView) {
       return (
         <div>
-          <Header as='h3' color='blue' dividing onClick={() => this.showAddTaskModal(true)}>
-            {boothNum} - {vendor}
-          </Header>
+          <Header as='h3' dividing>{vendor}</Header>
           <TaskModal open={addTaskModalShown}
                      closeHander={this.showAddTaskModal}
                      presetBoothId={boothId}
                      presetVendorName={vendor} />
           <div className='BCImobilevendorstatus'>
+            <Button primary basic onClick={() => this.showAddTaskModal(true)}>
+              {boothNum}
+            </Button>
             <Visitation boothId={boothId} visitStatus={visit} mobile />
             <NumericalProgress label='QU' completed={nbAnsweredQuestions(boothId)} total={questions.length}/>
             <NumericalProgress label='PB' completed={nbSubmittedPowerBuys(boothId)} total={powerBuys.length}/>
