@@ -11,6 +11,16 @@ class TradeShowData {
   // All Vendors, Booth Index List
   @observable public boothVendors: Map<string, IVendorDirectory>;
 
+  // Activities Booth Index List (breaktime / activity spaces)
+  @observable public boothActivities: Map<string, IVendorDirectory>;
+
+  // Administrative Booths (kiosk, new items, clearance, etc.)
+  @observable public boothAdmins:  Map<string, IVendorDirectory>;
+
+  // Floor Map Canvas Size
+  @observable public floorPlanWidthPx: number;
+  @observable public floorPlanHeightPx: number;
+
   // Vendors With Action Items
   // FIXME: Ideally this is the declaration to use for an observable map, but....
   // @observable public vendorsWithActions: Map<string, IVendorStatus> = new Map<string, IVendorStatus>();
@@ -27,10 +37,15 @@ class TradeShowData {
   // Profit Centers Data
   @observable public profitCenters: Array<ISubmittableItem|undefined>;
 
+  // Instance of the Dexie IndexedDB wrapper
   private db: ShowDatabase;
 
   constructor() {
     this.boothVendors = new Map();
+    this.boothActivities = new Map();
+    this.boothAdmins = new Map();
+    this.floorPlanWidthPx = 0;
+    this.floorPlanHeightPx = 0;
     this.vendorQuestions = [];
     this.powerBuys = [];
     this.profitCenters = [];
@@ -60,10 +75,27 @@ class TradeShowData {
       this.setCurrentShow(dataBackup.tradeShowId, true);
       this.db = new ShowDatabase(dataBackup.tradeShowId);
 
-      // Import the Booth-Vendor Data
-      const tempDbMap = new Map(Object.entries(dataBackup.boothVendors));
-      this.boothVendors = tempDbMap;
-      this.db.putBoothVendors(tempDbMap);
+      // Import Floor Plan Canvas Dimensions
+      this.floorPlanWidthPx = dataBackup.width;
+      this.floorPlanHeightPx = dataBackup.height;
+
+      // Import the Booth-Vendor Data, including activities and BCI administrative blocks
+      const tempVendorMap = new Map(Object.entries(dataBackup.vendors));
+      this.boothVendors = tempVendorMap;
+
+      const tempActivitiesMap = new Map(Object.entries(dataBackup.activities));
+      this.boothActivities = tempActivitiesMap;
+
+      const tempAdminsMap = new Map(Object.entries(dataBackup.admins));
+      this.boothAdmins = tempAdminsMap;
+
+      const allBoothData: Map<string, any> = new Map();
+      allBoothData.set('vendors', tempVendorMap);
+      allBoothData.set('activities', tempActivitiesMap);
+      allBoothData.set('admins', tempAdminsMap);
+      allBoothData.set('width', dataBackup.width);
+      allBoothData.set('height', dataBackup.height);
+      this.db.putBooths(allBoothData);
 
       // Import the Vendors with vendors with actions
       const tempVwaMap = new Map(Object.entries(dataBackup.vendorsWithActions));
@@ -118,17 +150,33 @@ class TradeShowData {
           .then((response) => response.json())
           .then((responseJson) => {
             runInAction(() => {
-              this.boothVendors = new Map(Object.entries(responseJson));
+              this.boothVendors = new Map(Object.entries(responseJson.vendors));
+              this.boothActivities = new Map(Object.entries(responseJson.activities));
+              this.boothAdmins = new Map(Object.entries(responseJson.admins));
+              this.floorPlanWidthPx = responseJson.width;
+              this.floorPlanHeightPx = responseJson.height;
             });
-            const tempDbMap: Map<string, IVendorDirectory> = new Map(Object.entries(responseJson));
-            this.db.clearBoothVendors();
-            this.db.putBoothVendors(tempDbMap);
+            const tempVendorMap: Map<string, IVendorDirectory> = new Map(Object.entries(responseJson.vendors));
+            const tempActivitiesMap: Map<string, IVendorDirectory> = new Map(Object.entries(responseJson.activities));
+            const tempAdminsMap: Map<string, IVendorDirectory> = new Map(Object.entries(responseJson.admins));
+            this.db.clearBooths();
+            const allBoothData: Map<string, any> = new Map();
+            allBoothData.set('vendors', tempVendorMap);
+            allBoothData.set('activities', tempActivitiesMap);
+            allBoothData.set('admins', tempAdminsMap);
+            allBoothData.set('width', this.floorPlanWidthPx);
+            allBoothData.set('height', this.floorPlanHeightPx);
+            this.db.putBooths(allBoothData);
           });
       } else {
         console.log('Loading vendors from the local database!');
-        this.db.getBoothVendors().then((dataMap) => {
+        this.db.getBooths().then((dataMap) => {
           runInAction(() => {
-            this.boothVendors = dataMap;
+            this.boothVendors = dataMap.get('vendors');
+            this.boothActivities = dataMap.get('activities');
+            this.boothAdmins = dataMap.get('admins');
+            this.floorPlanWidthPx = dataMap.get('width');
+            this.floorPlanHeightPx = dataMap.get('height');
           });
         });
       }
@@ -137,7 +185,7 @@ class TradeShowData {
 
   @action public clearDatabases = (eraseBoothVendors: boolean) => {
     if (eraseBoothVendors) {
-      this.db.clearBoothVendors();
+      this.db.clearBooths();
     }
     this.db.clearVendorActions();
     this.db.clearQuestions();
@@ -153,6 +201,10 @@ class TradeShowData {
       this.vendorsWithActions.clear();
       if (eraseBoothVendors) {
         this.boothVendors = new Map();
+        this.boothActivities = new Map();
+        this.boothAdmins = new Map();
+        this.floorPlanWidthPx = 0;
+        this.floorPlanHeightPx = 0;
       }
     });
   };
@@ -543,6 +595,13 @@ class TradeShowData {
     if (this.vendorsWithActions.has(boothId)) {
       this.vendorsWithActions.get(boothId).openStockForm = OpenStockForm.ABANDONED;
       this.saveActionToDatabase(boothId);
+    }
+  };
+
+
+  @action public deleteDatabase = () => {
+    if (this.tradeShowId !== undefined) {
+      this.db.deleteDB(this.tradeShowId);
     }
   };
 }

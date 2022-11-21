@@ -22,22 +22,56 @@ import csv
 import json
 import sys
 
-vendors = {}
+vendors = {}     # Vendor Booths
+activities = {}  # Activity / Game Booths
+admins = {}      # Administrative Booths
+width = 0        # Canvas Floor Map Width
+height = 0       # Canvas Floor Map Height
 
 def parseCSVVendors(argv):
     with open(argv[1], newline='') as csvfile:
         csvVendors = csv.reader(csvfile, delimiter=',', quotechar='"')
         for row in csvVendors:
-            vendors[row[0]] = {           # They boothId is the main 'key' to the map/object
-                'boothNum': int(row[1]),  # boothNum is the actual booth # in the directory
-                'vendor': row[2],         # the unique name of the vendor
-                'x1': int(row[3]),        # leftmost pixel position of the booth on the map
-                'y1': int(row[4]),        # topmost pixel position of the booth on the map
-                'width': int(row[5]),     # width of the booth in pixels
-                'height': int(row[6]),    # height of the booth in pixels
-            }
+            if row[0] == 'width':
+                width = int(row[1])
+            elif row[0] == 'height':
+                height = int(row[1])
+            elif row[2] == 'activity':
+                activities[row[0]] = {        # The boothId is the main 'key' to the map/object
+                    'boothNum': int(row[1]),  # boothNum is the actual booth # in the directory
+                    'vendor': row[3],         # the unique name of the vendor
+                    'x1': int(row[4]),        # leftmost pixel position of the booth on the map
+                    'y1': int(row[5]),        # topmost pixel position of the booth on the map
+                    'width': int(row[6]),     # width of the booth in pixels
+                    'height': int(row[7]),    # height of the booth in pixels
+                }
+            elif row[2] == 'admin':
+                admins[row[0]] = {
+                    'boothNum': int(row[1]),
+                    'vendor': row[3],
+                    'x1': int(row[4]),
+                    'y1': int(row[5]),
+                    'width': int(row[6]),
+                    'height': int(row[7]),
+                }
+            elif row[2] == 'vendor':
+                vendors[row[0]] = {
+                    'boothNum': int(row[1]),
+                    'vendor': row[3],
+                    'x1': int(row[4]),
+                    'y1': int(row[5]),
+                    'width': int(row[6]),
+                    'height': int(row[7]),
+                }
 
-        print(json.dumps(vendors))
+        allBooths = {
+            'width': width,
+            'height': height,
+            'vendors': vendors,
+            'admins': admins,
+            'activities': activities,
+        }
+        print(json.dumps(allBooths))
 
 if __name__ == "__main__":
     parseCSVVendors(sys.argv)

@@ -151,8 +151,16 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
             <Form.Field>
               <label>Local Show Data Actions</label>
               <Form.Field className='BCIvendorquickactions'>
-                <Button basic color='blue' onClick={this.exportData}>Export...</Button>
-                <Button basic color='pink' onClick={this.openImporter}>Import...</Button>
+                <Button basic={!exportJson}
+                        color='blue'
+                        onClick={this.exportData}>
+                  Export...
+                </Button>
+                <Button basic={!importer}
+                        color='pink'
+                        onClick={this.openImporter}>
+                  Import...
+                </Button>
                 <Button basic={!clearerOpen}
                         color='red'
                         onClick={clearerOpen ? this.reallyClear : this.openClearer}>
@@ -242,6 +250,7 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
   };
 
   private eraseSelectedShow = () => {
+    this.props.showStore.deleteDatabase();
     this.props.showStore.setCurrentShow(undefined, true);
     this.props.closeHander(false);
   };
@@ -280,7 +289,11 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
   private exportData = () => {
     const {
       tradeShowId,
+      floorPlanWidthPx,
+      floorPlanHeightPx,
       boothVendors,
+      boothActivities,
+      boothAdmins,
       vendorsWithActions,
       vendorQuestions,
       powerBuys,
@@ -289,7 +302,11 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
 
     const backupObj: DataBackup = {
       tradeShowId: tradeShowId,
-      boothVendors: Object.fromEntries(toJS(boothVendors)),
+      width: floorPlanWidthPx,
+      height: floorPlanHeightPx,
+      admins: Object.fromEntries(toJS(boothAdmins)),
+      activities: Object.fromEntries(toJS(boothActivities)),
+      vendors: Object.fromEntries(toJS(boothVendors)),
       vendorsWithActions: Object.fromEntries(toJS(vendorsWithActions)),
       vendorQuestions: toJS(vendorQuestions),
       powerBuys: toJS(powerBuys),

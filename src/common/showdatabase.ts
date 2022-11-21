@@ -12,6 +12,9 @@ import {
 
 export default class ShowDatabase extends Dexie {
   vendors!: Dexie.Table<DBVendorDirectory>;
+  activities!: Dexie.Table<DBVendorDirectory>;
+  admins!: Dexie.Table<DBVendorDirectory>;
+  mapDimensions!: Dexie.Table<any>;
   actions!: Dexie.Table<IVendorStatus>;
   questions!: Dexie.Table<DBQuestionAnswer>;
   pwrBuys!: Dexie.Table<DBSubmittableItem>;
@@ -21,6 +24,9 @@ export default class ShowDatabase extends Dexie {
     super(showId);
     this.version(1).stores({
       vendors: 'boothId, boothNum, vendor, x1, y1, width, height',
+      activities: 'boothId, boothNum, vendor, x1, y1, width, height',
+      admins: 'boothId, boothNum, vendor, x1, y1, width, height',
+      mapDimensions: 'parameter, value',
       actions: 'boothId, boothNum, vendor, visit, questions, powerBuys, profitCenters, openStockForm',
       questions: 'qIdx, question, answer',
       pwrBuys: 'itmIdx, itemId, submitted',
@@ -28,20 +34,24 @@ export default class ShowDatabase extends Dexie {
     });
   }
 
-  public clearBoothVendors = () => {
+  public clearBooths = () => {
     this.vendors.clear();
+    this.activities.clear();
+    this.admins.clear();
+    this.mapDimensions.clear();
   };
 
   public get nbBoothVendors() {
     return this.vendors.count();
   }
 
-  public getBoothVendors = (): Promise<Map<string, IVendorDirectory>> => {
+  public getBooths = (): Promise<Map<string, any>> => {
     return new Promise((resolve, reject) => {
+      let outputMap = new Map();
       this.vendors.toArray().then((outputArray) => {
-        let outputMap: Map<string, IVendorDirectory> = new Map();
+        let vendorsMap: Map<string, IVendorDirectory> = new Map();
         for (const item of outputArray) {
-          outputMap.set(item.boothId, {
+          vendorsMap.set(item.boothId, {
             boothNum: item.boothNum,
             vendor: item.vendor,
             x1: item.x1,
@@ -50,19 +60,68 @@ export default class ShowDatabase extends Dexie {
             height: item.height,
           });
         }
-        resolve(outputMap);
+        this.activities.toArray().then((actArray) => {
+          let actsMap: Map<string, IVendorDirectory> = new Map();
+          for (const item of actArray) {
+            actsMap.set(item.boothId, {
+              boothNum: item.boothNum,
+              vendor: item.vendor,
+              x1: item.x1,
+              y1: item.y1,
+              width: item.width,
+              height: item.height,
+            });
+          }
+          this.admins.toArray().then((admArray) => {
+            let admMap: Map<string, IVendorDirectory> = new Map();
+            for (const item of admArray) {
+              admMap.set(item.boothId, {
+                boothNum: item.boothNum,
+                vendor: item.vendor,
+                x1: item.x1,
+                y1: item.y1,
+                width: item.width,
+                height: item.height,
+              });
+            }
+            this.mapDimensions.toArray().then((dimsArray) => {
+              let width = 0;
+              let height = 0;
+              for (const item of dimsArray) {
+                if (item.parameter === 'height') {
+                  height = item.value;
+                } else if (item.parameter === 'width') {
+                  width = item.value;
+                }
+              }
+              outputMap.set('vendors', vendorsMap);
+              outputMap.set('activities', actsMap);
+              outputMap.set('admins', admMap);
+              outputMap.set('height', height);
+              outputMap.set('width', width);
+              resolve(outputMap);
+            });
+          });
+        });
       });
     });
   };
 
-  public putBoothVendors = (vendors: Map<string, IVendorDirectory>) => {
-    vendors.forEach((vendor, key) => {
+  public putBooths = (booths: Map<string, any>) => {
+    booths.get('vendors').forEach((vendor: IVendorDirectory, key: string) => {
       const itemWithId: DBVendorDirectory = { boothId: key, ...vendor };
-      this.vendors.put(itemWithId).then((keyname) => {
-        // FIXME: Remove this later
-        // console.log(keyname, typeof(keyname));
-      });
+      this.vendors.put(itemWithId);
     });
+    booths.get('activities').forEach((vendor: IVendorDirectory, key: string) => {
+      const itemWithId: DBVendorDirectory = { boothId: key, ...vendor };
+      this.activities.put(itemWithId);
+    });
+    booths.get('admins').forEach((vendor: IVendorDirectory, key: string) => {
+      const itemWithId: DBVendorDirectory = { boothId: key, ...vendor };
+      this.admins.put(itemWithId);
+    });
+    this.mapDimensions.put({ parameter: 'width', value: booths.get('width') });
+    this.mapDimensions.put({ parameter: 'height', value: booths.get('height') });
   };
 
   public putVendorAction = (action: IVendorStatus) => {
@@ -183,5 +242,9 @@ export default class ShowDatabase extends Dexie {
 
   public clearPCs = () => {
     this.prfCtrs.clear();
+  };
+
+  public deleteDB = (dbName: string) => {
+    Dexie.delete(dbName);
   };
 }

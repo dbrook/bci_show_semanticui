@@ -24,7 +24,11 @@ export interface DBVendorDirectory extends IVendorDirectory {
 
 export interface DataBackup {
   tradeShowId: string;
-  boothVendors: { [key: string]: IVendorDirectory };
+  width: number;
+  height: number;
+  admins: { [key: string]: IVendorDirectory };
+  activities: { [key: string]: IVendorDirectory };
+  vendors: { [key: string]: IVendorDirectory };
   vendorsWithActions: { [key: string]: IVendorStatus };
   vendorQuestions: IQuestionAnswer[];
   powerBuys: ISubmittableItem[];
