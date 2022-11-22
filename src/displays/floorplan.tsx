@@ -12,8 +12,8 @@ interface FloorPlanProps {
 @inject('showStore') @observer
 export default class FloorPlan extends React.Component<FloorPlanProps> {
   private myCanvasRef = React.createRef<HTMLCanvasElement>();
-  private visitBorderWidth = 6;
-  private boothNumberFont = '15px Lato';
+  private visitBorderWidth = 4;
+  private boothNumberFont = '11px Lato';
   private lineColorActivityBooth = 'rgba(175, 175, 175, 1)';
   private fillColorActivityBooth = 'rgba(175, 175, 175, 0.10)';
   private lineColorVendorBooth = 'rgba(0, 0, 0, 1)';
@@ -80,12 +80,17 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
 
     ctx.strokeStyle = lineStyle;
     ctx.lineWidth = 1;
+    let drawnBooth: Set<number> = new Set();
     for (const vend of vendorDrawCoords) {
-      ctx.strokeRect(vend.x, vend.y, vend.width, vend.height);
-      ctx.fillStyle = fillStyle;
-      ctx.fillRect(vend.x + 1, vend.y + 1, vend.width - 2, vend.height - 2);
-      ctx.fillStyle = 'black';
-      ctx.fillText(`${vend.boothNum}`, vend.x + 10, vend.y + 24);
+      // Don't repeatedly draw into the same booth (multi-vendor booths)
+      if (!drawnBooth.has(vend.boothNum)) {
+        ctx.strokeRect(vend.x, vend.y, vend.width, vend.height);
+        ctx.fillStyle = fillStyle;
+        ctx.fillRect(vend.x + 1, vend.y + 1, vend.width - 2, vend.height - 2);
+        ctx.fillStyle = 'black';
+        ctx.fillText(`${vend.boothNum}`, vend.x + 8, vend.y + 18);
+        drawnBooth.add(vend.boothNum);
+      }
     }
   };
 
@@ -98,13 +103,13 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
         openStock: value.openStockForm,
         boothNum: value.boothNum,
         //@ts-ignore
-        x1: booths.get(value.boothId).x1 + (this.visitBorderWidth - 2),
+        x1: booths.get(value.boothId).x1 + (this.visitBorderWidth - 1),
         //@ts-ignore
-        y1: booths.get(value.boothId).y1 + (this.visitBorderWidth - 2),
+        y1: booths.get(value.boothId).y1 + (this.visitBorderWidth - 1),
         //@ts-ignore
-        width: booths.get(value.boothId).width - (this.visitBorderWidth - 2) * 2,
+        width: booths.get(value.boothId).width - (this.visitBorderWidth - 1) * 2,
         //@ts-ignore
-        height: booths.get(value.boothId).height - (this.visitBorderWidth - 2) * 2,
+        height: booths.get(value.boothId).height - (this.visitBorderWidth - 1) * 2,
       };
     });
 
@@ -151,10 +156,10 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
       }
 
       ctx.strokeRect(stat.x1, stat.y1, stat.width, stat.height);
-      ctx.fillRect(stat.x1 + 3, stat.y1 + 3, stat.width - 6, stat.height - 6);
+      ctx.fillRect(stat.x1 + 2, stat.y1 + 2, stat.width - 4, stat.height - 4);
       if (redrawBoothNum) {
         ctx.fillStyle = boothNumColor;
-        ctx.fillText(`${stat.boothNum}`, stat.x1 + 6, stat.y1 + 20);
+        ctx.fillText(`${stat.boothNum}`, stat.x1 + 5, stat.y1 + 14);
         // For Chromium, set the fill style back to black explicitly or else fonts are all white
         ctx.fillStyle = 'black';
       }
