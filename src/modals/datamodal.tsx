@@ -8,6 +8,7 @@ import {
   DropdownProps,
   DropdownItemProps,
   Form,
+  Label,
   Message,
   Modal,
   Tab,
@@ -74,7 +75,6 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
                 onClick={this.loadSelectedShow}>
           Load Selected
         </Button>
-        <Button color='red' onClick={this.eraseSelectedShow}>Erase Current Show</Button>
         <Button primary onClick={this.requestLoadAvailableShows}>Reload Trade Show List</Button>
       </div>;
 
@@ -197,7 +197,16 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
           <Form>
             <Form.Group widths='equal'>
               <Form.Field>
-                <label>Currently-loaded Trade Show Vendor Data:</label>{tradeShowId ?? 'None'}
+                <label>Currently-loaded Trade Show Vendor Data:</label>
+                {tradeShowId !== undefined ?
+                  <Button as='div' labelPosition='left'>
+                    <Label basic>{tradeShowId}</Label>
+                    <Button color='red' onClick={this.eraseSelectedShow}>
+                      Erase All Show Data
+                    </Button>
+                  </Button> :
+                  'None'
+                }
               </Form.Field>
             </Form.Group>
           </Form>
