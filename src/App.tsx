@@ -1,4 +1,5 @@
 import React from 'react';
+import { RefObject } from 'react';
 import './App.css';
 
 // Styling
@@ -15,8 +16,11 @@ import MenuBar from './displays/menubar';
 import TabArea from './displays/tabarea';
 
 export default class App extends React.Component<any, any> {
+  private tabRef: RefObject<TabArea>;
+
   constructor(props: any) {
     super(props);
+    this.tabRef = React.createRef();
     this.state = {
       hideCompleted: false,
       alphaSort: false,
@@ -30,11 +34,13 @@ export default class App extends React.Component<any, any> {
         <Provider showStore={TradeShowStore}>
           <div className="App">
             <MenuBar hideCompleted={this.state.hideCompleted}
-                    toggleHideCompleted={this.toggleHideCompleted}
-                    alphaSort={this.state.alphaSort}
-                    toggleAlphaSort={this.toggleAlphabetical} />
+                     toggleHideCompleted={this.toggleHideCompleted}
+                     alphaSort={this.state.alphaSort}
+                     toggleAlphaSort={this.toggleAlphabetical}
+                     dataModalClose={this.onDataModalClose} />
             <TabArea hideCompleted={this.state.hideCompleted}
-                    alphaSort={this.state.alphaSort} />
+                     alphaSort={this.state.alphaSort}
+                     ref={this.tabRef} />
           </div>
         </Provider>
       );
@@ -52,10 +58,17 @@ export default class App extends React.Component<any, any> {
 
   public toggleHideCompleted = () => {
     this.setState({ hideCompleted: !this.state.hideCompleted });
-  }
+  };
 
   public toggleAlphabetical = () => {
     this.setState({ alphaSort: !this.state.alphaSort });
-  }
-}
+  };
 
+  public vendorListReturn = () => {
+    this.tabRef.current?.switchToVendorsList();
+  };
+
+  public onDataModalClose = () => {
+    this.vendorListReturn();
+  };
+}

@@ -1,5 +1,7 @@
 import React from 'react';
-import { Tab } from 'semantic-ui-react';
+import { SyntheticEvent } from 'react';
+
+import { Tab, TabProps } from 'semantic-ui-react';
 
 import VendorList from './vendorlist';
 import FloorPlan from './floorplan';
@@ -11,8 +13,20 @@ interface TabAreaProps {
   alphaSort: boolean;
 };
 
-export default class TabArea extends React.Component<TabAreaProps> {
+interface TabAreaState {
+  activeTab: number;
+};
+
+export default class TabArea extends React.Component<TabAreaProps, TabAreaState> {
+  constructor(props: TabAreaProps, state: TabAreaState) {
+    super(props, state);
+    this.state = {
+      activeTab: 0,
+    };
+  }
+
   render() {
+    const { activeTab } = this.state;
     const panes = [
       {
         menuItem: 'Vendors',
@@ -57,7 +71,19 @@ export default class TabArea extends React.Component<TabAreaProps> {
     ];
 
     return (
-      <Tab menu={{ attached: 'bottom', tabular: true }} panes={panes} className='outerTabStyle' />
+      <Tab menu={{ attached: 'bottom', tabular: true }}
+           activeIndex={activeTab}
+           onTabChange={this.handleTabChange}
+           panes={panes}
+           className='outerTabStyle' />
     );
   }
+
+  private handleTabChange = (e: SyntheticEvent, data: TabProps) => {
+    this.setState({ activeTab: data.activeIndex as number });
+  };
+
+  public switchToVendorsList = () => {
+    this.setState({ activeTab: 0 });
+  };
 }

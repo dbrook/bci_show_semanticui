@@ -2,7 +2,7 @@
  * Application-level version descriptors for About Window
  */
 
-export const applicationVersion: string = '1.0.0';
+export const applicationVersion: string = '1.0.1';
 export const copyrightYearRange: string = '2022';
 export const uiLibrary: string = 'React 18.0.0';
 export const uiControls: string = 'Semantic UI React 2.1.3';

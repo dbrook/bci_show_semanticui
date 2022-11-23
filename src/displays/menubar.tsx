@@ -11,6 +11,7 @@ interface MenuBarProps {
   toggleHideCompleted: () => void;
   alphaSort: boolean;
   toggleAlphaSort: () => void;
+  dataModalClose: () => void;
   showStore?: any;
 };
 
@@ -95,6 +96,9 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
 
   private showDataModal = (showIt: boolean) => {
     this.setState({ dataModalShown: showIt });
+    if (!showIt) {
+      this.props.dataModalClose();
+    }
     return;
   }
 }
