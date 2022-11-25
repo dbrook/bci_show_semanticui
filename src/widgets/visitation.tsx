@@ -14,6 +14,11 @@ interface VisitationState {
   visitModalShown: boolean;
 };
 
+/*
+ * Visitation Component:
+ *
+ * A button showing the current vendor visit status. When clicked, it opens the Vendor Visit modal.
+ */
 export default class Visitation extends React.Component<VisitationProps, VisitationState> {
   constructor(props: VisitationProps, state: VisitationState) {
     super(props, state);

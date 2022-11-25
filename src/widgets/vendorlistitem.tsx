@@ -14,7 +14,15 @@ interface VendorListItemState {
   addTaskModalShown: boolean;
 };
 
-export default class VendorListItem extends React.Component<VendorListItemProps, VendorListItemState> {
+/*
+ * VendorListItem Component:
+ *
+ * Single vendor for use in the Vendor List display tab. This component shows the booth number
+ * (highlighted to indicate there is at least 1 action assigned to the boothId / vendor), the
+ * vendor name, and a button to show the Add Task modal preset to the vendor.
+ */
+export default class VendorListItem extends React.Component<VendorListItemProps,
+                                                            VendorListItemState> {
   constructor(props: VendorListItemProps, state: VendorListItemState) {
     super(props, state);
     this.state = { addTaskModalShown: false };

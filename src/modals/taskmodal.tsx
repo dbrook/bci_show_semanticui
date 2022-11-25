@@ -30,6 +30,13 @@ interface TaskModalState {
   inputValue: string,
 };
 
+/*
+ * Add Task modal:
+ *
+ * Adds one or more tasks to a vendor of the user's choosing (with a searchable dropdown), or can
+ * be instantiated with a booth and/or item type to perform a task addition to a vendor without
+ * having to search (useful when instantiated from the Summary tab, for instance).
+ */
 @inject('showStore') @observer
 export default class TaskModal extends React.Component<TaskModalProps, TaskModalState> {
   constructor(props: TaskModalProps, state: TaskModalState) {
@@ -44,7 +51,9 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
   }
 
   render() {
-    const { open, closeHander, presetBoothId, presetVendorName, showStore: { boothVendors } } = this.props;
+    const {
+      open, closeHander, presetBoothId, presetVendorName, showStore: { boothVendors },
+    } = this.props;
     const { itemTypeToAdd, keepOpenOnAdd, boothIdToAdd } = this.state;
 
     let vendorMenu: any = [];

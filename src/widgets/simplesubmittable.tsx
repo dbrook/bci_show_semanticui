@@ -9,6 +9,13 @@ interface SimpleSubmittableProps {
   showStore?: any;
 };
 
+/*
+ * SimpleSubmittable Component:
+ *
+ * Graphical representation of a submittable item (like a Power Buy) that displays a prefix, number,
+ * button that indicates the submission is done or not, and a delete button to remove it from the
+ * database.
+ */
 @inject('showStore') @observer
 export default class SimpleSubmittable extends React.Component<SimpleSubmittableProps> {
   render() {

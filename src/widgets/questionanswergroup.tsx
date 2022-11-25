@@ -13,6 +13,11 @@ interface QuestionAnswerGroupProps {
   showStore?: any;
 };
 
+/*
+ * QuestionAnswerGroup Component:
+ *
+ * Collection of all QuestionAnswer components belonging to a single vendor.
+ */
 @inject('showStore') @observer
 export default class QuestionAnswerGroup extends React.Component<QuestionAnswerGroupProps> {
   render() {

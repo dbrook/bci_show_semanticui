@@ -17,6 +17,12 @@ interface TabAreaState {
   activeTab: number;
 };
 
+/*
+ * Primary application tabbed interface, wraps each component in a Tab Pane.
+ * This is a controlled component that will be reset to the vendors list after the Data Management
+ * modal is opened (or else changing shows will lead to confusingly empty contents in the other
+ * tabs as all the data is refreshed in the MobX store).
+ */
 export default class TabArea extends React.Component<TabAreaProps, TabAreaState> {
   constructor(props: TabAreaProps, state: TabAreaState) {
     super(props, state);
@@ -63,7 +69,8 @@ export default class TabArea extends React.Component<TabAreaProps, TabAreaState>
         render: () => {
           return (
             <Tab.Pane attached='top' className='innerTabStyle'>
-              <TaskDetailList hideCompleted={this.props.hideCompleted} alphaSort={this.props.alphaSort} />
+              <TaskDetailList hideCompleted={this.props.hideCompleted}
+                              alphaSort={this.props.alphaSort} />
             </Tab.Pane>
           );
         },

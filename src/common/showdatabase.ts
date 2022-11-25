@@ -10,6 +10,14 @@ import {
   DBSubmittableItem,
 } from '../types/interfaces';
 
+/*
+ * IndexedDB wrapper implemented with Dexie
+ *
+ * Responsible for:
+ *   - Opening existing or creating new database for the showId specified at construction
+ *   - Writing out changes to the database
+ *   - Reading-in data from the database (if present for a showId) and providing it to the store
+ */
 export default class ShowDatabase extends Dexie {
   vendors!: Dexie.Table<DBVendorDirectory>;
   activities!: Dexie.Table<DBVendorDirectory>;
@@ -161,9 +169,7 @@ export default class ShowDatabase extends Dexie {
     this.actions.clear();
   };
 
-  /*
-  questions!: Dexie.Table<DBQuestionAnswer>;
-  */
+
   public putQuestion = (qIdx: number, qa: IQuestionAnswer): Promise<IQuestionAnswer[]> => {
     return this.questions.put({ qIdx: qIdx, ...qa });
   };
@@ -190,9 +196,7 @@ export default class ShowDatabase extends Dexie {
     this.questions.clear();
   };
 
-  /*
-  pwrBuys!: Dexie.Table<DBSubmittableItem>;
-  */
+
   public putPB = (pbIdx: number, pb: ISubmittableItem): Promise<number> => {
     return this.pwrBuys.put({ itmIdx: pbIdx, ...pb });
   };
@@ -217,9 +221,7 @@ export default class ShowDatabase extends Dexie {
     this.pwrBuys.clear();
   };
 
-  /*
-  prfCtrs!: Dexie.Table<DBSubmittableItem>;
-  */
+
   public putPC = (pcIdx: number, pc: ISubmittableItem): Promise<number> => {
     return this.prfCtrs.put({ itmIdx: pcIdx, ...pc });
   };

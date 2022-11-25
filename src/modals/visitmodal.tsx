@@ -19,6 +19,12 @@ interface VisitModalState {
   openStockChanged: boolean,
 };
 
+/*
+ * Vendor Visit modal:
+ *
+ * Sets the visit status and open stock form status of a vendor. Also provides quick, 1-click
+ * actions to mark a vendor as visited and any action on the open stock form.
+ */
 @inject('showStore') @observer
 export default class VisitModal extends React.Component<VisitModalProps, VisitModalState> {
   private visitOptions;
@@ -68,7 +74,9 @@ export default class VisitModal extends React.Component<VisitModalProps, VisitMo
                   <Button basic color='purple' onClick={this.pickupOS}>Pick Up OS</Button>
                   <Button basic color='green' onClick={this.submitOS}>Submit OS</Button>
                   <Button basic color='red' onClick={this.nothingMore}>Nothing Else</Button>
-                  <Button basic color='pink' onClick={this.revistWithQ}>Add Question, Flag Revisit</Button>
+                  <Button basic color='pink' onClick={this.revistWithQ}>
+                    Add Question, Flag Revisit
+                  </Button>
                 </Form.Field>
               </Form.Field>
             </Form.Group>

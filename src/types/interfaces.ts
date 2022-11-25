@@ -59,7 +59,7 @@ export interface DBSubmittableItem extends ISubmittableItem {
 };
 
 export interface IVendorStatus {
-  boothId: string;               // Completely-unique Booth Identifier (several vendors share 1 booth at times)
+  boothId: string;               // Unique Booth Identifier (several vendors may share a booth)
   boothNum: number;              // The actual booth number of the vendor
   vendor: string;                // Vendor name from the show directory/index
   visit: VendorVisit;            // Status of the vender from an initial/revisit point of view

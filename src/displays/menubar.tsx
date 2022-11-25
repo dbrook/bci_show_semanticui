@@ -20,6 +20,11 @@ interface MenuBarState {
   dataModalShown: boolean,
 };
 
+/*
+ * Toolbar-like widget that appears at the top of the application window to allow users to start
+ * the Data Management modal, add tasks, sort lists based on booth vs. vendor name, hide booths and
+ * tasks that have no further actions
+ */
 @inject('showStore') @observer
 export default class MenuBar extends React.Component<MenuBarProps, MenuBarState> {
   constructor(props: MenuBarProps, state: MenuBarState) {
@@ -49,13 +54,18 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
     return (
       <>
         <DataModal open={dataModalShown} closeHander={this.showDataModal}/>
-        <TaskModal open={addTaskModalShown} closeHander={this.showAddTaskModal} presetItemType='VI'/>
+        <TaskModal open={addTaskModalShown}
+                   closeHander={this.showAddTaskModal}
+                   presetItemType='VI'/>
         <div className='topBar'>
           <Button icon primary basic={vendorsPresent} labelPosition='left' onClick={() => this.showDataModal(true)}>
             <Icon name='calendar alternate outline' />
             {tradeShowId ?? 'Load Show Data...'}
           </Button>
-          <Button icon primary basic button disabled={!vendorsPresent} labelPosition='left' onClick={() => this.showAddTaskModal(true)}>
+          <Button icon primary basic button
+                  disabled={!vendorsPresent}
+                  labelPosition='left'
+                  onClick={() => this.showAddTaskModal(true)}>
             <Icon name='plus square outline' />
             Add...
           </Button>
@@ -64,17 +74,25 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
             <Icon name={sortingIconName} />
             {sortingIconText}
           </Button>
-          <Button icon primary basic={!hideCompleted} onClick={toggleHideCompleted} button labelPosition='left'>
+          <Button icon primary button
+                  basic={!hideCompleted}
+                  onClick={toggleHideCompleted}
+                  labelPosition='left'>
             <Icon name='clipboard check' />
             Hide Done
           </Button>
         </div>
         <div className='topBarCondensed'>
-          <Button icon primary basic={vendorsPresent} labelPosition='left' onClick={() => this.showDataModal(true)}>
+          <Button icon primary
+                  basic={vendorsPresent}
+                  labelPosition='left'
+                  onClick={() => this.showDataModal(true)}>
             <Icon name='calendar alternate outline' />
             {tradeShowId ?? 'Load Show Data...'}
           </Button>
-          <Button icon primary basic button disabled={!vendorsPresent} onClick={() => this.showAddTaskModal(true)}>
+          <Button icon primary basic button
+                  disabled={!vendorsPresent}
+                  onClick={() => this.showAddTaskModal(true)}>
             <Icon name='plus square outline' />
           </Button>
           <div className='BCIflexmenubarspacer' />

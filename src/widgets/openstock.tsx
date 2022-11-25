@@ -12,6 +12,12 @@ interface OpenStockProps {
   showStore?: any;
 };
 
+/*
+ * OpenStock Component:
+ *
+ * Shows current open stock form status as well as action buttons for proceding to the next step and
+ * the ability to abandon a form after initially retrieving one.
+ */
 @inject('showStore') @observer
 export default class OpenStock extends React.Component<OpenStockProps> {
   render() {
@@ -91,7 +97,9 @@ export default class OpenStock extends React.Component<OpenStockProps> {
         </div>;
     } else {
       button = <div>
-          <Label {...mainProps} size='large' className='BCIlabeledopenstock'>{currentStateStr}</Label>
+          <Label {...mainProps} size='large' className='BCIlabeledopenstock'>
+            {currentStateStr}
+          </Label>
           <Button.Group>
             <Button icon basic color={nextColor} onClick={this.advanceButtonAction}>
               <Icon name={nextIcon}/>

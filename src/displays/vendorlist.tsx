@@ -16,6 +16,10 @@ interface VendorListState {
   filterText: string;
 }
 
+/*
+ * List of all vendors loaded from the Trade Show Data. Allows filtering the vendors with an input
+ * component at the top. Can be sorted by booth number or lexicographically by vendor.
+ */
 @inject('showStore') @observer
 export default class VendorList extends React.Component<VendorListProps, VendorListState> {
   constructor(props: VendorListProps, state: VendorListState) {

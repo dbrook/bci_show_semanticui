@@ -1,9 +1,28 @@
 import { action, computed, runInAction, makeObservable, observable, toJS } from 'mobx';
 
-import { DataBackup, IVendorDirectory, IVendorStatus, IQuestionAnswer, ISubmittableItem } from '../types/interfaces';
+import {
+  DataBackup,
+  IVendorDirectory,
+  IVendorStatus,
+  IQuestionAnswer,
+  ISubmittableItem,
+} from '../types/interfaces';
 import { VendorVisit, OpenStockForm } from '../types/enums';
 import ShowDatabase from './showdatabase';
 
+/*
+ * Global Application State Store
+ *
+ * This class holds:
+ *   - Currently-loaded show (from local storage)
+ *   - Vendors list, coordinates of booths to draw in canvas, overall canvas dimension
+ *   - Booth lists for administrative tasks (kiosks, etc.) and activities (break booths, etc.)
+ *   - Vendors with actions (visit status, open stock form, links to questions, PB, PC)
+ *   - Questions, Power Buys, Profit Centers arrays
+ *
+ * In addition, it is responsible for interacting with Dexie to store/retrieve data from the
+ * IndexedDB databases for each show
+ */
 class TradeShowData {
   // Current Trade Show Database Loaded
   @observable public tradeShowId: string|undefined = undefined;
@@ -23,7 +42,6 @@ class TradeShowData {
 
   // Vendors With Action Items
   // FIXME: Ideally this is the declaration to use for an observable map, but....
-  // @observable public vendorsWithActions: Map<string, IVendorStatus> = new Map<string, IVendorStatus>();
   // ... this workaround below is required to make a map "properly" observable
   // https://github.com/mobxjs/mobx-react/issues/398
   public vendorsWithActions = observable.map();
@@ -50,7 +68,7 @@ class TradeShowData {
     this.powerBuys = [];
     this.profitCenters = [];
 
-    // DO NOT REMOVE! This is needed in MobX 6+ to make observers actually respect the decorator syntax?
+    // DO NOT REMOVE! This is needed in MobX 6+ to make observers actually respect the decorators
     // More information @ https://mobx.js.org/enabling-decorators.html
     makeObservable(this);
 
@@ -156,9 +174,12 @@ class TradeShowData {
               this.floorPlanWidthPx = responseJson.width;
               this.floorPlanHeightPx = responseJson.height;
             });
-            const tempVendorMap: Map<string, IVendorDirectory> = new Map(Object.entries(responseJson.vendors));
-            const tempActivitiesMap: Map<string, IVendorDirectory> = new Map(Object.entries(responseJson.activities));
-            const tempAdminsMap: Map<string, IVendorDirectory> = new Map(Object.entries(responseJson.admins));
+            const tempVendorMap: Map<string, IVendorDirectory> =
+              new Map(Object.entries(responseJson.vendors));
+            const tempActivitiesMap: Map<string, IVendorDirectory> =
+              new Map(Object.entries(responseJson.activities));
+            const tempAdminsMap: Map<string, IVendorDirectory> =
+              new Map(Object.entries(responseJson.admins));
             this.db.clearBooths();
             const allBoothData: Map<string, any> = new Map();
             allBoothData.set('vendors', tempVendorMap);
@@ -382,8 +403,11 @@ class TradeShowData {
         this.vendorQuestions[questionId] !== undefined) {
       this.vendorQuestions[questionId] = { ...this.vendorQuestions[questionId], question: questionText };
       // This ignore is needed because the value could be undefined but it was already checked above
-      // @ts-ignore
-      this.db.putQuestion(questionId, { question: questionText, answer: this.vendorQuestions[questionId].answer });
+      this.db.putQuestion(questionId, {
+                            question: questionText,
+                            // @ts-ignore
+                            answer: this.vendorQuestions[questionId].answer,
+                          });
     }
   };
 
@@ -393,13 +417,21 @@ class TradeShowData {
         this.vendorQuestions[questionId] !== undefined) {
       if (answerText === '') {
         delete this.vendorQuestions[questionId]?.answer
-        // @ts-ignore
-        this.db.putQuestion(questionId, { question: this.vendorQuestions[questionId].question, answer: undefined });
+        this.db.putQuestion(questionId,
+                            {
+                              // @ts-ignore
+                              question: this.vendorQuestions[questionId].question,
+                              answer: undefined,
+                            });
       } else {
         // @ts-ignore
         this.vendorQuestions[questionId].answer = answerText;
-        // @ts-ignore
-        this.db.putQuestion(questionId, { question: this.vendorQuestions[questionId].question, answer: answerText });
+        this.db.putQuestion(questionId,
+                            {
+                              // @ts-ignore
+                              question: this.vendorQuestions[questionId].question,
+                              answer: answerText,
+                            });
       }
     }
   };
@@ -465,8 +497,12 @@ class TradeShowData {
   @action public submitPowerBuy = (pbId: number, submitted: boolean) => {
     if (pbId >= 0 && pbId < this.powerBuys.length && this.powerBuys[pbId] !== undefined) {
       // This ignore is needed because the value could be undefined but it was already checked above
-      // @ts-ignore
-      this.db.putPB(pbId, { itemId: this.powerBuys[pbId].itemId, submitted: submitted }).then(() => {
+      this.db.putPB(pbId,
+                    {
+                      // @ts-ignore
+                      itemId: this.powerBuys[pbId].itemId,
+                      submitted: submitted,
+                    }).then(() => {
         // @ts-ignore
         this.powerBuys[pbId].submitted = submitted;
       });
@@ -533,8 +569,12 @@ class TradeShowData {
   @action public submitProfitCenter = (pcId: number, submitted: boolean) => {
     if (pcId >= 0 && pcId < this.profitCenters.length && this.profitCenters[pcId] !== undefined) {
       // This ignore is needed because the value could be undefined but it was already checked above
-      // @ts-ignore
-      this.db.putPC(pcId, { itemId: this.profitCenters[pcId].itemId, submitted: submitted }).then(() => {
+      this.db.putPC(pcId,
+                    {
+                      // @ts-ignore
+                      itemId: this.profitCenters[pcId].itemId,
+                      submitted: submitted,
+                    }).then(() => {
         // @ts-ignore
         this.profitCenters[pcId].submitted = submitted;
       });

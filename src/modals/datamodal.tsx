@@ -37,6 +37,12 @@ interface DataModalState {
   clearerOpen: boolean;
 };
 
+/*
+ * Data Management modal:
+ *
+ * Allows switching between trade shows, downloading new show(s) booth data, exporting/importing
+ * data to/from JSON payloads (respectively), and contains an 'about this application' panel
+ */
 @inject('showStore') @observer
 export default class DataModal extends React.Component<DataModalProps, DataModalState> {
   constructor(props: DataModalProps, state: DataModalState) {

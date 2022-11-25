@@ -13,13 +13,19 @@ interface TaskDetailListProps {
   showStore?: any;
 };
 
+/*
+ * Interface to show all questions/answers, Power Buys, and Profit Centers for the show, grouped
+ * by type, then by each vendor (sorted by booth number or lexicographically by vendor).
+ */
 @inject('showStore') @observer
 export default class TaskDetailList extends React.Component<TaskDetailListProps> {
   render() {
     const {
       hideCompleted,
       alphaSort,
-      showStore: { vendorsWithActions, nbAnsweredQuestions, nbSubmittedPowerBuys, nbSubmittedProfitCenters },
+      showStore: {
+        vendorsWithActions, nbAnsweredQuestions, nbSubmittedPowerBuys, nbSubmittedProfitCenters,
+      },
     } = this.props;
 
     const tempVendorStat = Array.from(vendorsWithActions, ([key, value]) => {

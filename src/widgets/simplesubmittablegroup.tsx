@@ -14,10 +14,17 @@ interface SimpleSubmittableGroupProps {
   showStore?: any;
 };
 
+/*
+ * SimpleSubmittableGroup Component:
+ *
+ * Collection of all SimpleSubmittable components belonging to a single vendor.
+ */
 @inject('showStore') @observer
 export default class SimpleSubmittableGroup extends React.Component<SimpleSubmittableGroupProps> {
   render() {
-    const { boothNum, vendor, items, hideCompleted, prefix, showStore: { powerBuys, profitCenters } } = this.props;
+    const {
+      boothNum, vendor, items, hideCompleted, prefix, showStore: { powerBuys, profitCenters },
+    } = this.props;
 
     const itemsAsSubmittables = items.map((x) => {
       if (prefix === 'PB') {

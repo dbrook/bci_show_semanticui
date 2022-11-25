@@ -11,13 +11,22 @@ import {
   database,
 } from '../common/appversions';
 
+/*
+ * About This Application Component:
+ *
+ * Just a standard "about this application" window that every quality program should have!
+ *
+ * The versions are all stores in a file under the "common" directory for centralized management.
+ */
 export default class AboutPanel extends React.Component {
   render() {
     return (
       <>
         <Header color='violet' as='h1'>BCI Trade Show Tracker</Header>
         <p><b>Version {applicationVersion}</b></p>
-        <p>A simple vendor interaction tracking application for Dealers attending BCI Trade Shows.</p>
+        <p>
+          A simple vendor interaction tracking application for Dealers attending BCI Trade Shows.
+        </p>
         <p>Copyright © {copyrightYearRange}, Daniel Brook</p>
         <p>Not affiliated with Bradley Caldwell, Inc.</p>
         <Header color='orange' as='h3'>Application Details</Header>

@@ -9,6 +9,11 @@ interface FloorPlanProps {
   showStore?: any;
 }
 
+/*
+ * React wrapper around an HTML Canvas element responsible for drawing all the booths based on the
+ * type (vendor, admin, activity) and makes an inner outline based on the booth visit status, fill
+ * based on the open stock form submission status
+ */
 @inject('showStore') @observer
 export default class FloorPlan extends React.Component<FloorPlanProps> {
   private myCanvasRef = React.createRef<HTMLCanvasElement>();
@@ -46,7 +51,10 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
     if (ctx !== null) {
       ctx.font = this.boothNumberFont;
       this.drawBooths(ctx, boothVendors, this.lineColorVendorBooth, this.lineColorDoNotVisit);
-      this.drawBooths(ctx, boothActivities, this.lineColorActivityBooth, this.fillColorActivityBooth);
+      this.drawBooths(ctx,
+                      boothActivities,
+                      this.lineColorActivityBooth,
+                      this.fillColorActivityBooth);
       this.drawBooths(ctx, boothAdmins, this.lineColorAdminBooth, this.fillColorAdminBooth);
       this.drawBoothStatus(ctx, boothVendors, vendorsWithActions);
     }
@@ -75,7 +83,13 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
                         lineStyle: string,
                         fillStyle: string) => {
     const vendorDrawCoords = Array.from(booths, ([key, value]) => {
-      return { boothNum: value.boothNum, x: value.x1, y: value.y1, width: value.width, height: value.height };
+      return {
+        boothNum: value.boothNum,
+        x: value.x1,
+        y: value.y1,
+        width: value.width,
+        height: value.height,
+      };
     });
 
     ctx.strokeStyle = lineStyle;

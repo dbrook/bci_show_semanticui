@@ -15,6 +15,10 @@ import { TradeShowStore } from './common/datastore';
 import MenuBar from './displays/menubar';
 import TabArea from './displays/tabarea';
 
+/*
+ * Top-level application component (adapted from the Create-React-App default one) that holds the
+ * application menu bar and the tabbed interface with vendors, the floor plan, summary, and tasks
+ */
 export default class App extends React.Component<any, any> {
   private tabRef: RefObject<TabArea>;
 
@@ -49,7 +53,9 @@ export default class App extends React.Component<any, any> {
         <div className="App">
           <Message error>
             <p>A browser with IndexedDB support is required to use this application.</p>
-            <p><a href='https://caniuse.com/indexeddb'>Click here to see web browser IndexedDB support.</a></p>
+            <p><a href='https://caniuse.com/indexeddb'>
+              Click here to see web browser IndexedDB support.
+            </a></p>
           </Message>
         </div>
       );

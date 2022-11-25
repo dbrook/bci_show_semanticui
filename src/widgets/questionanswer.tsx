@@ -16,8 +16,16 @@ interface QuestionAnswerState {
   newAnswerText: string|undefined;
 };
 
+/*
+ * QuestionAnswer Component:
+ *
+ * Displays the current question and answer text for an IQuestionAnswer item in the database. The
+ * fields can be edited using the associated edit button and saved with the same button. An
+ * IQuestionAnswer item may also be deleted with the included delete button.
+ */
 @inject('showStore') @observer
-export default class QuestionAnswer extends React.Component<QuestionAnswerProps, QuestionAnswerState> {
+export default class QuestionAnswer extends React.Component<QuestionAnswerProps,
+                                                            QuestionAnswerState> {
   constructor(props: QuestionAnswerProps, state: QuestionAnswerState) {
     super(props, state);
     this.state = {
@@ -34,11 +42,17 @@ export default class QuestionAnswer extends React.Component<QuestionAnswerProps,
 
     const { question, answer } = showStore.vendorQuestions[questionId];
 
-    const outerClass = answer !== undefined ? 'BCIquestionanswerflex' : 'BCIquestionanswerflex unanswered';
+    const outerClass = answer !== undefined ?
+                       'BCIquestionanswerflex' :
+                       'BCIquestionanswerflex unanswered';
     const questionBtnColor = editingQuestion ? 'blue' : answer !== undefined ? 'green' : 'red';
     const answerBtnColor = editingAnswer ? 'blue' : answer !== undefined ? 'green' : 'red';
     const questionIcon = editingQuestion ? 'save' : 'question';
-    const answerIcon = editingAnswer ? 'save' : answer !== undefined ? 'check' : 'arrow alternate circle right';
+    const answerIcon = editingAnswer ?
+                       'save' :
+                       answer !== undefined ?
+                         'check' :
+                         'arrow alternate circle right';
 
     return <div className={outerClass}>
         <div className='BCIindividualquestion'>

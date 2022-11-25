@@ -19,6 +19,16 @@ interface VendorActionsState {
   addTaskModalShown: boolean;
 };
 
+/*
+ * VendorActions Component:
+ *
+ * Displays the action statuses for a single vendor in a responsive manner. In desktop mode this
+ * renders a table row with cells, in mobile mode it labels the widgets and renders them in flexbox
+ * to allow wrapping and using the vendor name as a title.
+ *
+ * Tasks can be added to the vendor using the Add Task modal which is preset to the boothId for the
+ * vendor specified.
+ */
 @inject('showStore') @observer
 export default class VendorActions extends React.Component<VendorActionsProps, VendorActionsState> {
   constructor(props: VendorActionsProps, state: VendorActionsState) {
@@ -39,7 +49,9 @@ export default class VendorActions extends React.Component<VendorActionsProps, V
       profitCenters,
       openStockForm
     } = this.props.vendorStatus;
-    const { nbAnsweredQuestions, nbSubmittedPowerBuys, nbSubmittedProfitCenters } = this.props.showStore;
+    const {
+      nbAnsweredQuestions, nbSubmittedPowerBuys, nbSubmittedProfitCenters,
+    } = this.props.showStore;
     const condensedView = this.props.condensed;
     const { addTaskModalShown } = this.state;
 
@@ -56,10 +68,16 @@ export default class VendorActions extends React.Component<VendorActionsProps, V
               {boothNum}
             </Button>
             <Visitation boothId={boothId} visitStatus={visit} mobile />
-            <NumericalProgress label='QU' completed={nbAnsweredQuestions(boothId)} total={questions.length}/>
-            <NumericalProgress label='PB' completed={nbSubmittedPowerBuys(boothId)} total={powerBuys.length}/>
-            <NumericalProgress label='PC' completed={nbSubmittedProfitCenters(boothId)} total={profitCenters.length}/>
-            <OpenStock boothId={boothId} formStatus={openStockForm} labeled={true}/>
+            <NumericalProgress label='QU'
+                               completed={nbAnsweredQuestions(boothId)}
+                               total={questions.length} />
+            <NumericalProgress label='PB'
+                               completed={nbSubmittedPowerBuys(boothId)}
+                               total={powerBuys.length} />
+            <NumericalProgress label='PC'
+                               completed={nbSubmittedProfitCenters(boothId)}
+                               total={profitCenters.length} />
+            <OpenStock boothId={boothId} formStatus={openStockForm} labeled={true} />
           </div>
           <Divider />
         </div>
@@ -77,11 +95,20 @@ export default class VendorActions extends React.Component<VendorActionsProps, V
             </Button>
           </Table.Cell>
           <Table.Cell>{vendor}</Table.Cell>
-          <Table.Cell><Visitation boothId={boothId} visitStatus={visit}/></Table.Cell>
-          <Table.Cell><NumericalProgress completed={nbAnsweredQuestions(boothId)} total={questions.length}/></Table.Cell>
-          <Table.Cell><NumericalProgress completed={nbSubmittedPowerBuys(boothId)} total={powerBuys.length}/></Table.Cell>
-          <Table.Cell><NumericalProgress completed={nbSubmittedProfitCenters(boothId)} total={profitCenters.length}/></Table.Cell>
-          <Table.Cell><OpenStock boothId={boothId} formStatus={openStockForm} labeled={false}/></Table.Cell>
+          <Table.Cell><Visitation boothId={boothId} visitStatus={visit} /></Table.Cell>
+          <Table.Cell><NumericalProgress completed={nbAnsweredQuestions(boothId)}
+                                         total={questions.length} />
+          </Table.Cell>
+          <Table.Cell><NumericalProgress completed={nbSubmittedPowerBuys(boothId)}
+                                         total={powerBuys.length} />
+          </Table.Cell>
+          <Table.Cell><NumericalProgress completed={nbSubmittedProfitCenters(boothId)}
+                                         total={profitCenters.length} />
+          </Table.Cell>
+          <Table.Cell><OpenStock boothId={boothId}
+                                 formStatus={openStockForm}
+                                 labeled={false} />
+          </Table.Cell>
         </Table.Row>
       );
     }

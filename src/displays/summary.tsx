@@ -13,6 +13,14 @@ interface TaskListProps {
   showStore?: any;
 };
 
+/*
+ * Contents of the Task Summary tab. This is a responsive component: in desktop mode it will show
+ * a table with booth number, vendor name, visit, question, power buy, profit center, and open stock
+ * form submission status for any vendor with at least one of the above actions assigned. In mobile
+ * mode, the table is taken out (because Semantic UI will stack all the contents making it difficult
+ * to actually understand what components are representing) and replaced with labeled versions of
+ * the widgets laid out using flexbox.
+ */
 @inject('showStore') @observer
 export default class Summary extends React.Component<TaskListProps> {
   render() {
@@ -53,7 +61,9 @@ export default class Summary extends React.Component<TaskListProps> {
               <Table.HeaderCell className='BCItasksum simpleStyle'>Questions</Table.HeaderCell>
               <Table.HeaderCell className='BCItasksum simpleStyle'>Power Buy</Table.HeaderCell>
               <Table.HeaderCell className='BCItasksum simpleStyle'>Profit Center</Table.HeaderCell>
-              <Table.HeaderCell className='BCItasksum openStockStyle'>Open Stock Form</Table.HeaderCell>
+              <Table.HeaderCell className='BCItasksum openStockStyle'>
+                Open Stock Form
+              </Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -68,14 +78,19 @@ export default class Summary extends React.Component<TaskListProps> {
   }
 
   private vendorCompleted = (vendor: IVendorStatus): boolean => {
+    const {
+      nbAnsweredQuestions,
+      nbSubmittedPowerBuys,
+      nbSubmittedProfitCenters,
+    } = this.props.showStore;
     return (
       (vendor.visit !== VendorVisit.NOT_VISITED && vendor.visit !== VendorVisit.NEED_REVISIT) &&
       (vendor.openStockForm !== OpenStockForm.PICK_UP &&
        vendor.openStockForm !== OpenStockForm.RETRIEVED &&
        vendor.openStockForm !== OpenStockForm.FILLED_IN) &&
-      (this.props.showStore.nbAnsweredQuestions(vendor.boothId) === vendor.questions.length) &&
-      (this.props.showStore.nbSubmittedPowerBuys(vendor.boothId) === vendor.powerBuys.length) &&
-      (this.props.showStore.nbSubmittedProfitCenters(vendor.boothId) === vendor.profitCenters.length)
+      (nbAnsweredQuestions(vendor.boothId) === vendor.questions.length) &&
+      (nbSubmittedPowerBuys(vendor.boothId) === vendor.powerBuys.length) &&
+      (nbSubmittedProfitCenters(vendor.boothId) === vendor.profitCenters.length)
     );
   }
 }
