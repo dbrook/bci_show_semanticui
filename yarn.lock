@@ -4530,6 +4530,15 @@ fs-extra@^10.0.0:
     jsonfile "^6.0.1"
     universalify "^2.0.0"
 
+fs-extra@^4.0.2:
+  version "4.0.3"
+  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-4.0.3.tgz#0d852122e5bc5beb453fb028e9c0c9bf36340c94"
+  integrity sha512-q6rbdDd1o2mAnQreO7YADIxf/Whx4AHBiRf6d+/cVT8h44ss+lHgxf1FemcqDnQt9X3ct4McHr+JMGlYSsK7Cg==
+  dependencies:
+    graceful-fs "^4.1.2"
+    jsonfile "^4.0.0"
+    universalify "^0.1.0"
+
 fs-extra@^7.0.1:
   version "7.0.1"
   resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-7.0.1.tgz#4f189c44aa123b895f722804f55ea23eadc348e9"
@@ -7932,11 +7941,12 @@ selfsigned@^2.1.1:
   dependencies:
     node-forge "^1"
 
-semantic-ui-css@^2.4.1:
-  version "2.4.1"
-  resolved "https://registry.yarnpkg.com/semantic-ui-css/-/semantic-ui-css-2.4.1.tgz#f5aea39fafb787cbd905ec724272a3f9cba9004a"
-  integrity sha512-Pkp0p9oWOxlH0kODx7qFpIRYpK1T4WJOO4lNnpNPOoWKCrYsfHqYSKgk5fHfQtnWnsAKy7nLJMW02bgDWWFZFg==
+semantic-ui-offline@^2.4.1-1:
+  version "2.4.1-1"
+  resolved "https://registry.yarnpkg.com/semantic-ui-offline/-/semantic-ui-offline-2.4.1-1.tgz#c0333bed3bf84280998e2d967b9984c04150b388"
+  integrity sha512-ONx52etmkMax15ur+n2Hi8spC6VfhwlHmeownyq2I3vQTzoJzU9+rTq/fMzjohFpf3YmLdymaXloXH6+/1ycYA==
   dependencies:
+    fs-extra "^4.0.2"
     jquery x.*
 
 semantic-ui-react@^2.1.3:

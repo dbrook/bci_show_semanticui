@@ -3,7 +3,7 @@ import { RefObject } from 'react';
 import './App.css';
 
 // Styling
-import 'semantic-ui-css/semantic.css';
+import 'semantic-ui-offline/semantic.css';
 
 import { Message } from 'semantic-ui-react';
 

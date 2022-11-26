@@ -25,7 +25,7 @@ export default class AboutPanel extends React.Component {
         <Header color='violet' as='h1'>BCI Trade Show Tracker</Header>
         <p><b>Version {applicationVersion}</b></p>
         <p>
-          A simple vendor interaction tracking application for Dealers attending BCI Trade Shows.
+          A simple vendor interaction tracking application for dealers attending BCI Trade Shows.
         </p>
         <p>Copyright © {copyrightYearRange}, Daniel Brook</p>
         <p>Not affiliated with Bradley Caldwell, Inc.</p>
