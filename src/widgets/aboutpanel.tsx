@@ -35,6 +35,10 @@ export default class AboutPanel extends React.Component {
         <p>User Interface Controls: {uiControls}</p>
         <p>State Management: {stateManagement}</p>
         <p>IndexedDB Interface: {database}</p>
+        <Header color='red' as='h3'>Attribution</Header>
+        <p><a href="https://www.flaticon.com/free-icons/trade-show"
+              title="trade show icons"
+              target="_blank">Trade show icons created by Flat Icons - Flaticon</a></p>
       </>
     );
   }

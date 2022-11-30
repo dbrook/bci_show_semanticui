@@ -8,9 +8,9 @@
       "type": "image/x-icon"
     },
     {
-      "src": "bci-logo.png",
+      "src": "trade-show.png",
       "type": "image/png",
-      "sizes": "308x140"
+      "sizes": "256x256"
     }
   ],
   "start_url": ".",

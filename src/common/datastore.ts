@@ -152,7 +152,7 @@ class TradeShowData {
   };
 
   @action public loadAvailableShows = (): Promise<string[]> => {
-    return fetch('show_vendors/all_shows.json')
+    return fetch('show_vendors/all_shows.json', { cache: "no-store" })
       .then((response) => response.json())
       .then((responseJson) => {
         return responseJson.shows;
@@ -164,7 +164,7 @@ class TradeShowData {
       // Look for local show database first, otherwise pull from server
       if (nbVendorsInDb === 0) {
         console.log('Loading vendors from the server!');
-        fetch(`show_vendors/${this.tradeShowId}.json`)
+        fetch(`show_vendors/${this.tradeShowId}.json`, { cache: "no-store" })
           .then((response) => response.json())
           .then((responseJson) => {
             runInAction(() => {
