@@ -34,34 +34,16 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
   private fillColorSubmitted = 'rgba(33, 186, 69, 1)';
   private fillColorAbandoned = 'rgba(255, 201, 232, 1)';
 
-  componentDidMount() {
+  render() {
     const {
       tradeShowId,
+      floorPlanWidthPx,
+      floorPlanHeightPx,
       boothAdmins,
       boothVendors,
       boothActivities,
       vendorsWithActions,
     } = this.props.showStore;
-
-    if (tradeShowId === undefined) {
-      return;
-    }
-
-    const ctx = this.myCanvasRef.current!.getContext('2d');
-    if (ctx !== null) {
-      ctx.font = this.boothNumberFont;
-      this.drawBooths(ctx, boothVendors, this.lineColorVendorBooth, this.lineColorDoNotVisit);
-      this.drawBooths(ctx,
-                      boothActivities,
-                      this.lineColorActivityBooth,
-                      this.fillColorActivityBooth);
-      this.drawBooths(ctx, boothAdmins, this.lineColorAdminBooth, this.fillColorAdminBooth);
-      this.drawBoothStatus(ctx, boothVendors, vendorsWithActions);
-    }
-  }
-
-  render() {
-    const { tradeShowId, floorPlanWidthPx, floorPlanHeightPx } = this.props.showStore;
 
     if (tradeShowId === undefined) {
       return (
@@ -71,17 +53,30 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
       );
     }
 
+    let mapStyle = {
+      width: floorPlanWidthPx,
+      height: floorPlanHeightPx,
+      position: "relative" as "relative",
+    };
+
+    let boothDivs = this.drawBooths(boothVendors, this.lineColorVendorBooth, vendorsWithActions);
+    let activityDivs = this.drawBooths(boothActivities, this.lineColorActivityBooth, vendorsWithActions);
+    let adminDivs = this.drawBooths(boothAdmins, this.lineColorAdminBooth, vendorsWithActions);
+
     return (
       <div className='tabInnerLayout'>
-        <canvas ref={this.myCanvasRef} width={floorPlanWidthPx} height={floorPlanHeightPx} />
+        <div style={mapStyle}>
+          {boothDivs}
+          {activityDivs}
+          {adminDivs}
+        </div>
       </div>
     );
   }
 
-  private drawBooths = (ctx: CanvasRenderingContext2D,
-                        booths: Map<string, IVendorDirectory>,
-                        lineStyle: string,
-                        fillStyle: string) => {
+  private drawBooths = (booths: Map<string, IVendorDirectory>,
+                        outlineColor: string,
+                        vendStat: Map<string, IVendorStatus>) => {
     const vendorDrawCoords = Array.from(booths, ([key, value]) => {
       return {
         boothNum: value.boothNum,
@@ -89,23 +84,70 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
         y: value.y1,
         width: value.width,
         height: value.height,
+        boothId: key,
       };
     });
 
-    ctx.strokeStyle = lineStyle;
-    ctx.lineWidth = 1;
     let drawnBooth: Set<number> = new Set();
+    let divs = [];
     for (const vend of vendorDrawCoords) {
       // Don't repeatedly draw into the same booth (multi-vendor booths)
+      // FIXME: we should draw the most in-need status if multi-vendor booth!
       if (!drawnBooth.has(vend.boothNum)) {
-        ctx.strokeRect(vend.x, vend.y, vend.width, vend.height);
-        ctx.fillStyle = fillStyle;
-        ctx.fillRect(vend.x + 1, vend.y + 1, vend.width - 2, vend.height - 2);
-        ctx.fillStyle = 'black';
-        ctx.fillText(`${vend.boothNum}`, vend.x + 8, vend.y + 18);
+        let bgColor = "";
+        let stat = vendStat.get(vend.boothId);
+        if (stat) {
+        switch (stat.openStockForm) {
+          case OpenStockForm.DO_NOT_GET:
+            break;
+          case OpenStockForm.PICK_UP:
+            bgColor = this.fillColorPickUp;
+            break;
+          case OpenStockForm.RETRIEVED:
+            bgColor = this.fillColorRetrieved;
+            break;
+          case OpenStockForm.FILLED_IN:
+            bgColor = this.fillColorFilledIn;
+            break;
+          case OpenStockForm.SUBMITTED:
+            bgColor = this.fillColorSubmitted;
+            break;
+          case OpenStockForm.ABANDONED:
+            bgColor = this.fillColorAbandoned;
+            break;
+        }
+        }
+
+        let styleItem = {
+          position: "absolute" as "absolute",
+          top: vend.y,
+          left: vend.x,
+          width: vend.width,
+          height: vend.height,
+          borderWidth: "2px",
+          borderColor: outlineColor,
+          borderStyle: "solid",
+          backgroundColor: bgColor,
+          color: bgColor ? "white" : "black",
+//           boxShadow: bgColor ? "inset 0 0 0 5px " + bgColor : "",
+          display: "flex",
+          flexDirection: "column" as "column",
+          justifyContent: "center",
+        };
+
+        let itm = <div key={vend.boothNum} style={styleItem}>{vend.boothNum}</div>;
+        divs.push(itm);
         drawnBooth.add(vend.boothNum);
+
+//         ctx.strokeRect(vend.x, vend.y, vend.width, vend.height);
+//         ctx.fillStyle = fillStyle;
+//         ctx.fillRect(vend.x + 1, vend.y + 1, vend.width - 2, vend.height - 2);
+//         ctx.fillStyle = 'black';
+//         ctx.fillText(`${vend.boothNum}`, vend.x + 8, vend.y + 18);
+//         drawnBooth.add(vend.boothNum);
       }
     }
+    return divs;
   };
 
   private drawBoothStatus = (ctx: CanvasRenderingContext2D,
