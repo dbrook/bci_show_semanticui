@@ -2,11 +2,20 @@ import React from 'react';
 
 import { inject, observer } from 'mobx-react';
 
-import { VendorVisit, OpenStockForm } from '../types/enums';
+import { OpenStockForm } from '../types/enums';
 import { IVendorDirectory, IVendorStatus } from '../types/interfaces';
 
 interface FloorPlanProps {
   showStore?: any;
+}
+
+interface BoothOverall {
+  x: number,
+  y: number,
+  width: number,
+  height: number,
+  openQuestionCount: number | null;
+  openStock: OpenStockForm | null;
 }
 
 /*
@@ -16,11 +25,10 @@ interface FloorPlanProps {
  */
 @inject('showStore') @observer
 export default class FloorPlan extends React.Component<FloorPlanProps> {
-  private myCanvasRef = React.createRef<HTMLCanvasElement>();
   private visitBorderWidth = 4;
   private boothNumberFont = '11px Lato';
-  private lineColorActivityBooth = 'rgba(175, 175, 175, 1)';
-  private fillColorActivityBooth = 'rgba(175, 175, 175, 0.10)';
+  private lineColorActBooth = 'rgba(175, 175, 175, 1)';
+  private fillColorActBooth = 'rgba(175, 175, 175, 0.10)';
   private lineColorVendorBooth = 'rgba(0, 0, 0, 1)';
   private lineColorAdminBooth = 'rgba(100, 100, 255, 1)';
   private fillColorAdminBooth = 'rgba(100, 100, 255, 0.10)';
@@ -59,166 +67,129 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
       position: "relative" as "relative",
     };
 
-    let boothDivs = this.drawBooths(boothVendors, this.lineColorVendorBooth, vendorsWithActions);
-    let activityDivs = this.drawBooths(boothActivities, this.lineColorActivityBooth, vendorsWithActions);
+    let activDivs = this.drawBooths(boothActivities, this.lineColorActBooth, vendorsWithActions);
     let adminDivs = this.drawBooths(boothAdmins, this.lineColorAdminBooth, vendorsWithActions);
+    let boothDivs = this.drawBooths(boothVendors, this.lineColorVendorBooth, vendorsWithActions);
 
     return (
       <div className='tabInnerLayout'>
         <div style={mapStyle}>
-          {boothDivs}
-          {activityDivs}
-          {adminDivs}
+          {boothDivs}{activDivs}{adminDivs}
         </div>
       </div>
     );
   }
 
+  private reduceBooths = (booths: Map<string, IVendorDirectory>): Map<number, BoothOverall> => {
+    // Some vendors share a booth, which is kind of impossible to draw in a sane way, so every
+    // vendor will be reduced into a booth and its "most pressing" condition of both open stock
+    // form status and open question status will be saved for rendering.
+    let overallBoothStatuses = new Map<number, BoothOverall>();
+
+    booths.forEach((booth, boothId) => {
+      let boothAction = this.props.showStore.vendorsWithActions.get(boothId);
+
+      // Current Vendor Details
+      let curQuestionCount = null;
+      let curOpenStock = null;
+      if (boothAction) {
+        curQuestionCount = boothAction.questions.length -
+                           this.props.showStore.nbAnsweredQuestions(boothId);
+        curOpenStock = (boothAction.openStockForm === OpenStockForm.DO_NOT_GET ||
+                        boothAction.openStockForm === OpenStockForm.ABANDONED    ) ?
+                       null : boothAction.openStockForm;
+      }
+
+      // Most-restrictive known booth status so far
+      let knownBoothItem = overallBoothStatuses.get(booth.boothNum);
+      let knownQuestionCount = null;
+      let knownOpenStock = null;
+      if (knownBoothItem) {
+        knownQuestionCount = knownBoothItem.openQuestionCount;
+        knownOpenStock = knownBoothItem.openStock;
+      }
+
+      // See if the current vendor has more outstanding questions than the others
+      if (curQuestionCount !== null) {
+        if (knownQuestionCount !== null) {
+          knownQuestionCount = curQuestionCount > knownQuestionCount ? curQuestionCount : knownQuestionCount;
+        } else {
+          knownQuestionCount = curQuestionCount;
+        }
+      }
+
+      // See if the open stock form status is less-complete than the previously known one
+      // Will skip consideration of abandoned and do-not-collect statuses
+      if (curOpenStock !== null) {
+        if (knownOpenStock !== null) {
+          knownOpenStock = curOpenStock < knownOpenStock ? curOpenStock : knownOpenStock;
+        } else {
+          knownOpenStock = curOpenStock
+        }
+      }
+
+      let tmpBooth: BoothOverall = {
+        x: booth.x1,
+        y: booth.y1,
+        width: booth.width,
+        height: booth.height,
+        openQuestionCount: knownQuestionCount,
+        openStock: knownOpenStock,
+      };
+
+      overallBoothStatuses.set(booth.boothNum, tmpBooth);
+    });
+
+    return overallBoothStatuses;
+  }
+
   private drawBooths = (booths: Map<string, IVendorDirectory>,
                         outlineColor: string,
                         vendStat: Map<string, IVendorStatus>) => {
-    const vendorDrawCoords = Array.from(booths, ([key, value]) => {
-      return {
-        boothNum: value.boothNum,
-        x: value.x1,
-        y: value.y1,
-        width: value.width,
-        height: value.height,
-        boothId: key,
-      };
-    });
-
-    let drawnBooth: Set<number> = new Set();
-    let divs = [];
-    for (const vend of vendorDrawCoords) {
-      // Don't repeatedly draw into the same booth (multi-vendor booths)
-      // FIXME: we should draw the most in-need status if multi-vendor booth!
-      if (!drawnBooth.has(vend.boothNum)) {
-        let bgColor = "";
-        let stat = vendStat.get(vend.boothId);
-        if (stat) {
-        switch (stat.openStockForm) {
-          case OpenStockForm.DO_NOT_GET:
-            break;
-          case OpenStockForm.PICK_UP:
-            bgColor = this.fillColorPickUp;
-            break;
-          case OpenStockForm.RETRIEVED:
-            bgColor = this.fillColorRetrieved;
-            break;
-          case OpenStockForm.FILLED_IN:
-            bgColor = this.fillColorFilledIn;
-            break;
-          case OpenStockForm.SUBMITTED:
-            bgColor = this.fillColorSubmitted;
-            break;
-          case OpenStockForm.ABANDONED:
-            bgColor = this.fillColorAbandoned;
-            break;
-        }
-        }
-
-        let styleItem = {
-          position: "absolute" as "absolute",
-          top: vend.y,
-          left: vend.x,
-          width: vend.width,
-          height: vend.height,
-          borderWidth: "2px",
-          borderColor: outlineColor,
-          borderStyle: "solid",
-          backgroundColor: bgColor,
-          color: bgColor ? "white" : "black",
-//           boxShadow: bgColor ? "inset 0 0 0 5px " + bgColor : "",
-          display: "flex",
-          flexDirection: "column" as "column",
-          justifyContent: "center",
-        };
-
-        let itm = <div key={vend.boothNum} style={styleItem}>{vend.boothNum}</div>;
-        divs.push(itm);
-        drawnBooth.add(vend.boothNum);
-
-//         ctx.strokeRect(vend.x, vend.y, vend.width, vend.height);
-//         ctx.fillStyle = fillStyle;
-//         ctx.fillRect(vend.x + 1, vend.y + 1, vend.width - 2, vend.height - 2);
-//         ctx.fillStyle = 'black';
-//         ctx.fillText(`${vend.boothNum}`, vend.x + 8, vend.y + 18);
-//         drawnBooth.add(vend.boothNum);
-      }
-    }
-    return divs;
-  };
-
-  private drawBoothStatus = (ctx: CanvasRenderingContext2D,
-                             booths: Map<string, IVendorDirectory>,
-                             vendStat: Map<string, IVendorStatus>) => {
-    const arrayVendorStat = Array.from(vendStat, ([key, value]) => {
-      return {
-        visit: value.visit,
-        openStock: value.openStockForm,
-        boothNum: value.boothNum,
-        //@ts-ignore
-        x1: booths.get(value.boothId).x1 + (this.visitBorderWidth - 1),
-        //@ts-ignore
-        y1: booths.get(value.boothId).y1 + (this.visitBorderWidth - 1),
-        //@ts-ignore
-        width: booths.get(value.boothId).width - (this.visitBorderWidth - 1) * 2,
-        //@ts-ignore
-        height: booths.get(value.boothId).height - (this.visitBorderWidth - 1) * 2,
-      };
-    });
-
-    ctx.lineWidth = this.visitBorderWidth;
-    for (const stat of arrayVendorStat) {
-      switch (stat.visit) {
-        case VendorVisit.DO_NOT_VISIT:
-          ctx.strokeStyle = this.lineColorDoNotVisit;
-          break;
-        case VendorVisit.NOT_VISITED:
-          ctx.strokeStyle = this.lineColorNotVisited;
-          break;
-        case VendorVisit.VISITED:
-          ctx.strokeStyle = this.lineColorVisited;
-          break;
-        case VendorVisit.NEED_REVISIT:
-          ctx.strokeStyle = this.lineColorRevisit;
-          break;
-      }
-
-      let redrawBoothNum: boolean = true;
-      let boothNumColor: string = 'white';
-      switch (stat.openStock) {
+    let divs: React.ReactElement[] = [];
+    const vendorDrawCoords = this.reduceBooths(booths);
+    vendorDrawCoords.forEach((vend, boothNum) => {
+      let bgColor = "";
+      switch (vend.openStock) {
         case OpenStockForm.DO_NOT_GET:
-          redrawBoothNum = false;
-          ctx.fillStyle = this.lineColorDoNotVisit;  // Transparency
           break;
         case OpenStockForm.PICK_UP:
-          ctx.fillStyle = this.fillColorPickUp;
+          bgColor = this.fillColorPickUp;
           break;
         case OpenStockForm.RETRIEVED:
-          ctx.fillStyle = this.fillColorRetrieved;
+          bgColor = this.fillColorRetrieved;
           break;
         case OpenStockForm.FILLED_IN:
-          ctx.fillStyle = this.fillColorFilledIn;
+          bgColor = this.fillColorFilledIn;
           break;
         case OpenStockForm.SUBMITTED:
-          ctx.fillStyle = this.fillColorSubmitted;
+          bgColor = this.fillColorSubmitted;
           break;
         case OpenStockForm.ABANDONED:
-          ctx.fillStyle = this.fillColorAbandoned;
-          boothNumColor = 'black';
+          bgColor = this.fillColorAbandoned;
           break;
       }
 
-      ctx.strokeRect(stat.x1, stat.y1, stat.width, stat.height);
-      ctx.fillRect(stat.x1 + 2, stat.y1 + 2, stat.width - 4, stat.height - 4);
-      if (redrawBoothNum) {
-        ctx.fillStyle = boothNumColor;
-        ctx.fillText(`${stat.boothNum}`, stat.x1 + 5, stat.y1 + 14);
-        // For Chromium, set the fill style back to black explicitly or else fonts are all white
-        ctx.fillStyle = 'black';
-      }
-    }
+      let styleItem = {
+        position: "absolute" as "absolute",
+        top: vend.y,
+        left: vend.x,
+        width: vend.width,
+        height: vend.height,
+        borderWidth: "2px",
+        borderColor: outlineColor,
+        borderStyle: "solid",
+        backgroundColor: bgColor,
+        color: bgColor ? "white" : "black",
+        boxShadow: (vend.openQuestionCount && vend.openQuestionCount > 0) ? "inset 0 0 0 5px red" : "",
+        display: "flex",
+        flexDirection: "column" as "column",
+        justifyContent: "center",
+      };
+
+      let itm = <div key={boothNum} style={styleItem}>{boothNum}</div>;
+      divs.push(itm);
+    });
+    return divs;
   };
 }
