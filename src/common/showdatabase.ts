@@ -8,6 +8,7 @@ import {
   DBQuestionAnswer,
   ISubmittableItem,
   DBSubmittableItem,
+  DBIndexedString,
 } from '../types/interfaces';
 
 /*
@@ -27,6 +28,7 @@ export default class ShowDatabase extends Dexie {
   questions!: Dexie.Table<DBQuestionAnswer>;
   pwrBuys!: Dexie.Table<DBSubmittableItem>;
   prfCtrs!: Dexie.Table<DBSubmittableItem>;
+  vndNote!: Dexie.Table<DBIndexedString>;
 
   constructor(showId: string) {
     super(showId);
@@ -35,10 +37,11 @@ export default class ShowDatabase extends Dexie {
       activities: 'boothId, boothNum, vendor, x1, y1, width, height',
       admins: 'boothId, boothNum, vendor, x1, y1, width, height',
       mapDimensions: 'parameter, value',
-      actions: 'boothId, boothNum, vendor, visit, questions, powerBuys, profitCenters, openStockForm',
+      actions: 'boothId, boothNum, vendor, visit, questions, powerBuys, profitCenters, openStockForm, vndNote',
       questions: 'qIdx, question, answer',
       pwrBuys: 'itmIdx, itemId, submitted',
       prfCtrs: 'itmIdx, itemId, submitted',
+      vndNote: 'itmIdx, note',
     });
   }
 
@@ -157,6 +160,7 @@ export default class ShowDatabase extends Dexie {
             questions: item.questions,
             powerBuys: item.powerBuys,
             profitCenters: item.profitCenters,
+            vendorNotes: item.vendorNotes,
             openStockForm: item.openStockForm,
           });
         }
@@ -245,6 +249,32 @@ export default class ShowDatabase extends Dexie {
   public clearPCs = () => {
     this.prfCtrs.clear();
   };
+
+
+  public putVN = (vnIdx: number, vn: string): Promise<number> => {
+    return this.vndNote.put({ itmIdx: vnIdx, note: vn });
+  };
+
+  public deleteVN = (vnIdx: number) => {
+    this.vndNote.delete(vnIdx);
+  };
+
+  public getVNs = (): Promise<string[]> => {
+    return new Promise((resolve, reject) => {
+      this.vndNote.toArray().then((srcArr) => {
+        let tmpArr: string[] = [];
+        for (const item of srcArr) {
+          tmpArr[item.itmIdx] = item.note;
+        }
+        resolve(tmpArr);
+      });
+    });
+  };
+
+  public clearVNs = () => {
+    this.vndNote.clear();
+  };
+
 
   public deleteDB = (dbName: string) => {
     Dexie.delete(dbName);

@@ -33,6 +33,7 @@ export interface DataBackup {
   vendorQuestions: IQuestionAnswer[];
   powerBuys: ISubmittableItem[];
   profitCenters: ISubmittableItem[];
+  vendorNotes: string[];
 };
 
 
@@ -58,6 +59,11 @@ export interface DBSubmittableItem extends ISubmittableItem {
   itmIdx: number;
 };
 
+export interface DBIndexedString {
+  itmIdx: number;
+  note: string;
+};
+
 export interface IVendorStatus {
   boothId: string;               // Unique Booth Identifier (several vendors may share a booth)
   boothNum: number;              // The actual booth number of the vendor
@@ -66,5 +72,6 @@ export interface IVendorStatus {
   questions: number[];           // List of question IDs relevant to this vendor
   powerBuys: number[];           // List of Power Buys relevant to this vendor
   profitCenters: number[];       // List of Profit Centers relevant to this vendor
+  vendorNotes: number[];         // List of notes relevant to this vendor
   openStockForm: OpenStockForm;  // Open Stock Form completion progress (for this vendor)
 };

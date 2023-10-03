@@ -55,6 +55,9 @@ class TradeShowData {
   // Profit Centers Data
   @observable public profitCenters: Array<ISubmittableItem|undefined>;
 
+  // Notes for the vendors
+  @observable public vendorNotes: Array<string|undefined>;
+
   // Instance of the Dexie IndexedDB wrapper
   private db: ShowDatabase;
 
@@ -67,6 +70,7 @@ class TradeShowData {
     this.vendorQuestions = [];
     this.powerBuys = [];
     this.profitCenters = [];
+    this.vendorNotes = [];
 
     // DO NOT REMOVE! This is needed in MobX 6+ to make observers actually respect the decorators
     // More information @ https://mobx.js.org/enabling-decorators.html
@@ -82,6 +86,7 @@ class TradeShowData {
       this.loadQuestionsData();
       this.loadPowerBuys();
       this.loadProfitCenters();
+      this.loadVendorNotes();
     } else {
       this.db = new ShowDatabase('');
     }
@@ -148,6 +153,8 @@ class TradeShowData {
           this.db.putPC(index, elem);
         }
       });
+
+      // Import the notes
     });
   };
 
@@ -219,6 +226,7 @@ class TradeShowData {
       this.vendorQuestions = [];
       this.powerBuys = [];
       this.profitCenters = [];
+      this.vendorNotes = [];
       this.vendorsWithActions.clear();
       if (eraseBoothVendors) {
         this.boothVendors = new Map();
@@ -249,6 +257,7 @@ class TradeShowData {
       this.loadQuestionsData();
       this.loadPowerBuys();
       this.loadProfitCenters();
+      this.loadVendorNotes();
     }
   };
 
@@ -284,6 +293,14 @@ class TradeShowData {
     });
   };
 
+  private loadVendorNotes = () => {
+    this.db.getVNs().then((vnArray) => {
+      runInAction(() => {
+        this.vendorNotes = vnArray;
+      });
+    });
+  };
+
   @action public nbVendorActions = () => {
     return this.vendorsWithActions.size;
   }
@@ -298,6 +315,7 @@ class TradeShowData {
         questions: [],
         powerBuys: [],
         profitCenters: [],
+        vendorNotes: [],
         openStockForm: OpenStockForm.DO_NOT_GET,
       });
     }
@@ -311,6 +329,7 @@ class TradeShowData {
           booth.questions.length === 0 &&
           booth.powerBuys.length === 0 &&
           booth.profitCenters.length === 0 &&
+          booth.vendorNotes.length === 0 &&
           booth.openStockForm === OpenStockForm.DO_NOT_GET) {
         this.vendorsWithActions.delete(boothId);
         this.db.deleteVendorAction(boothId);
@@ -589,6 +608,64 @@ class TradeShowData {
       }
     }
     return submitted;
+  };
+
+
+  /*
+   * Vendor Notes Maintenance
+   */
+  @action nbVendorNotes = (boothId: string): number => {
+    let nbDefined = 0;
+    for (const vn of this.vendorsWithActions.get(boothId).vendorNotes) {
+      if (vn !== undefined) {
+        nbDefined++;
+      }
+    }
+    return nbDefined;
+  }
+
+  @action public addVendorNote = (boothId: string, note: string) => {
+    const nextNoteIdx = this.vendorNotes.indexOf(undefined);
+    const newNoteIdx = nextNoteIdx !== -1 ? nextNoteIdx : this.vendorNotes.length;
+    this.db.putVN(newNoteIdx, note).then(() => {
+      runInAction(() => {
+        this.initBoothIfNeeded(boothId);
+        if (nextNoteIdx !== -1) {
+          this.vendorNotes[nextNoteIdx] = note;
+          this.vendorsWithActions.get(boothId).vendorNotes.push(nextNoteIdx);
+        } else {
+          this.vendorNotes.push(note);
+          this.vendorsWithActions.get(boothId).vendorNotes.push(this.vendorNotes.length - 1);
+        }
+      });
+      this.saveActionToDatabase(boothId);
+    });
+  };
+
+  @action public removeVendorNote = (vnId: number) => {
+    if (vnId >= 0 && vnId < this.vendorNotes.length) {
+      let boothIdFound: string = '';
+      this.vendorsWithActions.forEach((value, key) => {
+        const idxFound = this.vendorsWithActions.get(key).vendorNotes.indexOf(vnId);
+        if (idxFound !== -1) {
+          this.vendorsWithActions.get(key).vendorNotes.splice(idxFound, 1);
+          boothIdFound = key;
+        }
+      });
+      this.vendorNotes[vnId] = undefined;
+      this.db.deleteVN(vnId);
+      this.cleanupBoothAuto(boothIdFound);
+    }
+  }
+
+  @action public nbVendorNotesForBoothId = (boothId: string): number => {
+    let notes = 0;
+    for (const noteId of this.vendorsWithActions.get(boothId).vendorNotes) {
+      if (this.vendorNotes[noteId] !== undefined) {
+        notes++;
+      }
+    }
+    return notes;
   };
 
 

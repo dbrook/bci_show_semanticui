@@ -57,7 +57,6 @@ export default class Summary extends React.Component<TaskListProps> {
             <Table.Row>
               <Table.HeaderCell className='BCItasksum boothStyle'>Booth</Table.HeaderCell>
               <Table.HeaderCell>Vendor</Table.HeaderCell>
-              <Table.HeaderCell className='BCItasksum visitStyle'>Visit</Table.HeaderCell>
               <Table.HeaderCell className='BCItasksum simpleStyle'>Questions</Table.HeaderCell>
               <Table.HeaderCell className='BCItasksum simpleStyle'>Power Buy</Table.HeaderCell>
               <Table.HeaderCell className='BCItasksum simpleStyle'>Profit Center</Table.HeaderCell>

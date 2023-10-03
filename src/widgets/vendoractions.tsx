@@ -1,12 +1,11 @@
 import React from 'react';
-import { Button, Divider, Header, Table } from 'semantic-ui-react';
+import { Button, Divider, Icon, Header, Table } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
 import { IVendorStatus } from '../types/interfaces';
 import TaskModal from '../modals/taskmodal';
 import NumericalProgress from './numericalprogress';
-import Visitation from './visitation';
 import OpenStock from './openstock';
 
 interface VendorActionsProps {
@@ -43,17 +42,19 @@ export default class VendorActions extends React.Component<VendorActionsProps, V
       boothId,
       boothNum,
       vendor,
-      visit,
       questions,
       powerBuys,
       profitCenters,
+      vendorNotes,
       openStockForm
     } = this.props.vendorStatus;
     const {
-      nbAnsweredQuestions, nbSubmittedPowerBuys, nbSubmittedProfitCenters,
+      nbAnsweredQuestions, nbSubmittedPowerBuys, nbSubmittedProfitCenters
     } = this.props.showStore;
     const condensedView = this.props.condensed;
     const { addTaskModalShown } = this.state;
+
+    let noteIcon = vendorNotes.length > 0 ? <Icon size="large" name="sticky note outline"/> : null;
 
     if (condensedView) {
       return (
@@ -67,7 +68,7 @@ export default class VendorActions extends React.Component<VendorActionsProps, V
             <Button primary basic onClick={() => this.showAddTaskModal(true)}>
               {boothNum}
             </Button>
-            <Visitation boothId={boothId} visitStatus={visit} mobile />
+            {noteIcon}
             <NumericalProgress label='QU'
                                completed={nbAnsweredQuestions(boothId)}
                                total={questions.length} />
@@ -89,13 +90,13 @@ export default class VendorActions extends React.Component<VendorActionsProps, V
                      closeHander={this.showAddTaskModal}
                      presetBoothId={boothId}
                      presetVendorName={vendor} />
-          <Table.Cell textAlign='center'>
+          <Table.Cell textAlign='left'>
             <Button primary basic onClick={() => this.showAddTaskModal(true)}>
               {boothNum}
             </Button>
+            {noteIcon}
           </Table.Cell>
           <Table.Cell>{vendor}</Table.Cell>
-          <Table.Cell><Visitation boothId={boothId} visitStatus={visit} /></Table.Cell>
           <Table.Cell><NumericalProgress completed={nbAnsweredQuestions(boothId)}
                                          total={questions.length} />
           </Table.Cell>

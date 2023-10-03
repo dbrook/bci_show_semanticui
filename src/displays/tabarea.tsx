@@ -35,21 +35,11 @@ export default class TabArea extends React.Component<TabAreaProps, TabAreaState>
     const { activeTab } = this.state;
     const panes = [
       {
-        menuItem: 'Vendors',
+        menuItem: 'Booths',
         render: () => {
           return (
             <Tab.Pane attached='top' className='innerTabStyle'>
               <VendorList alphaSort={this.props.alphaSort} />
-            </Tab.Pane>
-          );
-        },
-      },
-      {
-        menuItem: 'Map',
-        render: () => {
-          return (
-            <Tab.Pane attached='top' className='innerTabStyle'>
-              <FloorPlan />
             </Tab.Pane>
           );
         },
@@ -65,7 +55,26 @@ export default class TabArea extends React.Component<TabAreaProps, TabAreaState>
         },
       },
       {
-        menuItem: 'Tasks',
+        menuItem: 'Map',
+        render: () => {
+          return (
+            <Tab.Pane attached='top' className='innerTabStyle'>
+              <FloorPlan />
+            </Tab.Pane>
+          );
+        },
+      },
+      {
+        menuItem: 'Vendor',
+        render: () => {
+          return (
+            <Tab.Pane attached='top' className='innerTabStyle'>
+            </Tab.Pane>
+          );
+        },
+      },
+      {
+        menuItem: 'PB/PC',
         render: () => {
           return (
             <Tab.Pane attached='top' className='innerTabStyle'>

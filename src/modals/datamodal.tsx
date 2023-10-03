@@ -311,6 +311,7 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       boothAdmins,
       vendorsWithActions,
       vendorQuestions,
+      vendorNotes,
       powerBuys,
       profitCenters,
     } = this.props.showStore;
@@ -326,6 +327,7 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       vendorQuestions: toJS(vendorQuestions),
       powerBuys: toJS(powerBuys),
       profitCenters: toJS(profitCenters),
+      vendorNotes: toJS(vendorNotes),
     };
 
     this.setState({

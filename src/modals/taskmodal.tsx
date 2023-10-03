@@ -69,6 +69,7 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
 
     let entryField;
     switch (itemTypeToAdd) {
+      case 'NOTE':
       case 'QU':
         entryField = <Form.Group widths='equal'>
             <Form.Field>
@@ -94,7 +95,6 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
             </Form.Field>
           </Form.Group>;
         break;
-      case 'VI':
       default:
         entryField = null;
     }
@@ -119,9 +119,9 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
             <Form.Group widths='equal'>
               <Form.Field>
                 <Checkbox radio
-                          label='Visit'
-                          value='VI'
-                          checked={itemTypeToAdd === 'VI'}
+                          label='Note'
+                          value='NOTE'
+                          checked={itemTypeToAdd === 'NOTE'}
                           onChange={this.changeItemType} />
               </Form.Field>
               <Form.Field>
@@ -190,8 +190,8 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
       case 'PC':
         this.props.showStore.addProfitCenter(this.state.boothIdToAdd, this.state.inputValue);
         break;
-      case 'VI':
-        this.props.showStore.addVisit(this.state.boothIdToAdd);
+      case 'NOTE':
+        this.props.showStore.addVendorNote(this.state.boothIdToAdd, this.state.inputValue);
         break;
     }
 

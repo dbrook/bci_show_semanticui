@@ -27,24 +27,21 @@ Data Structure Changes:
 
 GUI Changes:
 -----------
-- Tasks Tab:
-    - Rename to "PB/PC"
-    - Remove Questions display
-- Summary Tab:
-    - Render Open Stock Form as a count like all others
-    - Remove "Visit" button
-    - Add a note icon where "Visit" used to be
-    - Clicking the Booth number button takes you to the dedicated Vendor Tab
 - Map Tab
-    - Switch to <div> style rendering
-    - Make clicking a <div> go to the Add Task Modal (or dedicated Tab opened to vendor)
-    - Outline color to be based on ... questions!
-- Remove Visit Widget(s)
-- Remove Visit Modal
+X   - Switch to <div> style rendering
+X   - Make clicking a <div> go to the Add Task Modal (or dedicated Tab opened to vendor)
+X   - Outline color to be based on ... questions!
+    - Make necessary change based off change to multiple open stocks
+- Summary Tab:
+X   - Remove "Visit" button
+X   - Add a note icon where "Visit" used to be
+    - Clicking the Booth number button takes you to the dedicated Vendor Tab
+    - Render Open Stock Form as a count like all others
+X Remove Visit Widget(s)
+X Remove Visit Modal
 - Add Task Modal:
-    - Swap "Visit" with "Note" in Add Task Modal
+X   - Swap "Visit" with "Note" in Add Task Modal
     - Pre-populate the Profit Center: PC-$boothNum-$identifier: eg: PC-100A, only fill in "A"
-    -
 - *New* Tab: "Vendor"
     - Upper section for drop-down: select an active booth
     - Note "alert" field(s) at the top
@@ -53,8 +50,11 @@ GUI Changes:
         b) Question+answers widget + add button
         c) PB/PC section
 - Rename "Vendors" to "Booths" (for all show booths)
-- New tab order:
-    1) Booths, 2) Summary, 3) Map, 4) Vendor, 5) PB/PC
+X New tab order:
+X   1) Booths, 2) Summary, 3) Map, 4) Vendor, 5) PB/PC
+- Tasks Tab:
+X   - Rename to "PB/PC"
+    - Remove Questions display
 
 Data Changes:
 -------------
