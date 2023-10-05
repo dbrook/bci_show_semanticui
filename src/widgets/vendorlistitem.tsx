@@ -32,7 +32,9 @@ export default class VendorListItem extends React.Component<VendorListItemProps,
     const { boothId, boothNum, vendor, hasActions } = this.props;
     const { addTaskModalShown } = this.state;
 
-    const boothClassName = hasActions ? 'BCIvendorBoothNumStyle actioned': 'BCIvendorBoothNumStyle';
+    const button = hasActions
+      ? <Button icon primary button onClick={this.openTaskModal}>{boothNum}</Button>
+      : <Button icon primary basic button onClick={this.openTaskModal}>{boothNum}</Button>;
 
     return <div className='BCIvendorListStyle'>
         <TaskModal open={addTaskModalShown}
@@ -40,10 +42,7 @@ export default class VendorListItem extends React.Component<VendorListItemProps,
                    presetItemType='VI'
                    presetBoothId={boothId}
                    presetVendorName={vendor} />
-        <Button icon primary basic button onClick={this.openTaskModal}>
-          <Icon name='plus square outline' />
-        </Button>
-        <span className={boothClassName}>{boothNum}</span>
+        {button}
         <span className='BCIvendorListName'>{vendor}</span>
       </div>;
   }
