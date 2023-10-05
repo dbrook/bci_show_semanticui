@@ -4,26 +4,15 @@ TODO: ask Mollie what the Power Buys (PB-*) numbers are like
 -> We might be able to radically simplify the data structure if so
 -> Actually, don't mess with it, just enforce it in the UI
 
-NEW PAGE (TAB): Full editing of a booth:
-- Drop down at top with booths with actions
-- Display Visit Status, Open Stock Forms, Questions, PB, PC
-- "Add Item" button in each section
-- Page is opened when clicking the booth number in the Summary Tab
-
-Vendors and Summary could be unified?
-- It would make the mobile view a fucking mess though
-
-
-
 
 Data Structure Changes:
 -----------------------
 - From actions:
-    - Remove "visit" field
+X   - Remove "visit" field
     - "openStockForm" shall become an array with a value and name
-    - Add a "notes" field that will be like questions but without answers
-- New array: "notes", just a string and itmIdx
-- New top-level field: "version" (null or "1" for version 1, "2" for version 2)
+X   - Add a "notes" field that will be like questions but without answers
+X New array: "notes", just a string and itmIdx
+N New top-level field: "version" (null or "1" for version 1, "2" for version 2)
 
 GUI Changes:
 -----------
@@ -41,7 +30,7 @@ X Remove Visit Widget(s)
 X Remove Visit Modal
 - Add Task Modal:
 X   - Swap "Visit" with "Note" in Add Task Modal
-    - Pre-populate the Profit Center: PC-$boothNum-$identifier: eg: PC-100A, only fill in "A"
+X   - Pre-populate the Profit Center: PC-$boothNum-$identifier: eg: PC-100A, only fill in "A"
 - *New* Tab: "Vendor"
     - Upper section for drop-down: select an active booth
     - Note "alert" field(s) at the top
@@ -49,19 +38,8 @@ X   - Swap "Visit" with "Note" in Add Task Modal
         a) Open Stock form + (add button), keeping same states
         b) Question+answers widget + add button
         c) PB/PC section
-- Rename "Vendors" to "Booths" (for all show booths)
+X Rename "Vendors" to "Booths" (for all show booths)
 X New tab order:
 X   1) Booths, 2) Summary, 3) Map, 4) Vendor, 5) PB/PC
 - Tasks Tab:
 X   - Rename to "PB/PC"
-    - Remove Questions display
-
-Data Changes:
--------------
-These changes will allow both versions of the GUI to exist for a user.
-We'll keep the upstream data sources the same, but flag the save file with
-a new field "version". If "version" is not present, assume version 1 data.
-Tasks:
-- Prefix the IndexedDB Name of tables with the version number and a dash:
-    "2-2023-Fall-ACY" will be tables with version 2 data
-- Local Storage version 2 GUI key: "BciTradeShow2Current"

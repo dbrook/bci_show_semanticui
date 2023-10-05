@@ -164,11 +164,30 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
   }
 
   private changeBooth = (e: SyntheticEvent, data: DropdownProps) => {
-    this.setState({ boothIdToAdd: data.value as string });
+    let boothId = data.value as string;
+    if (this.state.itemTypeToAdd === 'PC') {
+      // Pre-fill the PC booth number when a booth is (re)selected
+      this.setState({
+        boothIdToAdd: data.value as string,
+        inputValue: this.props.showStore.boothVendors.get(boothId).boothNum,
+      });
+    } else {
+      this.setState({ boothIdToAdd: boothId });
+    }
   }
 
   private changeItemType = (e: SyntheticEvent, data: CheckboxProps) => {
-    this.setState({ itemTypeToAdd: data.value as string });
+    if (data.value === 'PC') {
+      // Pre-fill the PC booth number if a profit center is requested to be added
+      let boothId = this.state.boothIdToAdd;
+      let boothNum = boothId ? this.props.showStore.boothVendors.get(boothId).boothNum : "";
+      this.setState({
+        itemTypeToAdd: data.value as string,
+        inputValue: boothNum,
+      });
+    } else {
+      this.setState({ itemTypeToAdd: data.value as string });
+    }
   }
 
   private changeInputAreaValue = (e: SyntheticEvent, data: InputProps) => {
