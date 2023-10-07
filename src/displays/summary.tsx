@@ -3,7 +3,7 @@ import { Table } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
-import { OpenStockForm, VendorVisit } from '../types/enums';
+import { OpenStockForm } from '../types/enums';
 import { IVendorStatus } from '../types/interfaces';
 import VendorActions from '../widgets/vendoractions';
 
@@ -60,9 +60,7 @@ export default class Summary extends React.Component<TaskListProps> {
               <Table.HeaderCell className='BCItasksum simpleStyle'>Questions</Table.HeaderCell>
               <Table.HeaderCell className='BCItasksum simpleStyle'>Power Buy</Table.HeaderCell>
               <Table.HeaderCell className='BCItasksum simpleStyle'>Profit Center</Table.HeaderCell>
-              <Table.HeaderCell className='BCItasksum openStockStyle'>
-                Open Stock Form
-              </Table.HeaderCell>
+              <Table.HeaderCell className='BCItasksum simpleStyle'>Open Stock</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -81,12 +79,10 @@ export default class Summary extends React.Component<TaskListProps> {
       nbAnsweredQuestions,
       nbSubmittedPowerBuys,
       nbSubmittedProfitCenters,
+      nbSubmittedOpenStock,
     } = this.props.showStore;
     return (
-      (vendor.visit !== VendorVisit.NOT_VISITED && vendor.visit !== VendorVisit.NEED_REVISIT) &&
-      (vendor.openStockForm !== OpenStockForm.PICK_UP &&
-       vendor.openStockForm !== OpenStockForm.RETRIEVED &&
-       vendor.openStockForm !== OpenStockForm.FILLED_IN) &&
+      (nbSubmittedOpenStock(vendor.boothId) === vendor.openStockForms.length) &&
       (nbAnsweredQuestions(vendor.boothId) === vendor.questions.length) &&
       (nbSubmittedPowerBuys(vendor.boothId) === vendor.powerBuys.length) &&
       (nbSubmittedProfitCenters(vendor.boothId) === vendor.profitCenters.length)

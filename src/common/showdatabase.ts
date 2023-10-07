@@ -37,7 +37,7 @@ export default class ShowDatabase extends Dexie {
       activities: 'boothId, boothNum, vendor, x1, y1, width, height',
       admins: 'boothId, boothNum, vendor, x1, y1, width, height',
       mapDimensions: 'parameter, value',
-      actions: 'boothId, boothNum, vendor, visit, questions, powerBuys, profitCenters, openStockForm, vndNote',
+      actions: 'boothId, boothNum, vendor, questions, powerBuys, profitCenters, openStockForms, vndNote',
       questions: 'qIdx, question, answer',
       pwrBuys: 'itmIdx, itemId, submitted',
       prfCtrs: 'itmIdx, itemId, submitted',
@@ -156,12 +156,11 @@ export default class ShowDatabase extends Dexie {
             boothId: item.boothId,
             boothNum: item.boothNum,
             vendor: item.vendor,
-            visit: item.visit,
             questions: item.questions,
             powerBuys: item.powerBuys,
             profitCenters: item.profitCenters,
             vendorNotes: item.vendorNotes,
-            openStockForm: item.openStockForm,
+            openStockForms: item.openStockForms,
           });
         }
         resolve(outputMap);

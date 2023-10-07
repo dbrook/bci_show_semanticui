@@ -7,7 +7,7 @@ import {
   IQuestionAnswer,
   ISubmittableItem,
 } from '../types/interfaces';
-import { VendorVisit, OpenStockForm } from '../types/enums';
+import { OpenStockForm } from '../types/enums';
 import ShowDatabase from './showdatabase';
 
 /*
@@ -311,12 +311,11 @@ class TradeShowData {
         boothId: boothId,
         boothNum: this.boothVendors.get(boothId)?.boothNum ?? 0,
         vendor: this.boothVendors.get(boothId)?.vendor ?? '',
-        visit: VendorVisit.DO_NOT_VISIT,
         questions: [],
         powerBuys: [],
         profitCenters: [],
         vendorNotes: [],
-        openStockForm: OpenStockForm.DO_NOT_GET,
+        openStockForms: [],
       });
     }
   };
@@ -325,12 +324,11 @@ class TradeShowData {
     // Checks the boothId contents to see if it can be removed from the "vendorWithActions" data set
     if (this.vendorsWithActions.has(boothId)) {
       const booth: IVendorStatus = this.vendorsWithActions.get(boothId);
-      if (booth.visit === VendorVisit.DO_NOT_VISIT &&
-          booth.questions.length === 0 &&
+      if (booth.questions.length === 0 &&
           booth.powerBuys.length === 0 &&
           booth.profitCenters.length === 0 &&
           booth.vendorNotes.length === 0 &&
-          booth.openStockForm === OpenStockForm.DO_NOT_GET) {
+          booth.openStockForms.length === 0) {
         this.vendorsWithActions.delete(boothId);
         this.db.deleteVendorAction(boothId);
       } else {
@@ -346,25 +344,6 @@ class TradeShowData {
   private saveActionToDatabase = (boothId: string) => {
     const stat: IVendorStatus = toJS(this.vendorsWithActions.get(boothId));
     this.db.putVendorAction(stat);
-  };
-
-
-  /*
-   * Booth Visit Changes
-   */
-  @action public addVisit = (boothId: string) => {
-    runInAction(() => {
-      this.initBoothIfNeeded(boothId);
-      this.vendorsWithActions.get(boothId).visit = VendorVisit.NOT_VISITED;
-    });
-    this.saveActionToDatabase(boothId);
-  };
-
-  @action public setVisitMode = (boothId: string, visitStatus: VendorVisit) => {
-    runInAction(() => {
-      this.vendorsWithActions.get(boothId).visit = visitStatus;
-      this.cleanupBoothAuto(boothId);
-    });
   };
 
 
@@ -672,21 +651,36 @@ class TradeShowData {
   /*
    * Open Stock Form Progress Handling
    */
-  @action public setOpenStock = (boothId: string, osStatus: OpenStockForm) => {
+  @action public nbSubmittedOpenStock = (boothId: string) => {
+    let completed = 0;
+    for (const os of this.vendorsWithActions.get(boothId).openStockForms) {
+      if (os === OpenStockForm.SUBMITTED || os === OpenStockForm.ABANDONED) {
+        completed++;
+      }
+    }
+    return completed;
+  };
+
+  @action public addOpenStock = (boothId: string, osStatus: OpenStockForm) => {
     runInAction(() => {
-      this.vendorsWithActions.get(boothId).openStockForm = osStatus;
+      this.initBoothIfNeeded(boothId);
+      this.vendorsWithActions.get(boothId).openStockForms.push(osStatus);
       this.cleanupBoothAuto(boothId);
     });
   };
 
-  @action public advanceOpenStockStatus = (boothId: string) => {
+  @action public setOpenStock = (boothId: string, osIdx: number, osStatus: OpenStockForm) => {
+    runInAction(() => {
+      this.vendorsWithActions.get(boothId).openStockForms[osIdx] = osStatus;
+      this.cleanupBoothAuto(boothId);
+    });
+  };
+
+  @action public advanceOpenStockStatus = (boothId: string, osIdx: number) => {
     if (this.vendorsWithActions.has(boothId)) {
-      const osState = this.vendorsWithActions.get(boothId).openStockForm;
-      let osNext: OpenStockForm = OpenStockForm.DO_NOT_GET;
+      const osState = this.vendorsWithActions.get(boothId).openStockForms[osIdx];
+      let osNext: OpenStockForm = OpenStockForm.PICK_UP;
       switch (osState) {
-        case OpenStockForm.DO_NOT_GET:
-          osNext = OpenStockForm.PICK_UP;
-          break;
         case OpenStockForm.PICK_UP:
           osNext = OpenStockForm.RETRIEVED;
           break;
@@ -697,20 +691,20 @@ class TradeShowData {
           osNext = OpenStockForm.SUBMITTED;
           break;
         default:
-          osNext = OpenStockForm.DO_NOT_GET;
+          osNext = OpenStockForm.PICK_UP;
           break;
       }
       runInAction(() => {
         // Progress the status of the form
-        this.vendorsWithActions.get(boothId).openStockForm = osNext;
+        this.vendorsWithActions.get(boothId).openStockForms[osIdx] = osNext;
         this.cleanupBoothAuto(boothId);
       });
     }
   };
 
-  @action public abandonOpenStock = (boothId: string) => {
+  @action public abandonOpenStock = (boothId: string, osIdx: number) => {
     if (this.vendorsWithActions.has(boothId)) {
-      this.vendorsWithActions.get(boothId).openStockForm = OpenStockForm.ABANDONED;
+      this.vendorsWithActions.get(boothId).openStockForms[osIdx] = OpenStockForm.ABANDONED;
       this.saveActionToDatabase(boothId);
     }
   };

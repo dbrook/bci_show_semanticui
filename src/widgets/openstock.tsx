@@ -67,7 +67,6 @@ export default class OpenStock extends React.Component<OpenStockProps> {
       nextIcon = 'undo';
       deleteBtnDisable = true;
       break;
-    case OpenStockForm.DO_NOT_GET:
     default:
       mainProps = { basic: true };
       currentStateStr = 'None';

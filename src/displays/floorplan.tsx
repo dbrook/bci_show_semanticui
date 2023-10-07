@@ -95,9 +95,9 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
       if (boothAction) {
         curQuestionCount = boothAction.questions.length -
                            this.props.showStore.nbAnsweredQuestions(boothId);
-        curOpenStock = (boothAction.openStockForm === OpenStockForm.DO_NOT_GET ||
-                        boothAction.openStockForm === OpenStockForm.ABANDONED    ) ?
-                       null : boothAction.openStockForm;
+        // curOpenStock = (boothAction.openStockForm === OpenStockForm.DO_NOT_GET ||
+                        // boothAction.openStockForm === OpenStockForm.ABANDONED    ) ?
+                       // null : boothAction.openStockForm;
       }
 
       // Most-restrictive known booth status so far
@@ -151,8 +151,6 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
     vendorDrawCoords.forEach((vend, boothNum) => {
       let bgColor = "";
       switch (vend.openStock) {
-        case OpenStockForm.DO_NOT_GET:
-          break;
         case OpenStockForm.PICK_UP:
           bgColor = this.fillColorPickUp;
           break;

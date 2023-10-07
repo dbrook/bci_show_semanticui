@@ -6,7 +6,6 @@ import { inject, observer } from 'mobx-react';
 import { IVendorStatus } from '../types/interfaces';
 import TaskModal from '../modals/taskmodal';
 import NumericalProgress from './numericalprogress';
-import OpenStock from './openstock';
 
 interface VendorActionsProps {
   vendorStatus: IVendorStatus;
@@ -46,10 +45,10 @@ export default class VendorActions extends React.Component<VendorActionsProps, V
       powerBuys,
       profitCenters,
       vendorNotes,
-      openStockForm
+      openStockForms
     } = this.props.vendorStatus;
     const {
-      nbAnsweredQuestions, nbSubmittedPowerBuys, nbSubmittedProfitCenters
+      nbAnsweredQuestions, nbSubmittedPowerBuys, nbSubmittedProfitCenters, nbSubmittedOpenStock
     } = this.props.showStore;
     const condensedView = this.props.condensed;
     const { addTaskModalShown } = this.state;
@@ -78,7 +77,9 @@ export default class VendorActions extends React.Component<VendorActionsProps, V
             <NumericalProgress label='PC'
                                completed={nbSubmittedProfitCenters(boothId)}
                                total={profitCenters.length} />
-            <OpenStock boothId={boothId} formStatus={openStockForm} labeled={true} />
+            <NumericalProgress label='OS'
+                               completed={nbSubmittedOpenStock(boothId)}
+                               total={openStockForms.length} />
           </div>
           <Divider />
         </div>
@@ -106,9 +107,8 @@ export default class VendorActions extends React.Component<VendorActionsProps, V
           <Table.Cell><NumericalProgress completed={nbSubmittedProfitCenters(boothId)}
                                          total={profitCenters.length} />
           </Table.Cell>
-          <Table.Cell><OpenStock boothId={boothId}
-                                 formStatus={openStockForm}
-                                 labeled={false} />
+          <Table.Cell><NumericalProgress completed={nbSubmittedOpenStock(boothId)}
+                                         total={openStockForms.length} />
           </Table.Cell>
         </Table.Row>
       );
