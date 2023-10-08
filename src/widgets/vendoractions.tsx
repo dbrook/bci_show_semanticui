@@ -58,7 +58,7 @@ export default class VendorActions extends React.Component<VendorActionsProps, V
     if (condensedView) {
       return (
         <div>
-          <Header as='h3' dividing>{vendor}</Header>
+          <Header as='h3'>{vendor}</Header>
           <TaskModal open={addTaskModalShown}
                      closeHander={this.showAddTaskModal}
                      presetBoothId={boothId}

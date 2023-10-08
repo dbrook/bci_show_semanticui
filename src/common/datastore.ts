@@ -6,6 +6,7 @@ import {
   IVendorStatus,
   IQuestionAnswer,
   ISubmittableItem,
+  IOpenStock,
 } from '../types/interfaces';
 import { OpenStockForm } from '../types/enums';
 import ShowDatabase from './showdatabase';
@@ -654,31 +655,32 @@ class TradeShowData {
   @action public nbSubmittedOpenStock = (boothId: string) => {
     let completed = 0;
     for (const os of this.vendorsWithActions.get(boothId).openStockForms) {
-      if (os === OpenStockForm.SUBMITTED || os === OpenStockForm.ABANDONED) {
+      if (os.formState === OpenStockForm.SUBMITTED || os.formState === OpenStockForm.ABANDONED) {
         completed++;
       }
     }
     return completed;
   };
 
-  @action public addOpenStock = (boothId: string, osStatus: OpenStockForm) => {
+  @action public addOpenStock = (boothId: string, label: string, osStatus: OpenStockForm) => {
     runInAction(() => {
       this.initBoothIfNeeded(boothId);
-      this.vendorsWithActions.get(boothId).openStockForms.push(osStatus);
+      let osForm: IOpenStock = { label: label, formState: osStatus };
+      this.vendorsWithActions.get(boothId).openStockForms.push(osForm);
       this.cleanupBoothAuto(boothId);
     });
   };
 
   @action public setOpenStock = (boothId: string, osIdx: number, osStatus: OpenStockForm) => {
     runInAction(() => {
-      this.vendorsWithActions.get(boothId).openStockForms[osIdx] = osStatus;
+      this.vendorsWithActions.get(boothId).openStockForms[osIdx].formState = osStatus;
       this.cleanupBoothAuto(boothId);
     });
   };
 
   @action public advanceOpenStockStatus = (boothId: string, osIdx: number) => {
     if (this.vendorsWithActions.has(boothId)) {
-      const osState = this.vendorsWithActions.get(boothId).openStockForms[osIdx];
+      const osState = this.vendorsWithActions.get(boothId).openStockForms[osIdx].formState;
       let osNext: OpenStockForm = OpenStockForm.PICK_UP;
       switch (osState) {
         case OpenStockForm.PICK_UP:
@@ -696,7 +698,7 @@ class TradeShowData {
       }
       runInAction(() => {
         // Progress the status of the form
-        this.vendorsWithActions.get(boothId).openStockForms[osIdx] = osNext;
+        this.vendorsWithActions.get(boothId).openStockForms[osIdx].formState = osNext;
         this.cleanupBoothAuto(boothId);
       });
     }
@@ -704,7 +706,7 @@ class TradeShowData {
 
   @action public abandonOpenStock = (boothId: string, osIdx: number) => {
     if (this.vendorsWithActions.has(boothId)) {
-      this.vendorsWithActions.get(boothId).openStockForms[osIdx] = OpenStockForm.ABANDONED;
+      this.vendorsWithActions.get(boothId).openStockForms[osIdx].formState = OpenStockForm.ABANDONED;
       this.saveActionToDatabase(boothId);
     }
   };

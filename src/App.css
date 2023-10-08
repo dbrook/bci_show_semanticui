@@ -97,11 +97,10 @@
 .BCItasksum.simpleStyle {
   width: 8.5em;
 }
-/*
+
 .BCItasksum.openStockStyle {
   width: 15em;
 }
-*/
 
 
 /* MOBILE/TABLET - Flexbox Variant of the Summary */
@@ -273,7 +272,7 @@
 }
 
 /* Hide the condensed / tablet-mobile view if the display is wide enough to show the desktop one */
-@media (min-width: 1024px) {
+@media (min-width: 1025px) {
   .BCImobiletablet {
     display: none;
   }

@@ -25,8 +25,6 @@ interface BoothOverall {
  */
 @inject('showStore') @observer
 export default class FloorPlan extends React.Component<FloorPlanProps> {
-  private visitBorderWidth = 4;
-  private boothNumberFont = '11px Lato';
   private lineColorActBooth = 'rgba(175, 175, 175, 1)';
   private fillColorActBooth = 'rgba(175, 175, 175, 0.10)';
   private lineColorVendorBooth = 'rgba(0, 0, 0, 1)';
@@ -92,13 +90,6 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
       // Current Vendor Details
       let curQuestionCount = null;
       let curOpenStock = null;
-      if (boothAction) {
-        curQuestionCount = boothAction.questions.length -
-                           this.props.showStore.nbAnsweredQuestions(boothId);
-        // curOpenStock = (boothAction.openStockForm === OpenStockForm.DO_NOT_GET ||
-                        // boothAction.openStockForm === OpenStockForm.ABANDONED    ) ?
-                       // null : boothAction.openStockForm;
-      }
 
       // Most-restrictive known booth status so far
       let knownBoothItem = overallBoothStatuses.get(booth.boothNum);
@@ -107,6 +98,18 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
       if (knownBoothItem) {
         knownQuestionCount = knownBoothItem.openQuestionCount;
         knownOpenStock = knownBoothItem.openStock;
+      }
+
+      if (boothAction) {
+        curQuestionCount = boothAction.questions.length -
+                           this.props.showStore.nbAnsweredQuestions(boothId);
+        for (const osf of boothAction.openStockForms) {
+          if (osf.formState !== OpenStockForm.ABANDONED) {
+            if (osf.formState < knownOpenStock || knownOpenStock === null) {
+              knownOpenStock = osf.formState;
+            }
+          }
+        }
       }
 
       // See if the current vendor has more outstanding questions than the others
@@ -141,7 +144,7 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
     });
 
     return overallBoothStatuses;
-  }
+  };
 
   private drawBooths = (booths: Map<string, IVendorDirectory>,
                         outlineColor: string,

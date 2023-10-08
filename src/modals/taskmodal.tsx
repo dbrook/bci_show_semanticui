@@ -14,6 +14,8 @@ import {
 
 import { inject, observer } from 'mobx-react';
 
+import { OpenStockForm } from '../types/enums'
+
 interface TaskModalProps {
   open: boolean,
   closeHander: (arg0: boolean) => any;
@@ -48,7 +50,7 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
       keepOpenOnAdd: false,
       inputValue: '',
     };
-  }
+  };
 
   render() {
     const {
@@ -71,6 +73,7 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
     switch (itemTypeToAdd) {
       case 'NOTE':
       case 'QU':
+      case 'OS':
         entryField = <Form.Group widths='equal'>
             <Form.Field>
               <Input fluid
@@ -145,6 +148,13 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
                           checked={itemTypeToAdd === 'PC'}
                           onChange={this.changeItemType} />
               </Form.Field>
+              <Form.Field>
+                <Checkbox radio
+                          label='Open Stock Form'
+                          value='OS'
+                          checked={itemTypeToAdd === 'OS'}
+                          onChange={this.changeItemType} />
+              </Form.Field>
             </Form.Group>
             {entryField}
           </Form>
@@ -161,7 +171,7 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
         </Modal.Actions>
       </Modal>
     );
-  }
+  };
 
   private changeBooth = (e: SyntheticEvent, data: DropdownProps) => {
     let boothId = data.value as string;
@@ -171,10 +181,16 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
         boothIdToAdd: data.value as string,
         inputValue: this.props.showStore.boothVendors.get(boothId).boothNum,
       });
+    } else if (this.state.itemTypeToAdd === 'OS') {
+      // Pre-fill the PC booth number when a booth is (re)selected
+      this.setState({
+        boothIdToAdd: data.value as string,
+        inputValue: this.props.showStore.boothVendors.get(boothId).vendor,
+      });
     } else {
       this.setState({ boothIdToAdd: boothId });
     }
-  }
+  };
 
   private changeItemType = (e: SyntheticEvent, data: CheckboxProps) => {
     if (data.value === 'PC') {
@@ -185,18 +201,26 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
         itemTypeToAdd: data.value as string,
         inputValue: boothNum,
       });
+    } else if (data.value === 'OS') {
+      // Pre-fill the vendor name if an open stock is requested to be added
+      let boothId = this.state.boothIdToAdd;
+      let vendorName = boothId ? this.props.showStore.boothVendors.get(boothId).vendor : "";
+      this.setState({
+        itemTypeToAdd: data.value as string,
+        inputValue: vendorName,
+      });
     } else {
       this.setState({ itemTypeToAdd: data.value as string });
     }
-  }
+  };
 
   private changeInputAreaValue = (e: SyntheticEvent, data: InputProps) => {
     this.setState({ inputValue: data.value });
-  }
+  };
 
   private setKeepOpened = (e: SyntheticEvent, data: CheckboxProps) => {
     this.setState({ keepOpenOnAdd: data.checked as boolean });
-  }
+  };
 
   private addEntry = () => {
     switch (this.state.itemTypeToAdd) {
@@ -212,6 +236,11 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
       case 'NOTE':
         this.props.showStore.addVendorNote(this.state.boothIdToAdd, this.state.inputValue);
         break;
+      case 'OS':
+        this.props.showStore.addOpenStock(this.state.boothIdToAdd,
+                                          this.state.inputValue,
+                                          OpenStockForm.PICK_UP);
+        break;
     }
 
     this.setState({ inputValue: '' });
@@ -219,5 +248,5 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
     if (!this.state.keepOpenOnAdd) {
       this.props.closeHander(false);
     }
-  }
+  };
 }
