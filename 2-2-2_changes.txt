@@ -9,10 +9,10 @@ Data Structure Changes:
 -----------------------
 - From actions:
 X   - Remove "visit" field
-    - "openStockForm" shall become an array with a value and name
+X   - "openStockForm" shall become an array with a value and name
 X   - Add a "notes" field that will be like questions but without answers
 X New array: "notes", just a string and itmIdx
-N New top-level field: "version" (null or "1" for version 1, "2" for version 2)
+? New top-level field: "version" (null or "1" for version 1, "2" for version 2)
 
 GUI Changes:
 -----------
@@ -20,12 +20,12 @@ GUI Changes:
 X   - Switch to <div> style rendering
 X   - Make clicking a <div> go to the Add Task Modal (or dedicated Tab opened to vendor)
 X   - Outline color to be based on ... questions!
-    - Make necessary change based off change to multiple open stocks
+X   - Make necessary change based off change to multiple open stocks
 - Summary Tab:
 X   - Remove "Visit" button
 X   - Add a note icon where "Visit" used to be
     - Clicking the Booth number button takes you to the dedicated Vendor Tab
-    - Render Open Stock Form as a count like all others
+X   - Render Open Stock Form as a count like all others
 X Remove Visit Widget(s)
 X Remove Visit Modal
 - Add Task Modal:
@@ -40,6 +40,6 @@ X   - Pre-populate the Profit Center: PC-$boothNum-$identifier: eg: PC-100A, onl
         c) PB/PC section
 X Rename "Vendors" to "Booths" (for all show booths)
 X New tab order:
-X   1) Booths, 2) Summary, 3) Map, 4) Vendor, 5) PB/PC
+X   1) Booths, 2) Map, 3) Vendor, 4) Summary, 5) PB/PC
 - Tasks Tab:
 X   - Rename to "PB/PC"

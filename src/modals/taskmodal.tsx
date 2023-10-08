@@ -54,7 +54,7 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
 
   render() {
     const {
-      open, closeHander, presetBoothId, presetVendorName, showStore: { boothVendors },
+      open, presetBoothId, presetVendorName, showStore: { boothVendors },
     } = this.props;
     const { itemTypeToAdd, keepOpenOnAdd, boothIdToAdd } = this.state;
 
@@ -103,6 +103,12 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
     }
 
     let headerText: string = presetBoothId ? `Add Task to ${presetBoothId}` : 'Add Task to Vendor';
+
+    let hideAdd = (boothIdToAdd === '' || boothIdToAdd === undefined) ||
+                  (!(boothIdToAdd === '' || boothIdToAdd === undefined) &&
+                   this.state.inputValue === '');
+
+    console.log(`The vendor is: ${boothIdToAdd}`);
 
     return (
       <Modal open={open}>
@@ -164,10 +170,10 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
           <Button basic
                   color='green'
                   onClick={this.addEntry}
-                  disabled={boothIdToAdd === '' || boothIdToAdd === undefined}>
+                  disabled={hideAdd}>
             Add
           </Button>
-          <Button basic color='grey' onClick={() => closeHander(false)}>Close</Button>
+          <Button basic color='grey' onClick={this.modalCloseOps}>Close</Button>
         </Modal.Actions>
       </Modal>
     );
@@ -248,5 +254,14 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
     if (!this.state.keepOpenOnAdd) {
       this.props.closeHander(false);
     }
+  };
+
+  private modalCloseOps = () => {
+    if (!this.props.presetBoothId) {
+      this.setState({ inputValue: '', boothIdToAdd: '' });
+    } else {
+      this.setState({ inputValue: '' });
+    }
+    this.props.closeHander(false);
   };
 }

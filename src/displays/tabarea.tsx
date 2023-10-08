@@ -45,16 +45,6 @@ export default class TabArea extends React.Component<TabAreaProps, TabAreaState>
         },
       },
       {
-        menuItem: 'Summary',
-        render: () => {
-          return (
-            <Tab.Pane attached='top' className='innerTabStyle'>
-              <Summary hideCompleted={this.props.hideCompleted} alphaSort={this.props.alphaSort} />
-            </Tab.Pane>
-          );
-        },
-      },
-      {
         menuItem: 'Map',
         render: () => {
           return (
@@ -69,6 +59,16 @@ export default class TabArea extends React.Component<TabAreaProps, TabAreaState>
         render: () => {
           return (
             <Tab.Pane attached='top' className='innerTabStyle'>
+            </Tab.Pane>
+          );
+        },
+      },
+      {
+        menuItem: 'Summary',
+        render: () => {
+          return (
+            <Tab.Pane attached='top' className='innerTabStyle'>
+              <Summary hideCompleted={this.props.hideCompleted} alphaSort={this.props.alphaSort} />
             </Tab.Pane>
           );
         },
