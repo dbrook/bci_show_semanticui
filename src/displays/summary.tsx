@@ -3,13 +3,13 @@ import { Table } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
-import { OpenStockForm } from '../types/enums';
 import { IVendorStatus } from '../types/interfaces';
 import VendorActions from '../widgets/vendoractions';
 
 interface TaskListProps {
   hideCompleted: boolean;
   alphaSort: boolean;
+  boothButtonClick: () => void;
   showStore?: any;
 };
 
@@ -24,7 +24,7 @@ interface TaskListProps {
 @inject('showStore') @observer
 export default class Summary extends React.Component<TaskListProps> {
   render() {
-    const { alphaSort, showStore: { vendorsWithActions } } = this.props;
+    const { alphaSort, boothButtonClick, showStore: { vendorsWithActions } } = this.props;
 
     const tempVendorStat = Array.from(vendorsWithActions, ([key, value]) => {
       return value;
@@ -37,14 +37,14 @@ export default class Summary extends React.Component<TaskListProps> {
 
     let vendorRows = tempVendorStat.map((x: IVendorStatus) => {
       if (!this.props.hideCompleted || !this.vendorCompleted(x)) {
-        return <VendorActions key={x.boothId} vendorStatus={x} condensed={false}/>
+        return <VendorActions key={x.boothId} vendorStatus={x} condensed={false} boothButtonClick={boothButtonClick} />
       }
       return null;
     });
 
     let vendorRowsMobile = tempVendorStat.map((x: IVendorStatus) => {
       if (!this.props.hideCompleted || !this.vendorCompleted(x)) {
-        return <VendorActions key={x.boothId} vendorStatus={x} condensed={true}/>
+        return <VendorActions key={x.boothId} vendorStatus={x} condensed={true} boothButtonClick={boothButtonClick} />
       }
       return null;
     });

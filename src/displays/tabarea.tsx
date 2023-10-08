@@ -7,6 +7,7 @@ import VendorList from './vendorlist';
 import FloorPlan from './floorplan';
 import Summary from './summary';
 import TaskDetailList from './taskdetaillist';
+import SingleVendor from './singlevendor';
 
 interface TabAreaProps {
   hideCompleted: boolean;
@@ -59,6 +60,7 @@ export default class TabArea extends React.Component<TabAreaProps, TabAreaState>
         render: () => {
           return (
             <Tab.Pane attached='top' className='innerTabStyle'>
+              <SingleVendor />
             </Tab.Pane>
           );
         },
@@ -68,7 +70,9 @@ export default class TabArea extends React.Component<TabAreaProps, TabAreaState>
         render: () => {
           return (
             <Tab.Pane attached='top' className='innerTabStyle'>
-              <Summary hideCompleted={this.props.hideCompleted} alphaSort={this.props.alphaSort} />
+              <Summary hideCompleted={this.props.hideCompleted}
+                       alphaSort={this.props.alphaSort}
+                       boothButtonClick={this.switchToSingleVendorTab} />
             </Tab.Pane>
           );
         },
@@ -101,5 +105,9 @@ export default class TabArea extends React.Component<TabAreaProps, TabAreaState>
 
   public switchToVendorsList = () => {
     this.setState({ activeTab: 0 });
+  };
+
+  public switchToSingleVendorTab = () => {
+    this.setState({ activeTab: 2 });
   };
 }

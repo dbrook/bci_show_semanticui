@@ -62,6 +62,8 @@ class TradeShowData {
   // Instance of the Dexie IndexedDB wrapper
   private db: ShowDatabase;
 
+  @observable public vendorPanelBoothId: string|undefined;
+
   constructor() {
     this.boothVendors = new Map();
     this.boothActivities = new Map();
@@ -72,6 +74,7 @@ class TradeShowData {
     this.powerBuys = [];
     this.profitCenters = [];
     this.vendorNotes = [];
+    this.vendorPanelBoothId = undefined;
 
     // DO NOT REMOVE! This is needed in MobX 6+ to make observers actually respect the decorators
     // More information @ https://mobx.js.org/enabling-decorators.html
@@ -709,6 +712,11 @@ class TradeShowData {
       this.vendorsWithActions.get(boothId).openStockForms[osIdx].formState = OpenStockForm.ABANDONED;
       this.saveActionToDatabase(boothId);
     }
+  };
+
+
+  @action public setVendorPanelBoothId = (boothId: string|undefined) => {
+    this.vendorPanelBoothId = boothId;
   };
 
 

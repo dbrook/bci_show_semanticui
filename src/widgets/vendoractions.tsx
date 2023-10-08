@@ -4,17 +4,13 @@ import { Button, Divider, Icon, Header, Table } from 'semantic-ui-react';
 import { inject, observer } from 'mobx-react';
 
 import { IVendorStatus } from '../types/interfaces';
-import TaskModal from '../modals/taskmodal';
 import NumericalProgress from './numericalprogress';
 
 interface VendorActionsProps {
   vendorStatus: IVendorStatus;
   condensed: boolean;
+  boothButtonClick: () => void;
   showStore?: any;
-};
-
-interface VendorActionsState {
-  addTaskModalShown: boolean;
 };
 
 /*
@@ -28,14 +24,7 @@ interface VendorActionsState {
  * vendor specified.
  */
 @inject('showStore') @observer
-export default class VendorActions extends React.Component<VendorActionsProps, VendorActionsState> {
-  constructor(props: VendorActionsProps, state: VendorActionsState) {
-    super(props, state);
-    this.state = {
-      addTaskModalShown: false,
-    };
-  }
-
+export default class VendorActions extends React.Component<VendorActionsProps> {
   render() {
     const {
       boothId,
@@ -45,27 +34,21 @@ export default class VendorActions extends React.Component<VendorActionsProps, V
       powerBuys,
       profitCenters,
       vendorNotes,
-      openStockForms
+      openStockForms,
     } = this.props.vendorStatus;
     const {
       nbAnsweredQuestions, nbSubmittedPowerBuys, nbSubmittedProfitCenters, nbSubmittedOpenStock
     } = this.props.showStore;
     const condensedView = this.props.condensed;
-    const { addTaskModalShown } = this.state;
-
     let noteIcon = vendorNotes.length > 0 ? <Icon size="large" name="sticky note outline"/> : null;
 
     if (condensedView) {
       return (
         <div>
           <Header as='h3' style={{textAlign: 'left'}}>{vendor}</Header>
-          <TaskModal open={addTaskModalShown}
-                     closeHander={this.showAddTaskModal}
-                     presetBoothId={boothId}
-                     presetVendorName={vendor} />
           <div className='BCImobilevendorgroup'>
             <div className='BCImobilevendorbuttonnote'>
-              <Button primary basic onClick={() => this.showAddTaskModal(true)}>{boothNum}</Button>
+              <Button primary basic onClick={this.switchToVendorTab}>{boothNum}</Button>
               {noteIcon}
             </div>
             <div className='BCImobilevendorstatus'>
@@ -89,14 +72,8 @@ export default class VendorActions extends React.Component<VendorActionsProps, V
     } else {
       return (
         <Table.Row>
-          <TaskModal open={addTaskModalShown}
-                     closeHander={this.showAddTaskModal}
-                     presetBoothId={boothId}
-                     presetVendorName={vendor} />
           <Table.Cell textAlign='left'>
-            <Button primary basic onClick={() => this.showAddTaskModal(true)}>
-              {boothNum}
-            </Button>
+            <Button primary basic onClick={this.switchToVendorTab}>{boothNum}</Button>
             {noteIcon}
           </Table.Cell>
           <Table.Cell>{vendor}</Table.Cell>
@@ -117,8 +94,8 @@ export default class VendorActions extends React.Component<VendorActionsProps, V
     }
   }
 
-  private showAddTaskModal = (showIt: boolean) => {
-    this.setState({ addTaskModalShown: showIt });
-    return;
+  private switchToVendorTab = () => {
+    this.props.showStore.setVendorPanelBoothId(this.props.vendorStatus.boothId);
+    this.props.boothButtonClick();
   }
 }
