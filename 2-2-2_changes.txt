@@ -24,8 +24,10 @@ X   - Make necessary change based off change to multiple open stocks
 - Summary Tab:
 X   - Remove "Visit" button
 X   - Add a note icon where "Visit" used to be
-    - Clicking the Booth number button takes you to the dedicated Vendor Tab
 X   - Render Open Stock Form as a count like all others
+X   - Only show non-None items in condensed summary view
+X   - Separate flex sorting of button and note icon from condensed summary view
+    - Clicking the Booth number button takes you to the dedicated Vendor Tab
 X Remove Visit Widget(s)
 X Remove Visit Modal
 - Add Task Modal:

@@ -58,28 +58,30 @@ export default class VendorActions extends React.Component<VendorActionsProps, V
     if (condensedView) {
       return (
         <div>
-          <Header as='h3'>{vendor}</Header>
+          <Header as='h3' style={{textAlign: 'left'}}>{vendor}</Header>
           <TaskModal open={addTaskModalShown}
                      closeHander={this.showAddTaskModal}
                      presetBoothId={boothId}
                      presetVendorName={vendor} />
-          <div className='BCImobilevendorstatus'>
-            <Button primary basic onClick={() => this.showAddTaskModal(true)}>
-              {boothNum}
-            </Button>
-            {noteIcon}
-            <NumericalProgress label='QU'
-                               completed={nbAnsweredQuestions(boothId)}
-                               total={questions.length} />
-            <NumericalProgress label='PB'
-                               completed={nbSubmittedPowerBuys(boothId)}
-                               total={powerBuys.length} />
-            <NumericalProgress label='PC'
-                               completed={nbSubmittedProfitCenters(boothId)}
-                               total={profitCenters.length} />
-            <NumericalProgress label='OS'
-                               completed={nbSubmittedOpenStock(boothId)}
-                               total={openStockForms.length} />
+          <div className='BCImobilevendorgroup'>
+            <div className='BCImobilevendorbuttonnote'>
+              <Button primary basic onClick={() => this.showAddTaskModal(true)}>{boothNum}</Button>
+              {noteIcon}
+            </div>
+            <div className='BCImobilevendorstatus'>
+              <NumericalProgress label='QU'
+                                completed={nbAnsweredQuestions(boothId)}
+                                total={questions.length} />
+              <NumericalProgress label='PB'
+                                completed={nbSubmittedPowerBuys(boothId)}
+                                total={powerBuys.length} />
+              <NumericalProgress label='PC'
+                                completed={nbSubmittedProfitCenters(boothId)}
+                                total={profitCenters.length} />
+              <NumericalProgress label='OS'
+                                completed={nbSubmittedOpenStock(boothId)}
+                                total={openStockForms.length} />
+            </div>
           </div>
           <Divider />
         </div>

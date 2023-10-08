@@ -108,10 +108,23 @@
   display: flex;
   flex-wrap: wrap;
   flex-direction: row;
-  justify-content: center;
   align-items: center;
   row-gap: 10px;
   column-gap: 5px;
+}
+.BCImobilevendorgroup {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  row-gap: 10px;
+  column-gap: 5px;
+}
+.BCImobilevendorbuttonnote {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  row-gap: 10px;
 }
 
 
@@ -272,7 +285,7 @@
 }
 
 /* Hide the condensed / tablet-mobile view if the display is wide enough to show the desktop one */
-@media (min-width: 1025px) {
+@media (min-width: 1024px) {
   .BCImobiletablet {
     display: none;
   }

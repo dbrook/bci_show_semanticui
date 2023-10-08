@@ -108,8 +108,6 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
                   (!(boothIdToAdd === '' || boothIdToAdd === undefined) &&
                    this.state.inputValue === '');
 
-    console.log(`The vendor is: ${boothIdToAdd}`);
-
     return (
       <Modal open={open}>
         <Modal.Header>{headerText}</Modal.Header>
