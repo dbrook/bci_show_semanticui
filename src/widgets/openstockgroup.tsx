@@ -3,15 +3,17 @@ import { Divider, Header } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
-import SimpleSubmittable from './simplesubmittable';
+import { OpenStockForm } from '../types/enums'
+import { IOpenStock } from '../types/interfaces'
+import OpenStock from './openstock';
 
-interface SimpleSubmittableGroupProps {
+interface OpenStockGroupProps {
+  boothId: string;
   boothNum: number;
   vendor: string;
-  items: number[];
+  items: IOpenStock[];
   hideCompleted: boolean;
   hideVendor: boolean;
-  prefix: string;
   showStore?: any;
 };
 
@@ -21,33 +23,28 @@ interface SimpleSubmittableGroupProps {
  * Collection of all SimpleSubmittable components belonging to a single vendor.
  */
 @inject('showStore') @observer
-export default class SimpleSubmittableGroup extends React.Component<SimpleSubmittableGroupProps> {
+export default class OpenStockGroup extends React.Component<OpenStockGroupProps> {
   render() {
     const {
+      boothId,
       boothNum,
       vendor,
       items,
       hideCompleted,
       hideVendor,
-      prefix,
-      showStore: { powerBuys, profitCenters },
     } = this.props;
 
-    const itemsAsSubmittables = items.map((x) => {
-      if (prefix === 'PB') {
-        const { submitted } = powerBuys[x];
-        if (hideCompleted && submitted) {
-          return null;
-        }
-        return <SimpleSubmittable key={x} itemIdx={x} prefix={prefix}/>;
-      } else if (prefix === 'PC') {
-        const { submitted } = profitCenters[x];
-        if (hideCompleted && submitted) {
-          return null;
-        }
-        return <SimpleSubmittable key={x} itemIdx={x} prefix={prefix}/>;
+    const itemsAsSubmittables = items.map((x, itemIdx) => {
+      const { label, formState } = x;
+      if (hideCompleted &&
+          (formState === OpenStockForm.ABANDONED || formState === OpenStockForm.SUBMITTED)) {
+        return null;
       }
-      return null;
+      return <OpenStock key={itemIdx}
+                        formStatus={formState}
+                        name={label}
+                        boothId={boothId}
+                        itmIdx={itemIdx} />;
     });
 
     let header = null;

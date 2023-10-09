@@ -159,6 +159,13 @@ class TradeShowData {
       });
 
       // Import the notes
+      const tempVNs = dataBackup.vendorNotes;
+      this.vendorNotes = tempVNs;
+      tempVNs.forEach((elem, index) => {
+        if (elem !== null) {
+          this.db.putVN(index, elem as string);
+        }
+      });
     });
   };
 
@@ -223,6 +230,7 @@ class TradeShowData {
     this.db.clearQuestions();
     this.db.clearPBs();
     this.db.clearPCs();
+    this.db.clearVNs();
   };
 
   @action public clearJSObjects = (eraseBoothVendors: boolean) => {
@@ -649,6 +657,16 @@ class TradeShowData {
       }
     }
     return notes;
+  };
+
+    @action public changeVendorNote = (noteId: number, text: string) => {
+    if (noteId >= 0 &&
+        noteId < this.vendorNotes.length &&
+        this.vendorNotes[noteId] !== undefined) {
+      // @ts-ignore
+      this.vendorNotes[noteId] = text;
+      this.db.putVN(noteId, text);
+    }
   };
 
 

@@ -36,7 +36,7 @@ export default class TabArea extends React.Component<TabAreaProps, TabAreaState>
     const { activeTab } = this.state;
     const panes = [
       {
-        menuItem: 'Booths',
+        menuItem: 'Index',
         render: () => {
           return (
             <Tab.Pane attached='top' className='innerTabStyle'>
@@ -78,7 +78,7 @@ export default class TabArea extends React.Component<TabAreaProps, TabAreaState>
         },
       },
       {
-        menuItem: 'PB/PC',
+        menuItem: 'All',
         render: () => {
           return (
             <Tab.Pane attached='top' className='innerTabStyle'>

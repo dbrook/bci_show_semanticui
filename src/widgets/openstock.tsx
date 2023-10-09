@@ -7,8 +7,9 @@ import { OpenStockForm } from  '../types/enums';
 
 interface OpenStockProps {
   formStatus: OpenStockForm;
-  labeled: boolean;
+  name: string;
   boothId: string;
+  itmIdx: number;
   showStore?: any;
 };
 
@@ -21,15 +22,13 @@ interface OpenStockProps {
 @inject('showStore') @observer
 export default class OpenStock extends React.Component<OpenStockProps> {
   render() {
-    const { formStatus, labeled } = this.props;
+    const { formStatus, name } = this.props;
 
     let currentStateStr: string;
     let nextColor: SemanticCOLORS;
     let nextIcon: SemanticICONS;
     let deleteBtnDisable: boolean;
     let mainProps = {};
-
-    let button;
 
     switch (formStatus) {
     case OpenStockForm.PICK_UP:
@@ -81,21 +80,7 @@ export default class OpenStock extends React.Component<OpenStockProps> {
       </Button> :
       <Button disabled icon basic color='red'><Icon name='trash alternate outline'/></Button>;
 
-    if (labeled) {
-      button = <div className='BCIopenstockmobilegroup'>
-          <Label size='large' {...mainProps}>
-            OS
-            <Label.Detail className='BCIunlabeledopenstock'>{currentStateStr}</Label.Detail>
-          </Label>
-          <Button.Group>
-            <Button icon basic color={nextColor} onClick={this.advanceButtonAction}>
-              <Icon name={nextIcon}/>
-            </Button>
-            {deleteBtn}
-          </Button.Group>
-        </div>;
-    } else {
-      button = <div>
+    let button = <div className='BCIopenstockmobilegroup'>
           <Label {...mainProps} size='large' className='BCIlabeledopenstock'>
             {currentStateStr}
           </Label>
@@ -105,17 +90,17 @@ export default class OpenStock extends React.Component<OpenStockProps> {
             </Button>
             {deleteBtn}
           </Button.Group>
+          {name}
         </div>;
-    }
 
     return button;
   }
 
   private advanceButtonAction = () => {
-    this.props.showStore.advanceOpenStockStatus(this.props.boothId);
+    this.props.showStore.advanceOpenStockStatus(this.props.boothId, this.props.itmIdx);
   }
 
   private abandonButtonAction = () => {
-    this.props.showStore.abandonOpenStock(this.props.boothId);
+    this.props.showStore.abandonOpenStock(this.props.boothId, this.props.itmIdx);
   }
 }

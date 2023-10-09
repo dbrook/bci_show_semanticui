@@ -194,9 +194,9 @@
 
 /* Open Stock */
 .BCIopenstockmobilegroup {
-  width: 227px;
+  width: 14em;
   background-color: white;
-  padding: 2px;
+  padding: 6px 4px;
   border: 1px solid grey;
   border-radius: 4px;
 }
@@ -231,6 +231,7 @@
   row-gap: 5px;
   column-gap: 10px;
   align-items: flex-start;
+  background: white;
 }
 .BCIquestionanswerflex.unanswered {
   color: #DB2828;             /* Red color taken from Semantic UI */

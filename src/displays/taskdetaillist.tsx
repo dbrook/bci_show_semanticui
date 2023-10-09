@@ -6,6 +6,7 @@ import { inject, observer } from 'mobx-react';
 import { IVendorStatus } from '../types/interfaces';
 import SimpleSubmittableGroup from '../widgets/simplesubmittablegroup';
 import QuestionAnswerGroup from '../widgets/questionanswergroup';
+import OpenStockGroup from '../widgets/openstockgroup';
 
 interface TaskDetailListProps {
   hideCompleted: boolean;
@@ -24,7 +25,11 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
       hideCompleted,
       alphaSort,
       showStore: {
-        vendorsWithActions, nbAnsweredQuestions, nbSubmittedPowerBuys, nbSubmittedProfitCenters,
+        vendorsWithActions,
+        nbAnsweredQuestions,
+        nbSubmittedPowerBuys,
+        nbSubmittedProfitCenters,
+        nbSubmittedOpenStock,
       },
     } = this.props;
 
@@ -46,6 +51,7 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
                                     boothNum={x.boothNum}
                                     vendor={x.vendor}
                                     items={x.questions}
+                                    hideVendor={false}
                                     hideCompleted={hideCompleted} />
       }
       return null;
@@ -61,6 +67,7 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
                                        vendor={x.vendor}
                                        items={x.powerBuys}
                                        hideCompleted={hideCompleted}
+                                       hideVendor={false}
                                        prefix='PB' />
       }
       return null;
@@ -76,10 +83,28 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
                                        vendor={x.vendor}
                                        items={x.profitCenters}
                                        hideCompleted={hideCompleted}
+                                       hideVendor={false}
                                        prefix='PC' />
       }
       return null;
     });
+
+    let openStockRows = tempVendorStat.map((x: IVendorStatus) => {
+      if (x.openStockForms.length) {
+        if (hideCompleted && x.openStockForms.length === nbSubmittedOpenStock(x.boothId)) {
+          return null;
+        }
+        return <OpenStockGroup key={x.boothId}
+                              boothId={x.boothId}
+                              boothNum={x.boothNum}
+                              vendor={x.vendor}
+                              items={x.openStockForms}
+                              hideCompleted={hideCompleted}
+                              hideVendor={false} />;
+      }
+      return null;
+    });
+
 
     return (
       <div className='tabInnerLayout'>
@@ -89,6 +114,8 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
         {powerBuyRows}
         <Header as='h2' dividing textAlign='left' color='teal'>Profit Centers</Header>
         {profitCenterRows}
+        <Header as='h2' dividing textAlign='left' color='brown'>Open Stock Forms</Header>
+        {openStockRows}
       </div>
     );
   }

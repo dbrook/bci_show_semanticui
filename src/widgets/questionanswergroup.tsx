@@ -10,6 +10,7 @@ interface QuestionAnswerGroupProps {
   vendor: string;
   items: number[];
   hideCompleted: boolean;
+  hideVendor: boolean;
   showStore?: any;
 };
 
@@ -21,7 +22,14 @@ interface QuestionAnswerGroupProps {
 @inject('showStore') @observer
 export default class QuestionAnswerGroup extends React.Component<QuestionAnswerGroupProps> {
   render() {
-    const { boothNum, vendor, items, hideCompleted, showStore: { vendorQuestions } } = this.props;
+    const {
+      boothNum,
+      vendor,
+      items,
+      hideCompleted,
+      hideVendor,
+      showStore: { vendorQuestions }
+    } = this.props;
 
     const itemsAsQuestAns = items.map((x) => {
       const { answer } = vendorQuestions[x];
@@ -31,12 +39,18 @@ export default class QuestionAnswerGroup extends React.Component<QuestionAnswerG
       return <QuestionAnswer key={x} questionId={x}/>;
     });
 
+    let header = null;
+    let divider = null;
+    if (!hideVendor) {
+      header = <Header as='h3'>{boothNum} - {vendor}</Header>;
+      divider = <Divider />;
+    }
     return <div>
-        <Header as='h3'>{boothNum} - {vendor}</Header>
+        {header}
         <div>
           {itemsAsQuestAns}
         </div>
-        <Divider />
+        {divider}
       </div>;
   }
 }
