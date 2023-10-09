@@ -62,6 +62,7 @@ class TradeShowData {
   // Instance of the Dexie IndexedDB wrapper
   private db: ShowDatabase;
 
+  // Remembered last-used vendor on vendor tab
   @observable public vendorPanelBoothId: string|undefined;
 
   constructor() {
@@ -659,7 +660,7 @@ class TradeShowData {
     return notes;
   };
 
-    @action public changeVendorNote = (noteId: number, text: string) => {
+  @action public changeVendorNote = (noteId: number, text: string) => {
     if (noteId >= 0 &&
         noteId < this.vendorNotes.length &&
         this.vendorNotes[noteId] !== undefined) {

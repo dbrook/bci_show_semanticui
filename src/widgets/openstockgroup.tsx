@@ -20,7 +20,7 @@ interface OpenStockGroupProps {
 /*
  * SimpleSubmittableGroup Component:
  *
- * Collection of all SimpleSubmittable components belonging to a single vendor.
+ * Collection of all OpenStock items belonging to a single vendor.
  */
 @inject('showStore') @observer
 export default class OpenStockGroup extends React.Component<OpenStockGroupProps> {

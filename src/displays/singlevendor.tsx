@@ -19,7 +19,8 @@ interface DataModalState {
 };
 
 /*
- * Contents of the ...
+ * Displays all notes, questions, power buys, profit centers, and open stock forms present for
+ * a single vendor all in one page. This page is exempt from the 'Hide Completed' feature.
  */
 @inject('showStore') @observer
 export default class SingleVendor extends React.Component<SingleVendorProps, DataModalState> {

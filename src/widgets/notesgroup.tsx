@@ -10,7 +10,7 @@ interface NotesGroupProps {
 };
 
 /*
- * QuestionAnswerGroup Component:///
+ * A list of all notes relevant to a single vendor, rendered as Note items
  */
 @inject('showStore') @observer
 export default class NotesGroup extends React.Component<NotesGroupProps> {

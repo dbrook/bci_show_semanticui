@@ -27,19 +27,19 @@ X   - Add a note icon where "Visit" used to be
 X   - Render Open Stock Form as a count like all others
 X   - Only show non-None items in condensed summary view
 X   - Separate flex sorting of button and note icon from condensed summary view
-    - Clicking the Booth number button takes you to the dedicated Vendor Tab
+X   - Clicking the Booth number button takes you to the dedicated Vendor Tab
 X Remove Visit Widget(s)
 X Remove Visit Modal
 - Add Task Modal:
 X   - Swap "Visit" with "Note" in Add Task Modal
 X   - Pre-populate the Profit Center: PC-$boothNum-$identifier: eg: PC-100A, only fill in "A"
 - *New* Tab: "Vendor"
-    - Upper section for drop-down: select an active booth
-    - Note "alert" field(s) at the top
+X   - Upper section for drop-down: select an active booth
+X   - Note "alert" field(s) at the top
     - Flex container with:
-        a) Open Stock form + (add button), keeping same states
-        b) Question+answers widget + add button
-        c) PB/PC section
+X       a) Open Stock form + (add button), keeping same states
+X       b) Question+answers widget + add button
+X       c) PB/PC section
 X Rename "Vendors" to "Booths" (for all show booths)
 X New tab order:
 X   1) Booths, 2) Map, 3) Vendor, 4) Summary, 5) PB/PC

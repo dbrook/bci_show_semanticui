@@ -17,7 +17,8 @@ interface OpenStockProps {
  * OpenStock Component:
  *
  * Shows current open stock form status as well as action buttons for proceding to the next step and
- * the ability to abandon a form after initially retrieving one.
+ * the ability to abandon a form after initially retrieving one, displays with a label indicating
+ * the sub-vendor (as some vendors have multiple sub-brands in the BCI database).
  */
 @inject('showStore') @observer
 export default class OpenStock extends React.Component<OpenStockProps> {

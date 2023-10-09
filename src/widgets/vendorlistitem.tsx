@@ -19,7 +19,8 @@ interface VendorListItemState {
  *
  * Single vendor for use in the Vendor List display tab. This component shows the booth number
  * (highlighted to indicate there is at least 1 action assigned to the boothId / vendor), the
- * vendor name, and a button to show the Add Task modal preset to the vendor.
+ * vendor name, an indicator if any notes are associated with the vendor, and a button to open
+ * the vendor-specific tab to the vendor.
  */
 export default class VendorListItem extends React.Component<VendorListItemProps,
                                                             VendorListItemState> {

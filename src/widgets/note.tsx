@@ -15,7 +15,8 @@ interface NoteState {
 };
 
 /*
- * //
+ * An editable note: renders as a Semantic UI (warning) Message with left-aligned text and a
+ * button to edit/save (changes to a text input until saved) the note and another to delete it.
  */
 @inject('showStore') @observer
 export default class Note extends React.Component<NoteProps, NoteState> {

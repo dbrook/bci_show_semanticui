@@ -1,7 +1,6 @@
 /*
  * Data Types
  */
-
 export enum OpenStockForm {
   PICK_UP = 1,
   RETRIEVED = 2,

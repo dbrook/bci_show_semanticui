@@ -19,9 +19,11 @@ interface BoothOverall {
 }
 
 /*
- * React wrapper around an HTML Canvas element responsible for drawing all the booths based on the
- * type (vendor, admin, activity) and makes an inner outline based on the booth visit status, fill
- * based on the open stock form submission status
+ * Draws a map of the show floor plan with booth numbers based on the booth pixel coordinates.
+ * Booths for vendors are outlined in black, activities are in gray, and administrative booths
+ * are in blue. Any booth with outstanding questions has an inner thick red border, and the
+ * least-completed open stock form status for the entire booth is colored based on the status
+ * colors in the OpenStock widget.
  */
 @inject('showStore') @observer
 export default class FloorPlan extends React.Component<FloorPlanProps> {

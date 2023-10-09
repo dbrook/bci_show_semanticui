@@ -16,7 +16,7 @@ interface TaskListProps {
 /*
  * Contents of the Task Summary tab. This is a responsive component: in desktop mode it will show
  * a table with booth number, vendor name, visit, question, power buy, profit center, and open stock
- * form submission status for any vendor with at least one of the above actions assigned. In mobile
+ * forms submission status for any vendor with at least one of the above actions assigned. In mobile
  * mode, the table is taken out (because Semantic UI will stack all the contents making it difficult
  * to actually understand what components are representing) and replaced with labeled versions of
  * the widgets laid out using flexbox.

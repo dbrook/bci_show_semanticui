@@ -15,8 +15,9 @@ interface TaskDetailListProps {
 };
 
 /*
- * Interface to show all questions/answers, Power Buys, and Profit Centers for the show, grouped
- * by type, then by each vendor (sorted by booth number or lexicographically by vendor).
+ * Interface to show all questions/answers, Power Buys, Profit Centers, and Open Stock Forms for
+ * the show, grouped by type, then by each vendor.
+ * The display can be sorted by booth number or lexicographically by vendor.
  */
 @inject('showStore') @observer
 export default class TaskDetailList extends React.Component<TaskDetailListProps> {
