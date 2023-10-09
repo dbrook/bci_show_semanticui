@@ -117,7 +117,7 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
     const showDataTab = <Tab.Pane>
         {dataDropdown}
         <Message warning>
-          <Message.Header>Data Loss Warning</Message.Header>
+          <Message.Header>Local Data Notice</Message.Header>
           <p>
             This is a web app that keeps your vendor progress data on your device.
             Clearing browser website data/settings will erase this data. If you wish

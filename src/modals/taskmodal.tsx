@@ -109,7 +109,7 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
                    this.state.inputValue === '');
 
     return (
-      <Modal open={open}>
+      <Modal open={open} centered={false}>
         <Modal.Header>{headerText}</Modal.Header>
         <Modal.Content>
           <Form>
