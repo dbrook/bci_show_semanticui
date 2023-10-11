@@ -65,6 +65,8 @@ class TradeShowData {
   // Remembered last-used vendor on vendor tab
   @observable public vendorPanelBoothId: string|undefined;
 
+  @observable public mapSelectedBoothNum: number|undefined;
+
   constructor() {
     this.boothVendors = new Map();
     this.boothActivities = new Map();
@@ -76,6 +78,7 @@ class TradeShowData {
     this.profitCenters = [];
     this.vendorNotes = [];
     this.vendorPanelBoothId = undefined;
+    this.mapSelectedBoothNum = undefined;
 
     // DO NOT REMOVE! This is needed in MobX 6+ to make observers actually respect the decorators
     // More information @ https://mobx.js.org/enabling-decorators.html
@@ -736,6 +739,10 @@ class TradeShowData {
 
   @action public setVendorPanelBoothId = (boothId: string|undefined) => {
     this.vendorPanelBoothId = boothId;
+  };
+
+  @action public setMapSelectedBoothNum = (boothNum: number|undefined) => {
+    this.mapSelectedBoothNum = boothNum;
   };
 
 

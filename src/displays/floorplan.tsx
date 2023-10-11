@@ -5,8 +5,15 @@ import { inject, observer } from 'mobx-react';
 import { OpenStockForm } from '../types/enums';
 import { IVendorDirectory, IVendorStatus } from '../types/interfaces';
 
+import BoothModal from '../modals/boothmodal';
+
 interface FloorPlanProps {
+  boothButtonClick: () => void;
   showStore?: any;
+}
+
+interface FloorPlanState {
+  modalShown: boolean;
 }
 
 interface BoothOverall {
@@ -26,7 +33,7 @@ interface BoothOverall {
  * colors in the OpenStock widget.
  */
 @inject('showStore') @observer
-export default class FloorPlan extends React.Component<FloorPlanProps> {
+export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlanState> {
   private lineColorActBooth = 'rgba(175, 175, 175, 1)';
   private fillColorActBooth = 'rgba(175, 175, 175, 0.10)';
   private lineColorVendorBooth = 'rgba(0, 0, 0, 1)';
@@ -41,6 +48,13 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
   private fillColorFilledIn = 'rgba(33, 133, 208, 1)';
   private fillColorSubmitted = 'rgba(33, 186, 69, 1)';
   private fillColorAbandoned = 'rgba(255, 201, 232, 1)';
+
+  constructor(props: FloorPlanProps, state: FloorPlanState) {
+    super(props, state);
+    this.state = {
+      modalShown: false
+    };
+  }
 
   render() {
     const {
@@ -73,6 +87,7 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
 
     return (
       <div className='tabInnerLayout'>
+        <BoothModal open={this.state.modalShown} closeHandler={this.showBoothModal} />
         <div style={mapStyle}>
           {boothDivs}{activDivs}{adminDivs}
         </div>
@@ -190,9 +205,28 @@ export default class FloorPlan extends React.Component<FloorPlanProps> {
         justifyContent: "center",
       };
 
-      let itm = <div key={boothNum} style={styleItem}>{boothNum}</div>;
+      let itm = <div key={boothNum} style={styleItem} onClick={() => this.openBooth(boothNum)}>
+          {boothNum}
+        </div>;
       divs.push(itm);
     });
     return divs;
   };
+
+  private openBooth = (boothNum: number) => {
+    this.props.showStore.setMapSelectedBoothNum(boothNum);
+    this.showBoothModal(true, boothNum);
+  };
+
+  private showBoothModal = (showIt: boolean, boothNum: any) => {
+    this.setState({
+      modalShown: showIt
+    });
+    if (!showIt && boothNum) {
+      // Closing modal and have a booth identifier: switch to the vendor tab
+      this.props.boothButtonClick();
+    }
+    return;
+  };
+
 }
