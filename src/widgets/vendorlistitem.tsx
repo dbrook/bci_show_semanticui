@@ -40,7 +40,6 @@ export default class VendorListItem extends React.Component<VendorListItemProps,
     return <div className='BCIvendorListStyle'>
         <TaskModal open={addTaskModalShown}
                    closeHander={this.showAddTaskModal}
-                   presetItemType='NO'
                    presetBoothId={boothId}
                    presetVendorName={vendor} />
         {button}

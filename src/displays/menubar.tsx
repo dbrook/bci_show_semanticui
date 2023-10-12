@@ -55,8 +55,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
       <>
         <DataModal open={dataModalShown} closeHander={this.showDataModal}/>
         <TaskModal open={addTaskModalShown}
-                   closeHander={this.showAddTaskModal}
-                   presetItemType='VI'/>
+                   closeHander={this.showAddTaskModal} />
         <div className='topBar'>
           <Button icon primary basic={vendorsPresent} labelPosition='left' onClick={() => this.showDataModal(true)}>
             <Icon name='calendar alternate outline' />

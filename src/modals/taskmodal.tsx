@@ -46,7 +46,7 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
 
     this.state = {
       boothIdToAdd: props?.presetBoothId ?? '',
-      itemTypeToAdd: props?.presetItemType ?? 'VI',
+      itemTypeToAdd: props?.presetItemType ?? 'NOTE',
       keepOpenOnAdd: false,
       inputValue: '',
     };

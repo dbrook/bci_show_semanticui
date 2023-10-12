@@ -35,14 +35,8 @@ interface BoothOverall {
 @inject('showStore') @observer
 export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlanState> {
   private lineColorActBooth = 'rgba(175, 175, 175, 1)';
-  private fillColorActBooth = 'rgba(175, 175, 175, 0.10)';
   private lineColorVendorBooth = 'rgba(0, 0, 0, 1)';
   private lineColorAdminBooth = 'rgba(100, 100, 255, 1)';
-  private fillColorAdminBooth = 'rgba(100, 100, 255, 0.10)';
-  private lineColorDoNotVisit = 'rgba(0, 0, 0, 0)';
-  private lineColorNotVisited = 'rgba(219, 40, 40, 1)';
-  private lineColorVisited = 'rgba(88, 227, 64, 1)';
-  private lineColorRevisit = 'rgba(230, 95, 237, 1)';
   private fillColorPickUp = 'rgba(242, 113, 28, 1)';
   private fillColorRetrieved = 'rgba(163, 51, 200, 1)';
   private fillColorFilledIn = 'rgba(33, 133, 208, 1)';
