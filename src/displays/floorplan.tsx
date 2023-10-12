@@ -3,7 +3,7 @@ import React from 'react';
 import { inject, observer } from 'mobx-react';
 
 import { OpenStockForm } from '../types/enums';
-import { IVendorDirectory, IVendorStatus } from '../types/interfaces';
+import { IVendorDirectory } from '../types/interfaces';
 
 import BoothModal from '../modals/boothmodal';
 
@@ -35,8 +35,10 @@ interface BoothOverall {
 @inject('showStore') @observer
 export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlanState> {
   private lineColorActBooth = 'rgba(175, 175, 175, 1)';
+  private fillColorActBooth = 'rgba(175, 175, 175, 0.10)';
   private lineColorVendorBooth = 'rgba(0, 0, 0, 1)';
   private lineColorAdminBooth = 'rgba(100, 100, 255, 1)';
+  private fillColorAdminBooth = 'rgba(100, 100, 255, 0.10)';
   private fillColorPickUp = 'rgba(242, 113, 28, 1)';
   private fillColorRetrieved = 'rgba(163, 51, 200, 1)';
   private fillColorFilledIn = 'rgba(33, 133, 208, 1)';
@@ -58,7 +60,6 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
       boothAdmins,
       boothVendors,
       boothActivities,
-      vendorsWithActions,
     } = this.props.showStore;
 
     if (tradeShowId === undefined) {
@@ -75,9 +76,9 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
       position: "relative" as "relative",
     };
 
-    let activDivs = this.drawBooths(boothActivities, this.lineColorActBooth, vendorsWithActions);
-    let adminDivs = this.drawBooths(boothAdmins, this.lineColorAdminBooth, vendorsWithActions);
-    let boothDivs = this.drawBooths(boothVendors, this.lineColorVendorBooth, vendorsWithActions);
+    let activDivs = this.drawBooths(boothActivities, this.lineColorActBooth, this.fillColorActBooth);
+    let adminDivs = this.drawBooths(boothAdmins, this.lineColorAdminBooth, this.fillColorAdminBooth);
+    let boothDivs = this.drawBooths(boothVendors, this.lineColorVendorBooth, null);
 
     return (
       <div className='tabInnerLayout'>
@@ -159,7 +160,7 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
 
   private drawBooths = (booths: Map<string, IVendorDirectory>,
                         outlineColor: string,
-                        vendStat: Map<string, IVendorStatus>) => {
+                        fillColor: string|null) => {
     let divs: React.ReactElement[] = [];
     const vendorDrawCoords = this.reduceBooths(booths);
     vendorDrawCoords.forEach((vend, boothNum) => {
@@ -191,7 +192,7 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
         borderWidth: "2px",
         borderColor: outlineColor,
         borderStyle: "solid",
-        backgroundColor: bgColor,
+        backgroundColor: fillColor ?? bgColor,
         color: bgColor ? "white" : "black",
         boxShadow: (vend.openQuestionCount && vend.openQuestionCount > 0) ? "inset 0 0 0 5px red" : "",
         display: "flex",

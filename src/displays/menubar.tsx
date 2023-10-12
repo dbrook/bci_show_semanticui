@@ -13,12 +13,12 @@ interface MenuBarProps {
   toggleAlphaSort: () => void;
   dataModalClose: () => void;
   showStore?: any;
-};
+}
 
 interface MenuBarState {
   addTaskModalShown: boolean,
   dataModalShown: boolean,
-};
+}
 
 /*
  * Toolbar-like widget that appears at the top of the application window to allow users to start
@@ -55,7 +55,8 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
       <>
         <DataModal open={dataModalShown} closeHander={this.showDataModal}/>
         <TaskModal open={addTaskModalShown}
-                   closeHander={this.showAddTaskModal} />
+                   closeHander={this.showAddTaskModal}
+                   presetItemType='VI'/>
         <div className='topBar'>
           <Button icon primary basic={vendorsPresent} labelPosition='left' onClick={() => this.showDataModal(true)}>
             <Icon name='calendar alternate outline' />
