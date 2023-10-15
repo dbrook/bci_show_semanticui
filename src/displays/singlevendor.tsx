@@ -82,7 +82,7 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
 
       taskModal = <TaskModal open={addTaskModalShown}
                              closeHander={this.showAddTaskModal}
-                             presetItemType='NO'
+                             presetItemType='NOTE'
                              presetBoothId={vendorItem.boothId}
                              presetVendorName={vendorItem.vendor} />
 

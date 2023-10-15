@@ -65,6 +65,7 @@ class TradeShowData {
   // Remembered last-used vendor on vendor tab
   @observable public vendorPanelBoothId: string|undefined;
 
+  // For tracking which booth was selected in the floorplan tab to show appropriate vendors
   @observable public mapSelectedBoothNum: number|undefined;
 
   constructor() {
