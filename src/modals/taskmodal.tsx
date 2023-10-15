@@ -44,6 +44,11 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
   constructor(props: TaskModalProps, state: TaskModalState) {
     super(props, state);
 
+    // BE WARNED: the way modals work is they're always around/constructed and are shown
+    // by a visual trigger. The on/off visual trigger DOES NOT CONSTRUCT THE OBJECT, so
+    // relying on a booth ID in the state, specifically, is dangerous if other booths are
+    // added to and reuse the existing modal. As a result, preset booth ID will take
+    // precedence over the state if it was set.
     this.state = {
       boothIdToAdd: props?.presetBoothId ?? '',
       itemTypeToAdd: props?.presetItemType ?? 'NOTE',
@@ -52,12 +57,19 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
     };
   };
 
+  private getDesiredBoothId = (): string => {
+    if (this.props.presetBoothId !== undefined && this.props.presetBoothId !== '') {
+      return this.props.presetBoothId;
+    } else {
+      return this.state.boothIdToAdd;
+    }
+  };
+
   render() {
     const {
       open, presetBoothId, presetVendorName, showStore: { boothVendors },
     } = this.props;
-    const { itemTypeToAdd, keepOpenOnAdd, boothIdToAdd } = this.state;
-
+    const { itemTypeToAdd, keepOpenOnAdd } = this.state;
     let vendorMenu: any = [];
     if (presetBoothId === undefined) {
       const tempVendorStat = Array.from(boothVendors, ([key, value]) => {
@@ -104,9 +116,8 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
 
     let headerText: string = presetBoothId ? `Add Task to ${presetBoothId}` : 'Add Task to Vendor';
 
-    let hideAdd = (boothIdToAdd === '' || boothIdToAdd === undefined) ||
-                  (!(boothIdToAdd === '' || boothIdToAdd === undefined) &&
-                   this.state.inputValue === '');
+    let boothId = this.getDesiredBoothId();
+    let hideAdd = boothId === '' || boothId === undefined || this.state.inputValue === '';
 
     return (
       <Modal open={open} centered={false}>
@@ -199,7 +210,7 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
   private changeItemType = (e: SyntheticEvent, data: CheckboxProps) => {
     if (data.value === 'PC') {
       // Pre-fill the PC booth number if a profit center is requested to be added
-      let boothId = this.state.boothIdToAdd;
+      let boothId = this.getDesiredBoothId();
       let boothNum = boothId ? this.props.showStore.boothVendors.get(boothId).boothNum : "";
       this.setState({
         itemTypeToAdd: data.value as string,
@@ -207,7 +218,7 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
       });
     } else if (data.value === 'OS') {
       // Pre-fill the vendor name if an open stock is requested to be added
-      let boothId = this.state.boothIdToAdd;
+      let boothId = this.getDesiredBoothId();
       let vendorName = boothId ? this.props.showStore.boothVendors.get(boothId).vendor : "";
       this.setState({
         itemTypeToAdd: data.value as string,
@@ -227,23 +238,22 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
   };
 
   private addEntry = () => {
+    let boothId = this.getDesiredBoothId();
     switch (this.state.itemTypeToAdd) {
       case 'QU':
-        this.props.showStore.addQuestion(this.state.boothIdToAdd, this.state.inputValue);
+        this.props.showStore.addQuestion(boothId, this.state.inputValue);
         break;
       case 'PB':
-        this.props.showStore.addPowerBuy(this.state.boothIdToAdd, this.state.inputValue);
+        this.props.showStore.addPowerBuy(boothId, this.state.inputValue);
         break;
       case 'PC':
-        this.props.showStore.addProfitCenter(this.state.boothIdToAdd, this.state.inputValue);
+        this.props.showStore.addProfitCenter(boothId, this.state.inputValue);
         break;
       case 'NOTE':
-        this.props.showStore.addVendorNote(this.state.boothIdToAdd, this.state.inputValue);
+        this.props.showStore.addVendorNote(boothId, this.state.inputValue);
         break;
       case 'OS':
-        this.props.showStore.addOpenStock(this.state.boothIdToAdd,
-                                          this.state.inputValue,
-                                          OpenStockForm.PICK_UP);
+        this.props.showStore.addOpenStock(boothId, this.state.inputValue, OpenStockForm.PICK_UP);
         break;
     }
 
