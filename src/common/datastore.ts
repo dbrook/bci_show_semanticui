@@ -696,6 +696,13 @@ class TradeShowData {
     });
   };
 
+  @action public renameOpenStock = (boothId: string, osIdx: number, newLabel: string) => {
+    runInAction(() => {
+      this.vendorsWithActions.get(boothId).openStockForms.at(osIdx).label = newLabel;
+      this.cleanupBoothAuto(boothId);
+    });
+  };
+
   @action public setOpenStock = (boothId: string, osIdx: number, osStatus: OpenStockForm) => {
     runInAction(() => {
       this.vendorsWithActions.get(boothId).openStockForms[osIdx].formState = osStatus;
