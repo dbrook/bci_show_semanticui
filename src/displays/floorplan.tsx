@@ -6,6 +6,7 @@ import { OpenStockForm } from '../types/enums';
 import { IVendorDirectory } from '../types/interfaces';
 
 import BoothModal from '../modals/boothmodal';
+import TaskModal from '../modals/taskmodal';
 
 interface FloorPlanProps {
   boothButtonClick: () => void;
@@ -13,7 +14,8 @@ interface FloorPlanProps {
 }
 
 interface FloorPlanState {
-  modalShown: boolean;
+  boothModalShown: boolean;
+  taskModalBoothId: string|undefined;
 }
 
 interface BoothOverall {
@@ -48,7 +50,8 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
   constructor(props: FloorPlanProps, state: FloorPlanState) {
     super(props, state);
     this.state = {
-      modalShown: false
+      boothModalShown: false,
+      taskModalBoothId: undefined,
     };
   }
 
@@ -82,7 +85,13 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
 
     return (
       <div className='tabInnerLayout'>
-        <BoothModal open={this.state.modalShown} closeHandler={this.showBoothModal} />
+        <BoothModal open={this.state.boothModalShown}
+                    setAddTaskModal={this.addTaskModalBoothId}
+                    closeHandler={this.showBoothModal} />
+        <TaskModal open={this.state.taskModalBoothId !== undefined}
+                   closeHander={this.showAddTaskModal}
+                   presetBoothId={this.state.taskModalBoothId}
+                   presetVendorName={"vendorName"} />
         <div style={mapStyle}>
           {boothDivs}{activDivs}{adminDivs}
         </div>
@@ -216,7 +225,7 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
 
   private showBoothModal = (showIt: boolean, boothNum: any) => {
     this.setState({
-      modalShown: showIt
+      boothModalShown: showIt
     });
     if (!showIt && boothNum) {
       // Closing modal and have a booth identifier: switch to the vendor tab
@@ -225,4 +234,23 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
     return;
   };
 
+  private addTaskModalBoothId = (boothId: string|undefined) => {
+    this.setState({
+      taskModalBoothId: boothId
+    });
+  };
+
+  private showAddTaskModal = (showIt: boolean) => {
+    if (showIt) {
+      this.setState({
+        boothModalShown: showIt
+      });
+    } else {
+      this.setState({
+        boothModalShown: showIt,
+        taskModalBoothId: undefined,
+      });
+    }
+    return;
+  };
 }

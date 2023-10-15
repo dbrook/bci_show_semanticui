@@ -7,6 +7,7 @@ import { IVendorDirectory } from '../types/interfaces'
 
 interface BoothModalProps {
   open: boolean,
+  setAddTaskModal: (boothId: string|undefined) => any;
   closeHandler: (shown: boolean, boothNum: any) => any;
   showStore?: any;
 };
@@ -55,7 +56,7 @@ export default class BoothModal extends React.Component<BoothModalProps> {
             </div>;
         } else {
           return <div key={item}>
-              <Button basic color='blue' disabled>{item}</Button>
+              <Button basic color='blue' onClick={() => this.newVendorTask(item)}>{item}</Button>
               : {boothItem.vendor}
             </div>;
         }
@@ -97,9 +98,15 @@ export default class BoothModal extends React.Component<BoothModalProps> {
   private vendorSwitch = (boothId: string) => {
     this.props.showStore.setVendorPanelBoothId(boothId);
     this.props.closeHandler(false, boothId);
-  }
+  };
+
+  private newVendorTask = (boothId: string) => {
+    this.props.setAddTaskModal(boothId);
+    this.props.closeHandler(false, undefined);
+  };
 
   private modalCloseOps = () => {
+    this.props.setAddTaskModal(undefined);
     this.props.closeHandler(false, undefined);
   };
 }
