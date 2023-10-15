@@ -198,6 +198,7 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "center",
+        cursor: "pointer",
       };
 
       let itm = <div key={boothNum} style={styleItem} onClick={() => this.openBooth(boothNum)}>

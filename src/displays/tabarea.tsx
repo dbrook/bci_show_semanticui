@@ -46,6 +46,18 @@ export default class TabArea extends React.Component<TabAreaProps, TabAreaState>
         },
       },
       {
+        menuItem: 'Summary',
+        render: () => {
+          return (
+            <Tab.Pane attached='top' className='innerTabStyle'>
+              <Summary hideCompleted={this.props.hideCompleted}
+                       alphaSort={this.props.alphaSort}
+                       boothButtonClick={this.switchToSingleVendorTab} />
+            </Tab.Pane>
+          );
+        },
+      },
+      {
         menuItem: 'Map',
         render: () => {
           return (
@@ -61,18 +73,6 @@ export default class TabArea extends React.Component<TabAreaProps, TabAreaState>
           return (
             <Tab.Pane attached='top' className='innerTabStyle'>
               <SingleVendor />
-            </Tab.Pane>
-          );
-        },
-      },
-      {
-        menuItem: 'Summary',
-        render: () => {
-          return (
-            <Tab.Pane attached='top' className='innerTabStyle'>
-              <Summary hideCompleted={this.props.hideCompleted}
-                       alphaSort={this.props.alphaSort}
-                       boothButtonClick={this.switchToSingleVendorTab} />
             </Tab.Pane>
           );
         },
@@ -108,6 +108,6 @@ export default class TabArea extends React.Component<TabAreaProps, TabAreaState>
   };
 
   public switchToSingleVendorTab = () => {
-    this.setState({ activeTab: 2 });
+    this.setState({ activeTab: 3 });
   };
 }

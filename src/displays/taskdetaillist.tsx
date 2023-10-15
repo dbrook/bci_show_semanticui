@@ -109,14 +109,24 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
 
     return (
       <div className='tabInnerLayout'>
-        <Header as='h2' dividing textAlign='left' color='orange'>Questions</Header>
-        {questionRows}
-        <Header as='h2' dividing textAlign='left' color='violet'>Power Buys</Header>
-        {powerBuyRows}
-        <Header as='h2' dividing textAlign='left' color='teal'>Profit Centers</Header>
-        {profitCenterRows}
-        <Header as='h2' dividing textAlign='left' color='brown'>Open Stock Forms</Header>
-        {openStockRows}
+        <div className="BCI_vendoritems">
+          <div className='BCI_taskgroupitem'>
+            <Header as='h2' dividing textAlign='left' color='orange'>Questions</Header>
+            {questionRows}
+          </div>
+          <div className='BCI_taskgroupitem'>
+            <Header as='h2' dividing textAlign='left' color='brown'>Open Stock Forms</Header>
+            {openStockRows}
+          </div>
+          <div className='BCI_taskgroupitem'>
+            <Header as='h2' dividing textAlign='left' color='violet'>Power Buys</Header>
+            {powerBuyRows}
+          </div>
+          <div className='BCI_taskgroupitem'>
+            <Header as='h2' dividing textAlign='left' color='teal'>Profit Centers</Header>
+            {profitCenterRows}
+          </div>
+        </div>
       </div>
     );
   }

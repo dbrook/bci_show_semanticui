@@ -73,6 +73,25 @@
 }
 
 
+/* * * * * * * * * * * * *
+ * Individual Tab Styling
+ * * * * * * * * * * * * */
+.BCI_vendoritems {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  row-gap: 20px;
+  column-gap: 20px;
+  align-content: stretch;
+  justify-content: center;
+  max-width: 1450px;
+}
+
+.BCI_taskgroupitem {
+  width: 710px;
+  min-width: 200px;
+}
+
 /* * * * * * * * * * * *
  * Widget Styling
  * * * * * * * * * * * */

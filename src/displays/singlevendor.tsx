@@ -86,7 +86,7 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
                              presetBoothId={vendorItem.boothId}
                              presetVendorName={vendorItem.vendor} />
 
-      taskButton = <Button icon primary basic button labelPosition='left' onClick={this.openTaskModal}>
+      taskButton = <Button icon primary button labelPosition='left' onClick={this.openTaskModal}>
           <Icon name='plus square outline' />
           Add Item / Task to [{vendorItem.boothId}]...
         </Button>
@@ -102,17 +102,26 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
                   placeholder='Vendors'
                   defaultValue={vendorPanelBoothId ?? vendorPanelBoothId}
                   onChange={this.newVendorSelected} />
-        {notesComponent}
-        <Header as='h2' dividing textAlign='left' color='orange'>Questions</Header>
-        {questionsComponent}
-        <Header as='h2' dividing textAlign='left' color='violet'>Power Buys</Header>
-        {powerBuysComponent}
-        <Header as='h2' dividing textAlign='left' color='teal'>Profit Centers</Header>
-        {profitCtrComponent}
-        <Header as='h2' dividing textAlign='left' color='brown'>Open Stock Forms</Header>
-        {openStockComponent}
-        <Header as='h2' dividing textAlign='left' color='black' />
-        {taskButton}
+        <div className="BCI_vendoritems">
+          <div className='BCI_taskgroupitem' style={{textAlign: 'left'}}>{taskButton}</div>
+          {notesComponent}
+          <div className='BCI_taskgroupitem'>
+            <Header as='h2' dividing textAlign='left' color='orange'>Questions</Header>
+            {questionsComponent}
+          </div>
+          <div className='BCI_taskgroupitem'>
+            <Header as='h2' dividing textAlign='left' color='brown'>Open Stock Forms</Header>
+            {openStockComponent}
+          </div>
+          <div className='BCI_taskgroupitem'>
+            <Header as='h2' dividing textAlign='left' color='violet'>Power Buys</Header>
+            {powerBuysComponent}
+          </div>
+          <div className='BCI_taskgroupitem'>
+            <Header as='h2' dividing textAlign='left' color='teal'>Profit Centers</Header>
+            {profitCtrComponent}
+          </div>
+        </div>
       </div>
     );
   }
