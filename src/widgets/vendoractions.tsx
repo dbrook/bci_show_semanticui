@@ -57,10 +57,10 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
                                 total={questions.length} />
               <NumericalProgress label='PB'
                                 completed={nbSubmittedPowerBuys(boothId)}
-                                total={powerBuys.length} />
+                                total={powerBuys.size} />
               <NumericalProgress label='PC'
                                 completed={nbSubmittedProfitCenters(boothId)}
-                                total={profitCenters.length} />
+                                total={profitCenters.size} />
               <NumericalProgress label='OS'
                                 completed={nbSubmittedOpenStock(boothId)}
                                 total={openStockForms.length} />
@@ -81,10 +81,10 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
                                          total={questions.length} />
           </Table.Cell>
           <Table.Cell><NumericalProgress completed={nbSubmittedPowerBuys(boothId)}
-                                         total={powerBuys.length} />
+                                         total={powerBuys.size} />
           </Table.Cell>
           <Table.Cell><NumericalProgress completed={nbSubmittedProfitCenters(boothId)}
-                                         total={profitCenters.length} />
+                                         total={profitCenters.size} />
           </Table.Cell>
           <Table.Cell><NumericalProgress completed={nbSubmittedOpenStock(boothId)}
                                          total={openStockForms.length} />

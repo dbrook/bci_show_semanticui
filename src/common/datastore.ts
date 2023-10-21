@@ -5,7 +5,7 @@ import {
   IVendorDirectory,
   IVendorStatus,
   IQuestionAnswer,
-  ISubmittableItem,
+  ISubmittableQty,
   IOpenStock,
 } from '../types/interfaces';
 import { OpenStockForm } from '../types/enums';
@@ -50,12 +50,6 @@ class TradeShowData {
   // Question Data
   @observable public vendorQuestions: Array<IQuestionAnswer|undefined>;
 
-  // Power Buy Data
-  @observable public powerBuys: Array<ISubmittableItem|undefined>;
-
-  // Profit Centers Data
-  @observable public profitCenters: Array<ISubmittableItem|undefined>;
-
   // Notes for the vendors
   @observable public vendorNotes: Array<string|undefined>;
 
@@ -75,8 +69,6 @@ class TradeShowData {
     this.floorPlanWidthPx = 0;
     this.floorPlanHeightPx = 0;
     this.vendorQuestions = [];
-    this.powerBuys = [];
-    this.profitCenters = [];
     this.vendorNotes = [];
     this.vendorPanelBoothId = undefined;
     this.mapSelectedBoothNum = undefined;
@@ -93,8 +85,6 @@ class TradeShowData {
       this.loadShowData();
       this.loadProgressData();
       this.loadQuestionsData();
-      this.loadPowerBuys();
-      this.loadProfitCenters();
       this.loadVendorNotes();
     } else {
       this.db = new ShowDatabase('');
@@ -142,24 +132,6 @@ class TradeShowData {
       tempQuestions.forEach((elem, index) => {
         if (elem !== null) {
           this.db.putQuestion(index, elem);
-        }
-      });
-
-      // Import the Power Buys
-      const tempPBs = dataBackup.powerBuys;
-      this.powerBuys = tempPBs;
-      tempPBs.forEach((elem, index) => {
-        if (elem !== null) {
-          this.db.putPB(index, elem);
-        }
-      });
-
-      // Import the Profit Centers
-      const tempPCs = dataBackup.profitCenters;
-      this.profitCenters = tempPCs;
-      tempPCs.forEach((elem, index) => {
-        if (elem !== null) {
-          this.db.putPC(index, elem);
         }
       });
 
@@ -233,16 +205,12 @@ class TradeShowData {
     }
     this.db.clearVendorActions();
     this.db.clearQuestions();
-    this.db.clearPBs();
-    this.db.clearPCs();
     this.db.clearVNs();
   };
 
   @action public clearJSObjects = (eraseBoothVendors: boolean) => {
     runInAction(() => {
       this.vendorQuestions = [];
-      this.powerBuys = [];
-      this.profitCenters = [];
       this.vendorNotes = [];
       this.vendorsWithActions.clear();
       if (eraseBoothVendors) {
@@ -272,8 +240,6 @@ class TradeShowData {
       this.db = new ShowDatabase(newShowId);
       this.loadProgressData();
       this.loadQuestionsData();
-      this.loadPowerBuys();
-      this.loadProfitCenters();
       this.loadVendorNotes();
     }
   };
@@ -290,22 +256,6 @@ class TradeShowData {
     this.db.getQuestions().then((qArray) => {
       runInAction(() => {
         this.vendorQuestions = qArray;
-      });
-    });
-  };
-
-  private loadPowerBuys = () => {
-    this.db.getPBs().then((pbArray) => {
-      runInAction(() => {
-        this.powerBuys = pbArray;
-      });
-    });
-  };
-
-  private loadProfitCenters = () => {
-    this.db.getPCs().then((pcArray) => {
-      runInAction(() => {
-        this.profitCenters = pcArray;
       });
     });
   };
@@ -329,8 +279,8 @@ class TradeShowData {
         boothNum: this.boothVendors.get(boothId)?.boothNum ?? 0,
         vendor: this.boothVendors.get(boothId)?.vendor ?? '',
         questions: [],
-        powerBuys: [],
-        profitCenters: [],
+        powerBuys: new Map<string, ISubmittableQty>(),
+        profitCenters: new Map<string, ISubmittableQty>(),
         vendorNotes: [],
         openStockForms: [],
       });
@@ -342,8 +292,8 @@ class TradeShowData {
     if (this.vendorsWithActions.has(boothId)) {
       const booth: IVendorStatus = this.vendorsWithActions.get(boothId);
       if (booth.questions.length === 0 &&
-          booth.powerBuys.length === 0 &&
-          booth.profitCenters.length === 0 &&
+          booth.powerBuys.size === 0 &&
+          booth.profitCenters.size === 0 &&
           booth.vendorNotes.length === 0 &&
           booth.openStockForms.length === 0) {
         this.vendorsWithActions.delete(boothId);
@@ -463,147 +413,95 @@ class TradeShowData {
 
 
   /*
-   * Power Buy Maintenance
+   * Power Buy and Profit Center Maintenance
    */
-  @computed get nbPowerBuys() {
-    let nbDefined = 0;
-    for (const pb of this.powerBuys) {
-      if (pb !== undefined) {
-        nbDefined++;
+  @action public nbSubmittedPowerBuys = (boothId: string) => {
+    let nbSub = 0;
+    this.vendorsWithActions.get(boothId).powerBuys.forEach((pb: ISubmittableQty) => {
+      if (pb.submitted) {
+        nbSub++;
       }
-    }
-    return nbDefined;
-  }
-
-  @action public addPowerBuy = (boothId: string, pbNum: string) => {
-    const nextPbIdx = this.powerBuys.indexOf(undefined);
-    const newPbIdx = nextPbIdx !== -1 ? nextPbIdx : this.powerBuys.length;
-    this.db.putPB(newPbIdx, { itemId: pbNum, submitted: false }).then(() => {
-      runInAction(() => {
-        this.initBoothIfNeeded(boothId);
-        if (nextPbIdx !== -1) {
-          this.powerBuys[nextPbIdx] = { itemId: pbNum, submitted: false };
-          this.vendorsWithActions.get(boothId).powerBuys.push(nextPbIdx);
-        } else {
-          this.powerBuys.push({ itemId: pbNum, submitted: false });
-          this.vendorsWithActions.get(boothId).powerBuys.push(this.powerBuys.length - 1);
-        }
-      });
-      this.saveActionToDatabase(boothId);
     });
+    return nbSub;
   };
 
-  @action public removePowerBuy = (pbId: number) => {
-    if (pbId >= 0 && pbId < this.powerBuys.length) {
-      let boothIdFound: string = '';
-      this.vendorsWithActions.forEach((value, key) => {
-        const idxFound = this.vendorsWithActions.get(key).powerBuys.indexOf(pbId);
-        if (idxFound !== -1) {
-          this.vendorsWithActions.get(key).powerBuys.splice(idxFound, 1);
-          boothIdFound = key;
-        }
-      });
-      this.powerBuys[pbId] = undefined;
-      this.db.deletePB(pbId);
-      this.cleanupBoothAuto(boothIdFound);
-    }
-  }
-
-  @action public submitPowerBuy = (pbId: number, submitted: boolean) => {
-    if (pbId >= 0 && pbId < this.powerBuys.length && this.powerBuys[pbId] !== undefined) {
-      // This ignore is needed because the value could be undefined but it was already checked above
-      this.db.putPB(pbId,
-                    {
-                      // @ts-ignore
-                      itemId: this.powerBuys[pbId].itemId,
-                      submitted: submitted,
-                    }).then(() => {
-        // @ts-ignore
-        this.powerBuys[pbId].submitted = submitted;
-      });
-    }
-  };
-
-  @action public nbSubmittedPowerBuys = (boothId: string): number => {
-    let submitted = 0;
-    for (const questionId of this.vendorsWithActions.get(boothId).powerBuys) {
-      if (this.powerBuys[questionId]?.submitted) {
-        submitted++;
+  @action public setPowerBuys = (boothId: string, pbs: Map<string, number|undefined>) => {
+    this.initBoothIfNeeded(boothId);
+    let convertedPBs = this.vendorsWithActions.get(boothId).powerBuys;
+    pbs.forEach((value, key) => {
+      if (value === 0) {
+        // Unset a PB if it was explicitly set to 0
+        convertedPBs.delete(key);
+      } else if (value !== undefined) {
+        let submittable: ISubmittableQty = { quantity: value, submitted: false };
+        convertedPBs.set(key, submittable);
       }
-    }
-    return submitted;
-  };
-
-  /*
-   * Profit Center Maintenance
-   */
-  @computed get nbProfitCenters() {
-    let nbDefined = 0;
-    for (const pc of this.profitCenters) {
-      if (pc !== undefined) {
-        nbDefined++;
-      }
-    }
-    return nbDefined;
-  }
-
-  @action public addProfitCenter = (boothId: string, pcNum: string) => {
-    const nextPcIdx = this.profitCenters.indexOf(undefined);
-    const newPcIdx = nextPcIdx !== -1 ? nextPcIdx : this.profitCenters.length;
-    this.db.putPC(newPcIdx, { itemId: pcNum, submitted: false }).then(() => {
-      runInAction(() => {
-        this.initBoothIfNeeded(boothId);
-        if (nextPcIdx !== -1) {
-          this.profitCenters[nextPcIdx] = { itemId: pcNum, submitted: false };
-          this.vendorsWithActions.get(boothId).profitCenters.push(nextPcIdx);
-        } else {
-          this.profitCenters.push({ itemId: pcNum, submitted: false });
-          this.vendorsWithActions.get(boothId).profitCenters.push(this.profitCenters.length - 1);
-        }
-      });
-      this.saveActionToDatabase(boothId);
     });
+    this.vendorsWithActions.get(boothId).powerBuys = convertedPBs;
+    this.cleanupBoothAuto(boothId);
   };
 
-  @action public removeProfitCenter = (pcId: number) => {
-    if (pcId >= 0 && pcId < this.profitCenters.length) {
-      let boothIdFound: string = '';
-      this.vendorsWithActions.forEach((value, key) => {
-        const idxFound = this.vendorsWithActions.get(key).profitCenters.indexOf(pcId);
-        if (idxFound !== -1) {
-          this.vendorsWithActions.get(key).profitCenters.splice(idxFound, 1);
-          boothIdFound = key;
-        }
-      });
-      this.profitCenters[pcId] = undefined;
-      this.db.deletePC(pcId);
-      this.cleanupBoothAuto(boothIdFound);
-    }
-  }
-
-  @action public submitProfitCenter = (pcId: number, submitted: boolean) => {
-    if (pcId >= 0 && pcId < this.profitCenters.length && this.profitCenters[pcId] !== undefined) {
-      // This ignore is needed because the value could be undefined but it was already checked above
-      this.db.putPC(pcId,
-                    {
-                      // @ts-ignore
-                      itemId: this.profitCenters[pcId].itemId,
-                      submitted: submitted,
-                    }).then(() => {
-        // @ts-ignore
-        this.profitCenters[pcId].submitted = submitted;
-      });
-    }
+  @action public getGUIPowerBuys = (boothId: string|undefined): Map<string, number|undefined> => {
+    let pbs = new Map<string, number|undefined>();
+    this.vendorsWithActions.get(boothId)?.powerBuys.forEach((val: ISubmittableQty, key: string) => {
+      pbs.set(key, val.quantity);
+    });
+    return pbs;
   };
 
-  @action public nbSubmittedProfitCenters = (boothId: string): number => {
-    let submitted = 0;
-    for (const questionId of this.vendorsWithActions.get(boothId).profitCenters) {
-      if (this.profitCenters[questionId]?.submitted) {
-        submitted++;
+  @action public submitPowerBuy = (boothId: string, itemId: string, submitted: boolean) => {
+    this.vendorsWithActions.get(boothId).powerBuys.get(itemId).submitted = submitted;
+    this.cleanupBoothAuto(boothId);
+  };
+
+  @action public removePowerBuy = (boothId: string, itemId: string) => {
+    this.vendorsWithActions.get(boothId).powerBuys.delete(itemId);
+    this.cleanupBoothAuto(boothId);
+  };
+
+
+  @action public nbSubmittedProfitCenters = (boothId: string) => {
+    let nbSub = 0;
+    this.vendorsWithActions.get(boothId).profitCenters.forEach((pb: ISubmittableQty) => {
+      if (pb.submitted) {
+        nbSub++;
       }
-    }
-    return submitted;
+    });
+    return nbSub;
+  };
+
+  @action public setProfitCenters = (boothId: string, pcs: Map<string, number|undefined>) => {
+    this.initBoothIfNeeded(boothId);
+    let convertedPCs = this.vendorsWithActions.get(boothId).profitCenters;
+    pcs.forEach((value, key) => {
+      if (value === 0) {
+        // Unset a PC if it was explicitly set to 0
+        convertedPCs.delete(key);
+      } else if (value !== undefined) {
+        let submittable: ISubmittableQty = { quantity: value, submitted: false };
+        convertedPCs.set(key, submittable);
+      }
+    });
+    this.vendorsWithActions.get(boothId).profitCenters = convertedPCs;
+    this.cleanupBoothAuto(boothId);
+  };
+
+  @action public getGUIProfitCenters = (boothId: string|undefined): Map<string, number|undefined> => {
+    let pcs = new Map<string, number|undefined>();
+    this.vendorsWithActions.get(boothId)?.profitCenters.forEach((val: ISubmittableQty, key: string) => {
+      pcs.set(key, val.quantity);
+    });
+    return pcs;
+  };
+
+  @action public submitProfitCenter = (boothId: string, itemId: string, submitted: boolean) => {
+    this.vendorsWithActions.get(boothId).profitCenters.get(itemId).submitted = submitted;
+    this.cleanupBoothAuto(boothId);
+  };
+
+  @action public removeProfitCenter = (boothId: string, itemId: string) => {
+    this.vendorsWithActions.get(boothId).profitCenters.delete(itemId);
+    this.cleanupBoothAuto(boothId);
   };
 
 
@@ -740,6 +638,13 @@ class TradeShowData {
   @action public abandonOpenStock = (boothId: string, osIdx: number) => {
     if (this.vendorsWithActions.has(boothId)) {
       this.vendorsWithActions.get(boothId).openStockForms[osIdx].formState = OpenStockForm.ABANDONED;
+      this.saveActionToDatabase(boothId);
+    }
+  };
+
+  @action public deleteOpenStock = (boothId: string, osIdx: number) => {
+    if (this.vendorsWithActions.has(boothId)) {
+      this.vendorsWithActions.get(boothId).openStockForms.splice(osIdx, 1);
       this.saveActionToDatabase(boothId);
     }
   };

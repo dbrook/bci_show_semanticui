@@ -6,8 +6,6 @@ import {
   IVendorStatus,
   IQuestionAnswer,
   DBQuestionAnswer,
-  ISubmittableItem,
-  DBSubmittableItem,
   DBIndexedString,
 } from '../types/interfaces';
 
@@ -26,8 +24,6 @@ export default class ShowDatabase extends Dexie {
   mapDimensions!: Dexie.Table<any>;
   actions!: Dexie.Table<IVendorStatus>;
   questions!: Dexie.Table<DBQuestionAnswer>;
-  pwrBuys!: Dexie.Table<DBSubmittableItem>;
-  prfCtrs!: Dexie.Table<DBSubmittableItem>;
   vndNote!: Dexie.Table<DBIndexedString>;
 
   constructor(showId: string) {
@@ -39,8 +35,6 @@ export default class ShowDatabase extends Dexie {
       mapDimensions: 'parameter, value',
       actions: 'boothId, boothNum, vendor, questions, powerBuys, profitCenters, openStockForms, vndNote',
       questions: 'qIdx, question, answer',
-      pwrBuys: 'itmIdx, itemId, submitted',
-      prfCtrs: 'itmIdx, itemId, submitted',
       vndNote: 'itmIdx, note',
     });
   }
@@ -197,56 +191,6 @@ export default class ShowDatabase extends Dexie {
 
   public clearQuestions = () => {
     this.questions.clear();
-  };
-
-
-  public putPB = (pbIdx: number, pb: ISubmittableItem): Promise<number> => {
-    return this.pwrBuys.put({ itmIdx: pbIdx, ...pb });
-  };
-
-  public deletePB = (pbIdx: number) => {
-    this.pwrBuys.delete(pbIdx);
-  };
-
-  public getPBs = (): Promise<ISubmittableItem[]> => {
-    return new Promise((resolve, reject) => {
-      this.pwrBuys.toArray().then((srcArr) => {
-        let tmpArr: ISubmittableItem[] = [];
-        for (const item of srcArr) {
-          tmpArr[item.itmIdx] = { itemId: item.itemId, submitted: item.submitted };
-        }
-        resolve(tmpArr);
-      });
-    });
-  };
-
-  public clearPBs = () => {
-    this.pwrBuys.clear();
-  };
-
-
-  public putPC = (pcIdx: number, pc: ISubmittableItem): Promise<number> => {
-    return this.prfCtrs.put({ itmIdx: pcIdx, ...pc });
-  };
-
-  public deletePC = (pcIdx: number) => {
-    this.prfCtrs.delete(pcIdx);
-  };
-
-  public getPCs = (): Promise<ISubmittableItem[]> => {
-    return new Promise((resolve, reject) => {
-      this.prfCtrs.toArray().then((srcArr) => {
-        let tmpArr: ISubmittableItem[] = [];
-        for (const item of srcArr) {
-          tmpArr[item.itmIdx] = { itemId: item.itemId, submitted: item.submitted };
-        }
-        resolve(tmpArr);
-      });
-    });
-  };
-
-  public clearPCs = () => {
-    this.prfCtrs.clear();
   };
 
 

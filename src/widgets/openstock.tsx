@@ -51,7 +51,7 @@ export default class OpenStock extends React.Component<OpenStockProps, OpenStock
     let currentStateStr: string;
     let nextColor: SemanticCOLORS;
     let nextIcon: SemanticICONS;
-    let deleteBtnDisable: boolean;
+    let deleteBtnFinal: boolean;
     let advanceBtnDisable: boolean = false;
     let mainProps = {};
 
@@ -61,54 +61,51 @@ export default class OpenStock extends React.Component<OpenStockProps, OpenStock
       currentStateStr = 'Retrieve';
       nextColor = 'purple';
       nextIcon = 'handshake outline';
-      deleteBtnDisable = false;
+      deleteBtnFinal = false;
       break;
     case OpenStockForm.RETRIEVED:
       mainProps = { color: 'purple' };
       currentStateStr = 'Retrieved';
       nextColor = 'blue';
       nextIcon = 'edit';
-      deleteBtnDisable = false;
+      deleteBtnFinal = false;
       break;
     case OpenStockForm.FILLED_IN:
       mainProps = { color: 'blue' };
       currentStateStr = 'Filled-In';
       nextColor = 'green';
       nextIcon = 'checkmark';
-      deleteBtnDisable = false;
+      deleteBtnFinal = false;
       break;
     case OpenStockForm.SUBMITTED:
       mainProps = { color: 'green' };
       currentStateStr = 'Submitted';
       nextColor = 'black';
       nextIcon = 'undo';
-      deleteBtnDisable = true;
+      deleteBtnFinal = false;
       break;
     case OpenStockForm.ABANDONED:
       mainProps = { color: 'red', basic: true };
       currentStateStr = 'Discarded';
       nextColor = 'black';
       nextIcon = 'undo';
-      deleteBtnDisable = true;
+      deleteBtnFinal = true;
       break;
     default:
       mainProps = { basic: true };
       currentStateStr = 'None';
       nextColor = 'orange';
       nextIcon = 'file';
-      deleteBtnDisable = true;
+      deleteBtnFinal = true;
     };
 
     if (editing) {
-      deleteBtnDisable = true;
       advanceBtnDisable = true;
     }
 
-    const deleteBtn = !deleteBtnDisable ?
-      <Button icon basic color='red' onClick={this.abandonButtonAction}>
+    const deleteBtn = <Button icon color='red' basic={!deleteBtnFinal} onClick={this.abandonButtonAction}>
         <Icon name='trash alternate outline'/>
-      </Button> :
-      <Button disabled icon basic color='red'><Icon name='trash alternate outline'/></Button>;
+      </Button>;
 
     const editBtnIcon = editing ? 'save' : 'pencil alternate';
 
@@ -142,7 +139,11 @@ export default class OpenStock extends React.Component<OpenStockProps, OpenStock
   }
 
   private abandonButtonAction = () => {
-    this.props.showStore.abandonOpenStock(this.props.boothId, this.props.itmIdx);
+    if (this.props.formStatus === OpenStockForm.ABANDONED) {
+      this.props.showStore.deleteOpenStock(this.props.boothId, this.props.itmIdx);
+    } else {
+      this.props.showStore.abandonOpenStock(this.props.boothId, this.props.itmIdx);
+    }
   }
 
   private toggleEdit = () => {

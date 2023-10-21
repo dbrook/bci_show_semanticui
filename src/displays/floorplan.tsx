@@ -6,7 +6,6 @@ import { OpenStockForm } from '../types/enums';
 import { IVendorDirectory } from '../types/interfaces';
 
 import BoothModal from '../modals/boothmodal';
-import TaskModal from '../modals/taskmodal';
 
 interface FloorPlanProps {
   boothButtonClick: () => void;
@@ -15,7 +14,6 @@ interface FloorPlanProps {
 
 interface FloorPlanState {
   boothModalShown: boolean;
-  taskModalBoothId: string|undefined;
 }
 
 interface BoothOverall {
@@ -51,7 +49,6 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
     super(props, state);
     this.state = {
       boothModalShown: false,
-      taskModalBoothId: undefined,
     };
   }
 
@@ -88,10 +85,6 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
         <BoothModal open={this.state.boothModalShown}
                     setAddTaskModal={this.addTaskModalBoothId}
                     closeHandler={this.showBoothModal} />
-        <TaskModal open={this.state.taskModalBoothId !== undefined}
-                   closeHander={this.showAddTaskModal}
-                   presetBoothId={this.state.taskModalBoothId}
-                   presetVendorName={"vendorName"} />
         <div style={mapStyle}>
           {boothDivs}{activDivs}{adminDivs}
         </div>
@@ -235,22 +228,15 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
   };
 
   private addTaskModalBoothId = (boothId: string|undefined) => {
-    this.setState({
-      taskModalBoothId: boothId
-    });
+    if (boothId) {
+      // Add a simple note to the booth so it can be interfaced with in the Vendor pane
+      this.props.showStore.setVendorPanelBoothId(boothId);
+      this.props.showStore.addVendorNote(
+        boothId, 
+        "This is a newly initialized vendor. Use the buttons to add tasks and then delete this note."
+      );
+      this.props.boothButtonClick();
+    }
   };
 
-  private showAddTaskModal = (showIt: boolean) => {
-    if (showIt) {
-      this.setState({
-        boothModalShown: showIt
-      });
-    } else {
-      this.setState({
-        boothModalShown: showIt,
-        taskModalBoothId: undefined,
-      });
-    }
-    return;
-  };
 }

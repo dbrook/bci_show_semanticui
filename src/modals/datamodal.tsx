@@ -312,8 +312,6 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       vendorsWithActions,
       vendorQuestions,
       vendorNotes,
-      powerBuys,
-      profitCenters,
     } = this.props.showStore;
 
     const backupObj: DataBackup = {
@@ -325,8 +323,6 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       vendors: Object.fromEntries(toJS(boothVendors)),
       vendorsWithActions: Object.fromEntries(toJS(vendorsWithActions)),
       vendorQuestions: toJS(vendorQuestions),
-      powerBuys: toJS(powerBuys),
-      profitCenters: toJS(profitCenters),
       vendorNotes: toJS(vendorNotes),
     };
 

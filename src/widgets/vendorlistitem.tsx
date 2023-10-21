@@ -7,7 +7,7 @@ interface VendorListItemProps {
   boothNum: number;
   vendor: string;
   hasActions: boolean;
-  setAddTaskModalBoothId: (boothId: string|undefined) => void;
+  jumpToBoothFunc: (boothId: string) => void;
   showStore?: any;
 };
 
@@ -34,6 +34,6 @@ export default class VendorListItem extends React.Component<VendorListItemProps>
   }
 
   private openTaskModal = () => {
-    this.props.setAddTaskModalBoothId(this.props.boothId);
+    this.props.jumpToBoothFunc(this.props.boothId);
   }
 }

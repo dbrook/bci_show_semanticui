@@ -84,8 +84,8 @@ export default class Summary extends React.Component<TaskListProps> {
     return (
       (nbSubmittedOpenStock(vendor.boothId) === vendor.openStockForms.length) &&
       (nbAnsweredQuestions(vendor.boothId) === vendor.questions.length) &&
-      (nbSubmittedPowerBuys(vendor.boothId) === vendor.powerBuys.length) &&
-      (nbSubmittedProfitCenters(vendor.boothId) === vendor.profitCenters.length)
+      (nbSubmittedPowerBuys(vendor.boothId) === vendor.powerBuys.size) &&
+      (nbSubmittedProfitCenters(vendor.boothId) === vendor.profitCenters.size)
     );
   }
 }

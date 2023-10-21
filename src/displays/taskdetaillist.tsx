@@ -59,11 +59,12 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
     });
 
     let powerBuyRows = tempVendorStat.map((x: IVendorStatus) => {
-      if (x.powerBuys.length) {
-        if (hideCompleted && x.powerBuys.length === nbSubmittedPowerBuys(x.boothId)) {
+      if (x.powerBuys.size) {
+        if (hideCompleted && x.powerBuys.size === nbSubmittedPowerBuys(x.boothId)) {
           return null;
         }
         return <SimpleSubmittableGroup key={x.boothId}
+                                       boothId={x.boothId}
                                        boothNum={x.boothNum}
                                        vendor={x.vendor}
                                        items={x.powerBuys}
@@ -75,11 +76,12 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
     });
 
     let profitCenterRows = tempVendorStat.map((x: IVendorStatus) => {
-      if (x.profitCenters.length) {
-        if (hideCompleted && x.profitCenters.length === nbSubmittedProfitCenters(x.boothId)) {
+      if (x.profitCenters.size) {
+        if (hideCompleted && x.profitCenters.size === nbSubmittedProfitCenters(x.boothId)) {
           return null;
         }
         return <SimpleSubmittableGroup key={x.boothId}
+                                       boothId={x.boothId}
                                        boothNum={x.boothNum}
                                        vendor={x.vendor}
                                        items={x.profitCenters}

@@ -3,7 +3,6 @@ import { Button, Icon } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
-import TaskModal from '../modals/taskmodal';
 import DataModal from '../modals/datamodal';
 
 interface MenuBarProps {
@@ -16,7 +15,6 @@ interface MenuBarProps {
 }
 
 interface MenuBarState {
-  addTaskModalShown: boolean,
   dataModalShown: boolean,
 }
 
@@ -30,8 +28,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
   constructor(props: MenuBarProps, state: MenuBarState) {
     super(props, state);
     this.state = {
-      addTaskModalShown: false,
-      dataModalShown: false
+      dataModalShown: false,
     };
   }
 
@@ -44,7 +41,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
       showStore: { tradeShowId },
     } = this.props;
 
-    const { addTaskModalShown, dataModalShown } = this.state;
+    const { dataModalShown } = this.state;
 
     const sortingIconName = alphaSort ? 'sort alphabet down' : 'sort numeric down';
     const sortingIconText = alphaSort ? 'Sort: Vendor' : 'Sort: Booth';
@@ -54,20 +51,10 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
     return (
       <>
         <DataModal open={dataModalShown} closeHander={this.showDataModal}/>
-        <TaskModal open={addTaskModalShown}
-                   closeHander={this.showAddTaskModal}
-                   presetItemType='VI'/>
         <div className='topBar'>
           <Button icon primary basic={vendorsPresent} labelPosition='left' onClick={() => this.showDataModal(true)}>
             <Icon name='calendar alternate outline' />
             {tradeShowId ?? 'Load Show Data...'}
-          </Button>
-          <Button icon primary basic button
-                  disabled={!vendorsPresent}
-                  labelPosition='left'
-                  onClick={() => this.showAddTaskModal(true)}>
-            <Icon name='plus square outline' />
-            Add...
           </Button>
           <div className='BCIflexmenubarspacer' />
           <Button icon primary basic onClick={toggleAlphaSort} button labelPosition='left'>
@@ -90,11 +77,6 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
             <Icon name='calendar alternate outline' />
             {tradeShowId ?? 'Load Show Data...'}
           </Button>
-          <Button icon primary basic button
-                  disabled={!vendorsPresent}
-                  onClick={() => this.showAddTaskModal(true)}>
-            <Icon name='plus square outline' />
-          </Button>
           <div className='BCIflexmenubarspacer' />
           <Button icon primary basic onClick={toggleAlphaSort} button>
             <Icon name={sortingIconName} />
@@ -105,11 +87,6 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
         </div>
       </>
     );
-  }
-
-  private showAddTaskModal = (showIt: boolean) => {
-    this.setState({ addTaskModalShown: showIt });
-    return;
   }
 
   private showDataModal = (showIt: boolean) => {

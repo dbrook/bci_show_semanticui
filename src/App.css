@@ -213,7 +213,7 @@
 
 /* Open Stock */
 .BCIopenstockmobilegroup {
-  width: 16.2em;
+  width: 16.3em;
   background-color: white;
   padding: 6px 4px;
   border: 1px solid grey;
@@ -232,7 +232,8 @@
 /* Simple Submittable (Profit Ctr / Power Buy) */
 .BCIsimplesubmittable {
   justify-content: center;
-  width: 6.5em;
+  width: 10.87em;
+  font-family: monospace;
 }
 
 

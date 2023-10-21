@@ -3,12 +3,14 @@ import { Divider, Header } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
+import { ISubmittableQty } from '../types/interfaces';
 import SimpleSubmittable from './simplesubmittable';
 
 interface SimpleSubmittableGroupProps {
+  boothId: string;
   boothNum: number;
   vendor: string;
-  items: number[];
+  items: Map<string, ISubmittableQty>;
   hideCompleted: boolean;
   hideVendor: boolean;
   prefix: string;
@@ -24,39 +26,35 @@ interface SimpleSubmittableGroupProps {
 export default class SimpleSubmittableGroup extends React.Component<SimpleSubmittableGroupProps> {
   render() {
     const {
+      boothId,
       boothNum,
       vendor,
       items,
       hideCompleted,
       hideVendor,
       prefix,
-      showStore: { powerBuys, profitCenters },
     } = this.props;
 
-    const itemsAsSubmittables = items.map((x) => {
-      if (prefix === 'PB') {
-        const { submitted } = powerBuys[x];
-        if (hideCompleted && submitted) {
-          return null;
+    let itemsAsSubmittables: React.ReactElement[] = [];
+    if (items) {
+      items.forEach((value, key) => {
+        let submitted = value.submitted as boolean;
+        if (!(hideCompleted && submitted)) {
+          itemsAsSubmittables.push(
+            <SimpleSubmittable key={key} 
+              boothId={boothId} 
+              boothNum={boothNum} 
+              submitted={submitted} 
+              quantity={value.quantity}
+              prefix={prefix} 
+              itemId={key} />
+          );
         }
-        return <SimpleSubmittable key={x} itemIdx={x} prefix={prefix}/>;
-      } else if (prefix === 'PC') {
-        const { submitted } = profitCenters[x];
-        if (hideCompleted && submitted) {
-          return null;
-        }
-        return <SimpleSubmittable key={x} itemIdx={x} prefix={prefix}/>;
-      }
-      return null;
-    });
-
-    let header = null;
-    let divider = null;
-    if (!hideVendor) {
-      header = <Header as='h3'>{boothNum} - {vendor}</Header>;
-      divider = <Divider />;
+      });
     }
 
+    let header = hideVendor ? null : <Header as='h3'>{boothNum} - {vendor}</Header>;
+    let divider = hideVendor ? null : <Divider />;
     return <div>
         {header}
         <div className='BCItaskitemsflex'>

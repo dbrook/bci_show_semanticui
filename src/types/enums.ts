@@ -18,3 +18,11 @@ export enum DataLoad {
   SUCCESS = 1,
   FAILURE = 2,
 };
+
+
+/*
+ * Task Types
+ */
+export enum TaskType {
+  
+};

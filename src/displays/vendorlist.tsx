@@ -5,17 +5,16 @@ import { Input, InputProps } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
-import TaskModal from '../modals/taskmodal';
 import VendorListItem from '../widgets/vendorlistitem';
 
 interface VendorListProps {
   alphaSort: boolean;
+  boothButtonClick: () => void;
   showStore?: any;
 }
 
 interface VendorListState {
   filterText: string;
-  vendorTaskModalBoothId: string|undefined;
 }
 
 /*
@@ -26,12 +25,12 @@ interface VendorListState {
 export default class VendorList extends React.Component<VendorListProps, VendorListState> {
   constructor(props: VendorListProps, state: VendorListState) {
     super(props, state);
-    this.state = { filterText: '', vendorTaskModalBoothId: undefined };
+    this.state = { filterText: '' };
   }
 
   render() {
     const { alphaSort, showStore: { boothVendors, vendorsWithActions } } = this.props;
-    const { filterText, vendorTaskModalBoothId } = this.state;
+    const { filterText } = this.state;
     const lowerFilterText = filterText.toLowerCase();
 
     // Filter results by vendor and sort them according to the global sort setting
@@ -57,20 +56,12 @@ export default class VendorList extends React.Component<VendorListProps, VendorL
                              boothId={x.boothId}
                              boothNum={x.boothNum}
                              vendor={x.vendor}
-                             setAddTaskModalBoothId={this.setAddTaskModalBoothId}
+                             jumpToBoothFunc={this.jumpToBoothFunc}
                              hasActions={vendorHasActions}/>
     });
 
-    let vendorName = vendorTaskModalBoothId === undefined ? "" : boothVendors.get(vendorTaskModalBoothId).vendor;
-    let addTaskModal = <TaskModal open={vendorTaskModalBoothId !== undefined}
-        closeHander={this.showAddTaskModal}
-        presetBoothId={vendorTaskModalBoothId}
-        presetVendorName={vendorName}
-      />;
-
     return (
       <>
-        {addTaskModal}
         <Input fluid
                placeholder='Filter Vendors'
                action={{ icon: 'x', onClick: this.clearFilterText }}
@@ -91,14 +82,14 @@ export default class VendorList extends React.Component<VendorListProps, VendorL
     this.setState({ filterText: '' });
   };
 
-  private setAddTaskModalBoothId = (boothId: string|undefined) => {
-    this.setState({ vendorTaskModalBoothId: boothId });
-  };
-
-  private showAddTaskModal = (showIt: boolean) => {
-    if (!showIt) {
-      this.setState({ vendorTaskModalBoothId: undefined });
+  private jumpToBoothFunc = (boothId: string) => {
+    this.props.showStore.setVendorPanelBoothId(boothId);
+    if (!this.props.showStore.vendorsWithActions.has(boothId)) {
+      this.props.showStore.addVendorNote(
+        boothId, 
+        "This is a newly initialized vendor. Use the buttons to add tasks and then delete this note."
+      );
     }
-    return;
+    this.props.boothButtonClick();
   };
 }

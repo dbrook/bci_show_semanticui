@@ -1,6 +1,6 @@
 import React from 'react';
 import { SyntheticEvent } from 'react';
-import { Button, Dropdown, DropdownProps, Header, Icon } from 'semantic-ui-react';
+import { Button, ButtonProps, Dropdown, DropdownProps, Header, Icon } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
@@ -15,7 +15,12 @@ interface SingleVendorProps {
 };
 
 interface DataModalState {
-  addTaskModalShown: boolean;
+  addNoteModalShown: boolean;
+  addQuModalShown: boolean;
+  addPBModalShown: boolean;
+  addPCModalShown: boolean;
+  addOSModalShown: boolean;
+  deleteWarnShown: boolean;
 };
 
 /*
@@ -26,12 +31,19 @@ interface DataModalState {
 export default class SingleVendor extends React.Component<SingleVendorProps, DataModalState> {
   constructor(props: SingleVendorProps, state: DataModalState) {
     super(props, state);
-    this.state = { addTaskModalShown: false };
+    this.state = {
+      addNoteModalShown: false,
+      addQuModalShown: false,
+      addPBModalShown: false,
+      addPCModalShown: false,
+      addOSModalShown: false,
+      deleteWarnShown: false,
+    };
   }
 
   render() {
     const { showStore: { vendorPanelBoothId, vendorsWithActions } } = this.props;
-    const { addTaskModalShown } = this.state;
+    const { addNoteModalShown, addQuModalShown, addPBModalShown, addPCModalShown, addOSModalShown } = this.state;
 
     const tempVendorStat = Array.from(vendorsWithActions, ([key, value]) => {
       return {boothId: key, boothNum: value.boothNum, vendor: value.vendor};
@@ -47,8 +59,8 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
     let powerBuysComponent = null;
     let profitCtrComponent = null;
     let openStockComponent = null;
-    let taskModal = null;
-    let taskButton = null;
+    let taskModals = null;
+    let taskButtons = null;
     if (vendorItem) {
       notesComponent = <NotesGroup key={'NO-' + vendorItem.boothId}
                                    items={vendorItem.vendorNotes} />;
@@ -57,44 +69,75 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
                                                 vendor={vendorItem.vendor}
                                                 items={vendorItem.questions}
                                                 hideCompleted={false}
-                                                hideVendor={true} />
+                                                hideVendor={true} />;
       powerBuysComponent = <SimpleSubmittableGroup key={'PB-' + vendorItem.boothId}
+                                                   boothId={vendorItem.boothId}
                                                    boothNum={vendorItem.boothNum}
                                                    vendor={vendorItem.vendor}
                                                    items={vendorItem.powerBuys}
                                                    hideCompleted={false}
                                                    hideVendor={true}
-                                                   prefix='PB' />
+                                                   prefix='PB' />;
       profitCtrComponent = <SimpleSubmittableGroup key={'PC-' + vendorItem.boothId}
+                                                   boothId={vendorItem.boothId}
                                                    boothNum={vendorItem.boothNum}
                                                    vendor={vendorItem.vendor}
                                                    items={vendorItem.profitCenters}
                                                    hideCompleted={false}
                                                    hideVendor={true}
-                                                   prefix='PC' />
+                                                   prefix='PC' />;
       openStockComponent = <OpenStockGroup key={'OS-' + vendorItem.boothId}
                                            boothId={vendorItem.boothId}
                                            boothNum={vendorItem.boothNum}
                                            vendor={vendorItem.vendor}
                                            items={vendorItem.openStockForms}
                                            hideCompleted={false}
-                                           hideVendor={true} />
+                                           hideVendor={true} />;
 
-      taskModal = <TaskModal open={addTaskModalShown}
-                             closeHander={this.showAddTaskModal}
-                             presetItemType='NOTE'
-                             presetBoothId={vendorItem.boothId}
-                             presetVendorName={vendorItem.vendor} />
+      taskModals = [
+        <TaskModal open={addNoteModalShown}
+                   closeHander={this.showAddTaskModal}
+                   presetItemType='NOTE'
+                   presetBoothId={vendorItem.boothId}
+                   presetVendorName={vendorItem.vendor} />,
+        <TaskModal open={addQuModalShown}
+                   closeHander={this.showAddTaskModal}
+                   presetItemType='QU'
+                   presetBoothId={vendorItem.boothId}
+                   presetVendorName={vendorItem.vendor} />,
+        <TaskModal open={addOSModalShown}
+                   closeHander={this.showAddTaskModal}
+                   presetItemType='OS'
+                   presetBoothId={vendorItem.boothId}
+                   presetVendorName={vendorItem.vendor} />,
+        <TaskModal open={addPBModalShown}
+                   closeHander={this.showAddTaskModal}
+                   presetItemType='PB'
+                   presetBoothId={vendorItem.boothId}
+                   presetVendorName={vendorItem.vendor} />,
+        <TaskModal open={addPCModalShown}
+                   closeHander={this.showAddTaskModal}
+                   presetItemType='PC'
+                   presetBoothId={vendorItem.boothId}
+                   presetVendorName={vendorItem.vendor} />,
+      ];
 
-      taskButton = <Button icon primary button labelPosition='left' onClick={this.openTaskModal}>
-          <Icon name='plus square outline' />
-          Add Item / Task to [{vendorItem.boothId}]...
-        </Button>
+      taskButtons = [
+        <Button icon primary button name='NOTE' key='NOTEbtn' onClick={this.openTaskModal}>
+          <Icon name='sticky note outline' />
+        </Button>,
+        <Button icon primary button name='QU' key='QUbtn' onClick={this.openTaskModal}>
+          <Icon name='question circle outline' />
+        </Button>,
+        <Button primary button name='OS' key='OSbtn' onClick={this.openTaskModal}>OS</Button>,
+        <Button primary button name='PB' key='PBbtn' onClick={this.openTaskModal}>PB</Button>,
+        <Button primary button name='PC' key='PCbtn' onClick={this.openTaskModal}>PC</Button>,
+      ];
     }
 
     return (
       <div className='tabInnerLayout'>
-        {taskModal}
+        {taskModals}
         <Dropdown as='h3'
                   fluid
                   selection
@@ -103,7 +146,7 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
                   defaultValue={vendorPanelBoothId ?? vendorPanelBoothId}
                   onChange={this.newVendorSelected} />
         <div className="BCI_vendoritems">
-          <div className='BCI_taskgroupitem' style={{textAlign: 'left'}}>{taskButton}</div>
+          <div className='BCI_taskgroupitem' style={{textAlign: 'left'}}>{taskButtons}</div>
           {notesComponent}
           <div className='BCI_taskgroupitem'>
             <Header as='h2' dividing textAlign='left' color='orange'>Questions</Header>
@@ -130,12 +173,28 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
     this.props.showStore.setVendorPanelBoothId(data.value as string);
   };
 
-  private openTaskModal = () => {
-    this.showAddTaskModal(true);
+  private openTaskModal = (e: SyntheticEvent, data: ButtonProps) => {
+    this.showAddTaskModal(true, data.name);
   };
 
-  private showAddTaskModal = (showIt: boolean) => {
-    this.setState({ addTaskModalShown: showIt });
+  private showAddTaskModal = (showIt: boolean, taskType: string) => {
+    switch (taskType) {
+    case 'NOTE':
+      this.setState({ addNoteModalShown: showIt });
+      break;
+    case 'QU':
+      this.setState({ addQuModalShown: showIt });
+      break;
+    case 'PB':
+      this.setState({ addPBModalShown: showIt });
+      break;
+    case 'PC':
+      this.setState({ addPCModalShown: showIt });
+      break;
+    case 'OS':
+      this.setState({ addOSModalShown: showIt });
+      break;
+    }
     return;
   };
 }

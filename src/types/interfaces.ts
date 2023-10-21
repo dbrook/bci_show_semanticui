@@ -36,8 +36,6 @@ export interface DataBackup {
   vendors: { [key: string]: IVendorDirectory };
   vendorsWithActions: { [key: string]: IVendorStatus };
   vendorQuestions: IQuestionAnswer[];
-  powerBuys: ISubmittableItem[];
-  profitCenters: ISubmittableItem[];
   vendorNotes: string[];
 };
 
@@ -60,6 +58,11 @@ export interface ISubmittableItem {
   submitted: boolean;
 };
 
+export interface ISubmittableQty {
+  quantity: number;
+  submitted: boolean;
+};
+
 export interface DBSubmittableItem extends ISubmittableItem {
   itmIdx: number;
 };
@@ -70,12 +73,12 @@ export interface DBIndexedString {
 };
 
 export interface IVendorStatus {
-  boothId: string;               // Unique Booth Identifier (several vendors may share a booth)
-  boothNum: number;              // The actual booth number of the vendor
-  vendor: string;                // Vendor name from the show directory/index
-  questions: number[];           // List of question IDs relevant to this vendor
-  powerBuys: number[];           // List of Power Buys relevant to this vendor
-  profitCenters: number[];       // List of Profit Centers relevant to this vendor
-  vendorNotes: number[];         // List of notes relevant to this vendor
-  openStockForms: IOpenStock[];  // Open Stock Forms' completion progress (for this vendor)
+  boothId: string;                              // Unique Booth Identifier (several vendors may share a booth)
+  boothNum: number;                             // The actual booth number of the vendor
+  vendor: string;                               // Vendor name from the show directory/index
+  questions: number[];                          // List of question IDs relevant to this vendor
+  powerBuys: Map<string, ISubmittableQty>;      // Power Buys (letter) relevant to this vendor
+  profitCenters: Map<string, ISubmittableQty>;  // List of Profit Centers relevant to this vendor
+  vendorNotes: number[];                        // List of notes relevant to this vendor
+  openStockForms: IOpenStock[];                 // Open Stock Forms' completion progress (for this vendor)
 };
