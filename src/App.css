@@ -26,7 +26,7 @@
   background: linear-gradient(
     to right, 
     rgb(38,62,118) 0px,         /* Starting point */
-    rgb(38,62,118) 505px,       /* End blue point */
+    rgb(38,62,118) 495px,       /* End blue point */
     #EEEEEE calc(100% - 300px), /* Variable turn to gray zone */
     #EEEEEE 100%                /* End pure gray area */
   );
@@ -43,7 +43,7 @@
   background: linear-gradient(
     to right, 
     rgb(38,62,118) 0px,   /* Starting point */
-    rgb(38,62,118) 310px, /* End blue point */
+    rgb(38,62,118) 300px, /* End blue point */
     #EEEEEE calc(100% - 85px), /* Variable turn to gray zone */
     #EEEEEE 100%                /* End pure gray area */
   );

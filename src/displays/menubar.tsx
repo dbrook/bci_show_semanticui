@@ -50,7 +50,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
       <>
         <DataModal open={dataModalShown} closeHander={this.showDataModal}/>
         <div className='topBar'>
-          <Image src='bci-logo.png' style={{width: '88px', height: '40px'}}/>
+          <Image src='bci-logo.png' style={{width: '79px', height: '36px'}}/>
           <div style={{alignSelf: 'center', color: 'white', fontWeight: 'bold', fontSize: '26px', margin: '0 15px'}}>Trade Show</div>
           <Button icon 
                   primary 
@@ -74,7 +74,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
           </Button>
         </div>
         <div className='topBarCondensed'>
-          <Image src='bci-logo.png' style={{width: '88px', height: '40px', marginRight: '10px'}}/>
+          <Image src='bci-logo.png' style={{width: '79px', height: '36px', marginRight: '10px'}}/>
           <Button icon primary
                   labelPosition='left'
                   style={{width: '205px'}}
