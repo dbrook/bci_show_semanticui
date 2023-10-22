@@ -23,8 +23,6 @@ export default class NotesGroup extends React.Component<NotesGroupProps> {
       return <Note key={x} noteId={x} />;
     });
 
-    return <div style={{marginBottom: '14px', width: '710px'}}>
-        {notes}
-      </div>;
+    return notes;
   }
 }

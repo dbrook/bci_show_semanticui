@@ -96,26 +96,31 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
 
       taskModals = [
         <TaskModal open={addNoteModalShown}
+                   key='note'
                    closeHander={this.showAddTaskModal}
                    presetItemType='NOTE'
                    presetBoothId={vendorItem.boothId}
                    presetVendorName={vendorItem.vendor} />,
         <TaskModal open={addQuModalShown}
+                   key='qu'
                    closeHander={this.showAddTaskModal}
                    presetItemType='QU'
                    presetBoothId={vendorItem.boothId}
                    presetVendorName={vendorItem.vendor} />,
         <TaskModal open={addOSModalShown}
+                   key='os'
                    closeHander={this.showAddTaskModal}
                    presetItemType='OS'
                    presetBoothId={vendorItem.boothId}
                    presetVendorName={vendorItem.vendor} />,
         <TaskModal open={addPBModalShown}
+                   key='pb'
                    closeHander={this.showAddTaskModal}
                    presetItemType='PB'
                    presetBoothId={vendorItem.boothId}
                    presetVendorName={vendorItem.vendor} />,
         <TaskModal open={addPCModalShown}
+                   key='pc'
                    closeHander={this.showAddTaskModal}
                    presetItemType='PC'
                    presetBoothId={vendorItem.boothId}
@@ -147,7 +152,9 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
                   onChange={this.newVendorSelected} />
         <div className="BCI_vendoritems">
           <div className='BCI_taskgroupitem' style={{textAlign: 'left'}}>{taskButtons}</div>
-          {notesComponent}
+          <div className='BCI_taskgroupitem'>
+            {notesComponent}
+          </div>
           <div className='BCI_taskgroupitem'>
             <Header as='h2' dividing textAlign='left' color='orange'>Questions</Header>
             {questionsComponent}
