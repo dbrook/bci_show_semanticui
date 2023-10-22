@@ -119,8 +119,34 @@ class TradeShowData {
       allBoothData.set('height', dataBackup.height);
       this.db.putBooths(allBoothData);
 
-      // Import the Vendors with vendors with actions
-      const tempVwaMap = new Map(Object.entries(dataBackup.vendorsWithActions));
+      // Import the 'vendors with actions'. A map in a map is not natively supported, so
+      // the nested powerbuys and profitcenters needs to be handled per boothID!
+      const tempVwaMap = new Map<string, IVendorStatus>();
+      for (const boothId in dataBackup.vendorsWithActions) {
+        console.log(boothId);
+        const fileVWA = dataBackup.vendorsWithActions[boothId];
+        let pbs: Map<string, ISubmittableQty> = new Map<string, ISubmittableQty>();
+        for (const pbid in fileVWA.powerBuys) {
+          pbs.set(pbid, fileVWA.powerBuys[pbid]);
+        }
+        let pcs: Map<string, ISubmittableQty> = new Map<string, ISubmittableQty>();
+        for (const pcid in fileVWA.profitCenters) {
+          pcs.set(pcid, fileVWA.profitCenters[pcid]);
+        }
+        const vwa: IVendorStatus = {
+          boothId: fileVWA.boothId,
+          boothNum: fileVWA.boothNum,
+          vendor: fileVWA.vendor,
+          questions: fileVWA.questions,
+          powerBuys: pbs,
+          profitCenters: pcs,
+          vendorNotes: fileVWA.vendorNotes,
+          openStockForms: fileVWA.openStockForms,
+        };
+        tempVwaMap.set(boothId, vwa);
+      }
+
+      // Put it into the store and the database
       this.vendorsWithActions = observable.map(tempVwaMap);
       tempVwaMap.forEach((value, key) => {
         this.saveActionToDatabase(key);

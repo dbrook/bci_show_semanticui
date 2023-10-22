@@ -18,7 +18,7 @@ import { toJS } from 'mobx';
 import { inject, observer } from 'mobx-react';
 
 import { DataLoad } from '../types/enums';
-import { DataBackup } from '../types/interfaces';
+import { DataBackup, VendorStatusBackup, IVendorStatus, ISubmittableQty } from '../types/interfaces';
 import AboutPanel from '../widgets/aboutpanel';
 
 interface DataModalProps {
@@ -309,7 +309,7 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       boothVendors,
       boothActivities,
       boothAdmins,
-      vendorsWithActions,
+      // vendorsWithActions,
       vendorQuestions,
       vendorNotes,
     } = this.props.showStore;
@@ -321,7 +321,8 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       admins: Object.fromEntries(toJS(boothAdmins)),
       activities: Object.fromEntries(toJS(boothActivities)),
       vendors: Object.fromEntries(toJS(boothVendors)),
-      vendorsWithActions: Object.fromEntries(toJS(vendorsWithActions)),
+      // vendorsWithActions is a complicated object so it needs to have its own handler
+      vendorsWithActions: this.extractVendorsWithActions(),
       vendorQuestions: toJS(vendorQuestions),
       vendorNotes: toJS(vendorNotes),
     };
@@ -332,6 +333,35 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       errorImportingFile: false,
       clearerOpen: false,
     });
+  };
+
+  private extractVendorsWithActions = () => {
+    // This is a gross leaky abstraction ... it should be probably done in the datastore.ts ?
+
+    let vwaExp: { [key: string]: VendorStatusBackup } = {};
+    this.props.showStore.vendorsWithActions.forEach((vendor: IVendorStatus, boothId: string) => {
+      let powerBuys: { [key: string]: ISubmittableQty } = {};
+      vendor.powerBuys.forEach((pb, key) => {
+        powerBuys[key] = pb;
+      });
+      let profitCenters: { [key: string]: ISubmittableQty } = {};
+      vendor.profitCenters.forEach((pc, key) => {
+        profitCenters[key] = pc;
+      });
+      let curVend: VendorStatusBackup = {
+        boothId: vendor.boothId,
+        boothNum: vendor.boothNum,
+        vendor: vendor.vendor,
+        questions: vendor.questions,
+        powerBuys: powerBuys,
+        profitCenters: profitCenters,
+        vendorNotes: vendor.vendorNotes,
+        openStockForms: vendor.openStockForms,
+      };
+      vwaExp[boothId] = curVend;
+    });
+    console.log(vwaExp);
+    return vwaExp;
   };
 
   private openClearer = () => {

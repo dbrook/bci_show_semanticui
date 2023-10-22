@@ -27,6 +27,17 @@ export interface IOpenStock {
  * Data Export/Import Interfaces
  */
 
+export interface VendorStatusBackup {
+  boothId: string;
+  boothNum: number;
+  vendor: string;
+  questions: number[];
+  powerBuys: { [key: string]: ISubmittableQty };      // Exporting maps is apparently a no-go...
+  profitCenters: { [key: string]: ISubmittableQty };  // Exporting maps is apparently a no-go...
+  vendorNotes: number[];
+  openStockForms: IOpenStock[];
+};
+
 export interface DataBackup {
   tradeShowId: string;
   width: number;
@@ -34,7 +45,7 @@ export interface DataBackup {
   admins: { [key: string]: IVendorDirectory };
   activities: { [key: string]: IVendorDirectory };
   vendors: { [key: string]: IVendorDirectory };
-  vendorsWithActions: { [key: string]: IVendorStatus };
+  vendorsWithActions: { [key: string]: VendorStatusBackup };
   vendorQuestions: IQuestionAnswer[];
   vendorNotes: string[];
 };
