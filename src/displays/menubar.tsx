@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Icon } from 'semantic-ui-react';
+import { Button, Icon, Image } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
@@ -46,13 +46,17 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
     const sortingIconName = alphaSort ? 'sort alphabet down' : 'sort numeric down';
     const sortingIconText = alphaSort ? 'Sort: Vendor' : 'Sort: Booth';
 
-    const vendorsPresent = tradeShowId !== undefined;
-
     return (
       <>
         <DataModal open={dataModalShown} closeHander={this.showDataModal}/>
         <div className='topBar'>
-          <Button icon primary basic={vendorsPresent} labelPosition='left' onClick={() => this.showDataModal(true)}>
+          <Image src='bci-logo.png' style={{width: '88px', height: '40px'}}/>
+          <div style={{alignSelf: 'center', color: 'white', fontWeight: 'bold', fontSize: '26px', margin: '0 15px'}}>Trade Show</div>
+          <Button icon 
+                  primary 
+                  labelPosition='left'
+                  style={{width: '205px'}}
+                  onClick={() => this.showDataModal(true)}>
             <Icon name='calendar alternate outline' />
             {tradeShowId ?? 'Load Show Data...'}
           </Button>
@@ -70,9 +74,10 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
           </Button>
         </div>
         <div className='topBarCondensed'>
+          <Image src='bci-logo.png' style={{width: '88px', height: '40px', marginRight: '10px'}}/>
           <Button icon primary
-                  basic={vendorsPresent}
                   labelPosition='left'
+                  style={{width: '205px'}}
                   onClick={() => this.showDataModal(true)}>
             <Icon name='calendar alternate outline' />
             {tradeShowId ?? 'Load Show Data...'}

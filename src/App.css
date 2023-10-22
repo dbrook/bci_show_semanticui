@@ -23,7 +23,13 @@
   flex-wrap: wrap;
   padding: 4px 1px 4px 4px;
   margin-bottom: 5px;
-  background-color: #EEEEEE;
+  background: linear-gradient(
+    to right, 
+    rgb(38,62,118) 0px,         /* Starting point */
+    rgb(38,62,118) 505px,       /* End blue point */
+    #EEEEEE calc(100% - 300px), /* Variable turn to gray zone */
+    #EEEEEE 100%                /* End pure gray area */
+  );
 }
 
 .topBarCondensed {
@@ -34,7 +40,13 @@
   flex-wrap: wrap;
   padding: 4px 1px 4px 4px;
   margin-bottom: 5px;
-  background-color: #EEEEEE;
+  background: linear-gradient(
+    to right, 
+    rgb(38,62,118) 0px,   /* Starting point */
+    rgb(38,62,118) 310px, /* End blue point */
+    #EEEEEE calc(100% - 85px), /* Variable turn to gray zone */
+    #EEEEEE 100%                /* End pure gray area */
+  );
 }
 
 .BCIflexmenubarspacer {
