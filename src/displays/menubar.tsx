@@ -57,7 +57,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
                   labelPosition='left'
                   style={{width: '205px'}}
                   onClick={() => this.showDataModal(true)}>
-            <Icon name='calendar alternate outline' />
+            <Icon name='database' />
             {tradeShowId ?? 'Load Show Data...'}
           </Button>
           <div className='BCIflexmenubarspacer' />
