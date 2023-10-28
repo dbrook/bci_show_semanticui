@@ -92,21 +92,18 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
     );
   }
 
-  private reduceBooths = (booths: Map<string, IVendorDirectory>): Map<number, BoothOverall> => {
-    // Some vendors share a booth, which is kind of impossible to draw in a sane way, so every
-    // vendor will be reduced into a booth and its "most pressing" condition of both open stock
-    // form status and open question status will be saved for rendering.
-    let overallBoothStatuses = new Map<number, BoothOverall>();
+  private reduceBooths = (booths: Map<string, IVendorDirectory>): Map<string, BoothOverall> => {
+    let overallBoothStatuses = new Map<string, BoothOverall>();
 
-    booths.forEach((booth, boothId) => {
-      let boothAction = this.props.showStore.vendorsWithActions.get(boothId);
+    booths.forEach((booth, boothNum) => {
+      let boothAction = this.props.showStore.vendorsWithActions.get(boothNum);
 
       // Current Vendor Details
       let curQuestionCount = null;
       let curOpenStock = null;
 
       // Most-restrictive known booth status so far
-      let knownBoothItem = overallBoothStatuses.get(booth.boothNum);
+      let knownBoothItem = overallBoothStatuses.get(boothNum);
       let knownQuestionCount = null;
       let knownOpenStock = null;
       if (knownBoothItem) {
@@ -116,7 +113,7 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
 
       if (boothAction) {
         curQuestionCount = boothAction.questions.length -
-                           this.props.showStore.nbAnsweredQuestions(boothId);
+                           this.props.showStore.nbAnsweredQuestions(boothNum);
         for (const osf of boothAction.openStockForms) {
           if (osf.formState !== OpenStockForm.ABANDONED) {
             if (osf.formState < knownOpenStock || knownOpenStock === null) {
@@ -154,7 +151,7 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
         openStock: knownOpenStock,
       };
 
-      overallBoothStatuses.set(booth.boothNum, tmpBooth);
+      overallBoothStatuses.set(boothNum, tmpBooth);
     });
 
     return overallBoothStatuses;
@@ -211,7 +208,7 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
     return divs;
   };
 
-  private openBooth = (boothNum: number) => {
+  private openBooth = (boothNum: string) => {
     this.props.showStore.setMapSelectedBoothNum(boothNum);
     this.showBoothModal(true, boothNum);
   };

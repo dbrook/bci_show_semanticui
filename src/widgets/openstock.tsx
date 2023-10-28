@@ -17,7 +17,7 @@ import { OpenStockForm } from  '../types/enums';
 interface OpenStockProps {
   formStatus: OpenStockForm;
   name: string;
-  boothId: string;
+  boothNum: string;
   itmIdx: number;
   showStore?: any;
 };
@@ -135,20 +135,20 @@ export default class OpenStock extends React.Component<OpenStockProps, OpenStock
   }
 
   private advanceButtonAction = () => {
-    this.props.showStore.advanceOpenStockStatus(this.props.boothId, this.props.itmIdx);
+    this.props.showStore.advanceOpenStockStatus(this.props.boothNum, this.props.itmIdx);
   }
 
   private abandonButtonAction = () => {
     if (this.props.formStatus === OpenStockForm.ABANDONED) {
-      this.props.showStore.deleteOpenStock(this.props.boothId, this.props.itmIdx);
+      this.props.showStore.deleteOpenStock(this.props.boothNum, this.props.itmIdx);
     } else {
-      this.props.showStore.abandonOpenStock(this.props.boothId, this.props.itmIdx);
+      this.props.showStore.abandonOpenStock(this.props.boothNum, this.props.itmIdx);
     }
   }
 
   private toggleEdit = () => {
     if (this.state.editing) {
-      this.props.showStore.renameOpenStock(this.props.boothId, this.props.itmIdx, this.state.newName);
+      this.props.showStore.renameOpenStock(this.props.boothNum, this.props.itmIdx, this.state.newName);
       this.setState({
         editing: !this.state.editing,
         newName: "",

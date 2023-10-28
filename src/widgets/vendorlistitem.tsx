@@ -3,8 +3,7 @@ import React from 'react';
 import { Button } from 'semantic-ui-react';
 
 interface VendorListItemProps {
-  boothId: string;
-  boothNum: number;
+  boothNum: string;
   vendor: string;
   hasActions: boolean;
   jumpToBoothFunc: (boothId: string) => void;
@@ -34,6 +33,6 @@ export default class VendorListItem extends React.Component<VendorListItemProps>
   }
 
   private openTaskModal = () => {
-    this.props.jumpToBoothFunc(this.props.boothId);
+    this.props.jumpToBoothFunc(this.props.boothNum);
   }
 }

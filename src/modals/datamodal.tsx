@@ -310,7 +310,6 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       boothVendors,
       boothActivities,
       boothAdmins,
-      // vendorsWithActions,
       vendorQuestions,
       vendorNotes,
     } = this.props.showStore;
@@ -350,9 +349,8 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
         profitCenters[key] = pc;
       });
       let curVend: VendorStatusBackup = {
-        boothId: vendor.boothId,
         boothNum: vendor.boothNum,
-        vendor: vendor.vendor,
+        boothName: vendor.boothName,
         questions: vendor.questions,
         powerBuys: powerBuys,
         profitCenters: profitCenters,

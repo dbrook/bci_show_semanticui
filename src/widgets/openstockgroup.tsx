@@ -8,8 +8,7 @@ import { IOpenStock } from '../types/interfaces'
 import OpenStock from './openstock';
 
 interface OpenStockGroupProps {
-  boothId: string;
-  boothNum: number;
+  boothNum: string;
   vendor: string;
   items: IOpenStock[];
   hideCompleted: boolean;
@@ -26,7 +25,6 @@ interface OpenStockGroupProps {
 export default class OpenStockGroup extends React.Component<OpenStockGroupProps> {
   render() {
     const {
-      boothId,
       boothNum,
       vendor,
       items,
@@ -43,7 +41,7 @@ export default class OpenStockGroup extends React.Component<OpenStockGroupProps>
       return <OpenStock key={itemIdx}
                         formStatus={formState}
                         name={label}
-                        boothId={boothId}
+                        boothNum={boothNum}
                         itmIdx={itemIdx} />;
     });
 

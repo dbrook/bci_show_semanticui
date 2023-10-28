@@ -46,11 +46,11 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
     const { addNoteModalShown, addQuModalShown, addPBModalShown, addPCModalShown, addOSModalShown } = this.state;
 
     const tempVendorStat = Array.from(vendorsWithActions, ([key, value]) => {
-      return {boothId: key, boothNum: value.boothNum, vendor: value.vendor};
+      return {boothNum: key, vendor: value.boothName};
     });
 
     let vendorMenu = tempVendorStat.map((x: any) => {
-      return {key: x.boothId, text: `${x.boothNum} - ${x.vendor}`, value: x.boothId}
+      return {key: x.boothNum, text: `${x.boothNum} - ${x.vendor}`, value: x.boothNum}
     });
 
     let vendorItem = vendorsWithActions.get(vendorPanelBoothId);
@@ -62,32 +62,29 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
     let taskModals = null;
     let taskButtons = null;
     if (vendorItem) {
-      notesComponent = <NotesGroup key={'NO-' + vendorItem.boothId}
+      notesComponent = <NotesGroup key={'NO-' + vendorItem.boothNum}
                                    items={vendorItem.vendorNotes} />;
-      questionsComponent = <QuestionAnswerGroup key={'QU-' + vendorItem.boothId}
+      questionsComponent = <QuestionAnswerGroup key={'QU-' + vendorItem.boothNum}
                                                 boothNum={vendorItem.boothNum}
                                                 vendor={vendorItem.vendor}
                                                 items={vendorItem.questions}
                                                 hideCompleted={false}
                                                 hideVendor={true} />;
-      powerBuysComponent = <SimpleSubmittableGroup key={'PB-' + vendorItem.boothId}
-                                                   boothId={vendorItem.boothId}
+      powerBuysComponent = <SimpleSubmittableGroup key={'PB-' + vendorItem.boothNum}
                                                    boothNum={vendorItem.boothNum}
                                                    vendor={vendorItem.vendor}
                                                    items={vendorItem.powerBuys}
                                                    hideCompleted={false}
                                                    hideVendor={true}
                                                    prefix='PB' />;
-      profitCtrComponent = <SimpleSubmittableGroup key={'PC-' + vendorItem.boothId}
-                                                   boothId={vendorItem.boothId}
+      profitCtrComponent = <SimpleSubmittableGroup key={'PC-' + vendorItem.boothNum}
                                                    boothNum={vendorItem.boothNum}
                                                    vendor={vendorItem.vendor}
                                                    items={vendorItem.profitCenters}
                                                    hideCompleted={false}
                                                    hideVendor={true}
                                                    prefix='PC' />;
-      openStockComponent = <OpenStockGroup key={'OS-' + vendorItem.boothId}
-                                           boothId={vendorItem.boothId}
+      openStockComponent = <OpenStockGroup key={'OS-' + vendorItem.boothNum}
                                            boothNum={vendorItem.boothNum}
                                            vendor={vendorItem.vendor}
                                            items={vendorItem.openStockForms}
@@ -99,31 +96,31 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
                    key='note'
                    closeHander={this.showAddTaskModal}
                    presetItemType='NOTE'
-                   presetBoothId={vendorItem.boothId}
+                   presetBoothId={vendorItem.boothNum}
                    presetVendorName={vendorItem.vendor} />,
         <TaskModal open={addQuModalShown}
                    key='qu'
                    closeHander={this.showAddTaskModal}
                    presetItemType='QU'
-                   presetBoothId={vendorItem.boothId}
+                   presetBoothId={vendorItem.boothNum}
                    presetVendorName={vendorItem.vendor} />,
         <TaskModal open={addOSModalShown}
                    key='os'
                    closeHander={this.showAddTaskModal}
                    presetItemType='OS'
-                   presetBoothId={vendorItem.boothId}
+                   presetBoothId={vendorItem.boothNum}
                    presetVendorName={vendorItem.vendor} />,
         <TaskModal open={addPBModalShown}
                    key='pb'
                    closeHander={this.showAddTaskModal}
                    presetItemType='PB'
-                   presetBoothId={vendorItem.boothId}
+                   presetBoothId={vendorItem.boothNum}
                    presetVendorName={vendorItem.vendor} />,
         <TaskModal open={addPCModalShown}
                    key='pc'
                    closeHander={this.showAddTaskModal}
                    presetItemType='PC'
-                   presetBoothId={vendorItem.boothId}
+                   presetBoothId={vendorItem.boothNum}
                    presetVendorName={vendorItem.vendor} />,
       ];
 

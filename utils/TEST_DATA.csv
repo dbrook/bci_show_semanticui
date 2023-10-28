@@ -1,15 +1,14 @@
 width,590,,,,,,
 height,620,,,,,,
-ACT01,1,activity,Time Sink,162,117,51,112
-ACT02,2,activity,Deposit Boxes,162,229,51,353
-ACT03,139,activity,Refreshment Booth,111,243,51,54
-ACT04,165,activity,Activity,111,117,51,126
-BCI01,105,admin,Kiosk 1,1,415,54,167
-BCI02,215,admin,Clearance,111,415,51,167
-BCI03,283,admin,Kiosk 2,111,350,51,65
-BCI04,912,admin,New and Exciting,111,297,51,53
-100-0,100,vendor,"SAMPLE CO, INC",1,1,550,53
-100-1,100,vendor,ANOTHER CORP,1,97,54,64
-101-0,101,vendor,ZZZ MFG GROUP,1,161,54,65
-102-0,102,vendor,ABCD COMPANIES,1,226,54,127
-987-0,103,vendor,D & M PRODUCTS,1,353,54,62
+1,activity,Time Sink,162,117,51,112
+2,activity,Deposit Boxes,162,229,51,353
+139,activity,Refreshment Booth,111,243,51,54
+165,activity,Activity,111,117,51,126
+105,admin,Kiosk 1,1,415,54,167
+215,admin,Clearance,111,415,51,167
+283,admin,Kiosk 2,111,350,51,65
+912,admin,New and Exciting,111,297,51,53
+100,vendor,"SAMPLE CO, INC / ANOTHER CORP",1,1,550,53
+101,vendor,ZZZ MFG GROUP,1,161,54,65
+102,vendor,ABCD COMPANIES,1,226,54,127
+103,vendor,D & M PRODUCTS,1,353,54,62

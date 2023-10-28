@@ -6,7 +6,7 @@ import { inject, observer } from 'mobx-react';
 import QuestionAnswer from './questionanswer';
 
 interface QuestionAnswerGroupProps {
-  boothNum: number;
+  boothNum: string;
   vendor: string;
   items: number[];
   hideCompleted: boolean;

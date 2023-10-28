@@ -30,21 +30,21 @@ export default class Summary extends React.Component<TaskListProps> {
       return value;
     }).sort((a: IVendorStatus, b: IVendorStatus) => {
       if (alphaSort) {
-        return a.vendor < b.vendor ? -1 : (a.vendor > b.vendor ? 1 : 0);
+        return a.boothName < b.boothName ? -1 : (a.boothName > b.boothName ? 1 : 0);
       }
-      return a.boothId < b.boothId ? -1 : (a.boothId > b.boothId ? 1 : 0);
+      return a.boothNum < b.boothNum ? -1 : (a.boothNum > b.boothNum ? 1 : 0);
     });
 
     let vendorRows = tempVendorStat.map((x: IVendorStatus) => {
       if (!this.props.hideCompleted || !this.vendorCompleted(x)) {
-        return <VendorActions key={x.boothId} vendorStatus={x} condensed={false} boothButtonClick={boothButtonClick} />
+        return <VendorActions key={x.boothNum} vendorStatus={x} condensed={false} boothButtonClick={boothButtonClick} />
       }
       return null;
     });
 
     let vendorRowsMobile = tempVendorStat.map((x: IVendorStatus) => {
       if (!this.props.hideCompleted || !this.vendorCompleted(x)) {
-        return <VendorActions key={x.boothId} vendorStatus={x} condensed={true} boothButtonClick={boothButtonClick} />
+        return <VendorActions key={x.boothNum} vendorStatus={x} condensed={true} boothButtonClick={boothButtonClick} />
       }
       return null;
     });
@@ -82,10 +82,10 @@ export default class Summary extends React.Component<TaskListProps> {
       nbSubmittedOpenStock,
     } = this.props.showStore;
     return (
-      (nbSubmittedOpenStock(vendor.boothId) === vendor.openStockForms.length) &&
-      (nbAnsweredQuestions(vendor.boothId) === vendor.questions.length) &&
-      (nbSubmittedPowerBuys(vendor.boothId) === vendor.powerBuys.size) &&
-      (nbSubmittedProfitCenters(vendor.boothId) === vendor.profitCenters.size)
+      (nbSubmittedOpenStock(vendor.boothNum) === vendor.openStockForms.length) &&
+      (nbAnsweredQuestions(vendor.boothNum) === vendor.questions.length) &&
+      (nbSubmittedPowerBuys(vendor.boothNum) === vendor.powerBuys.size) &&
+      (nbSubmittedProfitCenters(vendor.boothNum) === vendor.profitCenters.size)
     );
   }
 }

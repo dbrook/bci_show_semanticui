@@ -27,9 +27,8 @@ interface VendorActionsProps {
 export default class VendorActions extends React.Component<VendorActionsProps> {
   render() {
     const {
-      boothId,
       boothNum,
-      vendor,
+      boothName,
       questions,
       powerBuys,
       profitCenters,
@@ -45,7 +44,7 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
     if (condensedView) {
       return (
         <div>
-          <Header as='h3' style={{textAlign: 'left'}}>{vendor}</Header>
+          <Header as='h3' style={{textAlign: 'left'}}>{boothName}</Header>
           <div className='BCImobilevendorgroup'>
             <div className='BCImobilevendorbuttonnote'>
               <Button primary basic onClick={this.switchToVendorTab}>{boothNum}</Button>
@@ -53,16 +52,16 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
             </div>
             <div className='BCImobilevendorstatus'>
               <NumericalProgress label='QU'
-                                completed={nbAnsweredQuestions(boothId)}
+                                completed={nbAnsweredQuestions(boothNum)}
                                 total={questions.length} />
               <NumericalProgress label='PB'
-                                completed={nbSubmittedPowerBuys(boothId)}
+                                completed={nbSubmittedPowerBuys(boothNum)}
                                 total={powerBuys.size} />
               <NumericalProgress label='PC'
-                                completed={nbSubmittedProfitCenters(boothId)}
+                                completed={nbSubmittedProfitCenters(boothNum)}
                                 total={profitCenters.size} />
               <NumericalProgress label='OS'
-                                completed={nbSubmittedOpenStock(boothId)}
+                                completed={nbSubmittedOpenStock(boothNum)}
                                 total={openStockForms.length} />
             </div>
           </div>
@@ -76,17 +75,17 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
             <Button primary basic onClick={this.switchToVendorTab}>{boothNum}</Button>
             {noteIcon}
           </Table.Cell>
-          <Table.Cell>{vendor}</Table.Cell>
-          <Table.Cell><NumericalProgress completed={nbAnsweredQuestions(boothId)}
+          <Table.Cell>{boothName}</Table.Cell>
+          <Table.Cell><NumericalProgress completed={nbAnsweredQuestions(boothNum)}
                                          total={questions.length} />
           </Table.Cell>
-          <Table.Cell><NumericalProgress completed={nbSubmittedPowerBuys(boothId)}
+          <Table.Cell><NumericalProgress completed={nbSubmittedPowerBuys(boothNum)}
                                          total={powerBuys.size} />
           </Table.Cell>
-          <Table.Cell><NumericalProgress completed={nbSubmittedProfitCenters(boothId)}
+          <Table.Cell><NumericalProgress completed={nbSubmittedProfitCenters(boothNum)}
                                          total={profitCenters.size} />
           </Table.Cell>
-          <Table.Cell><NumericalProgress completed={nbSubmittedOpenStock(boothId)}
+          <Table.Cell><NumericalProgress completed={nbSubmittedOpenStock(boothNum)}
                                          total={openStockForms.length} />
           </Table.Cell>
         </Table.Row>
@@ -95,7 +94,7 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
   }
 
   private switchToVendorTab = () => {
-    this.props.showStore.setVendorPanelBoothId(this.props.vendorStatus.boothId);
+    this.props.showStore.setVendorPanelBoothId(this.props.vendorStatus.boothNum);
     this.props.boothButtonClick();
   }
 }

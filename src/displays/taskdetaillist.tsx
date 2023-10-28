@@ -38,19 +38,19 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
       return value;
     }).sort((a: IVendorStatus, b: IVendorStatus) => {
       if (alphaSort) {
-        return a.vendor < b.vendor ? -1 : (a.vendor > b.vendor ? 1 : 0);
+        return a.boothName < b.boothName ? -1 : (a.boothName > b.boothName ? 1 : 0);
       }
-      return a.boothId < b.boothId ? -1 : (a.boothId > b.boothId ? 1 : 0);
+      return a.boothNum < b.boothNum ? -1 : (a.boothNum > b.boothNum ? 1 : 0);
     });
 
     let questionRows = tempVendorStat.map((x) => {
       if (x.questions.length) {
-        if (hideCompleted && x.questions.length === nbAnsweredQuestions(x.boothId)) {
+        if (hideCompleted && x.questions.length === nbAnsweredQuestions(x.boothNum)) {
           return null;
         }
-        return <QuestionAnswerGroup key={x.boothId}
+        return <QuestionAnswerGroup key={x.boothNum}
                                     boothNum={x.boothNum}
-                                    vendor={x.vendor}
+                                    vendor={x.boothName}
                                     items={x.questions}
                                     hideVendor={false}
                                     hideCompleted={hideCompleted} />
@@ -60,13 +60,12 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
 
     let powerBuyRows = tempVendorStat.map((x: IVendorStatus) => {
       if (x.powerBuys.size) {
-        if (hideCompleted && x.powerBuys.size === nbSubmittedPowerBuys(x.boothId)) {
+        if (hideCompleted && x.powerBuys.size === nbSubmittedPowerBuys(x.boothNum)) {
           return null;
         }
-        return <SimpleSubmittableGroup key={x.boothId}
-                                       boothId={x.boothId}
+        return <SimpleSubmittableGroup key={x.boothNum}
                                        boothNum={x.boothNum}
-                                       vendor={x.vendor}
+                                       vendor={x.boothName}
                                        items={x.powerBuys}
                                        hideCompleted={hideCompleted}
                                        hideVendor={false}
@@ -77,13 +76,12 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
 
     let profitCenterRows = tempVendorStat.map((x: IVendorStatus) => {
       if (x.profitCenters.size) {
-        if (hideCompleted && x.profitCenters.size === nbSubmittedProfitCenters(x.boothId)) {
+        if (hideCompleted && x.profitCenters.size === nbSubmittedProfitCenters(x.boothNum)) {
           return null;
         }
-        return <SimpleSubmittableGroup key={x.boothId}
-                                       boothId={x.boothId}
+        return <SimpleSubmittableGroup key={x.boothNum}
                                        boothNum={x.boothNum}
-                                       vendor={x.vendor}
+                                       vendor={x.boothName}
                                        items={x.profitCenters}
                                        hideCompleted={hideCompleted}
                                        hideVendor={false}
@@ -94,16 +92,15 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps>
 
     let openStockRows = tempVendorStat.map((x: IVendorStatus) => {
       if (x.openStockForms.length) {
-        if (hideCompleted && x.openStockForms.length === nbSubmittedOpenStock(x.boothId)) {
+        if (hideCompleted && x.openStockForms.length === nbSubmittedOpenStock(x.boothNum)) {
           return null;
         }
-        return <OpenStockGroup key={x.boothId}
-                              boothId={x.boothId}
-                              boothNum={x.boothNum}
-                              vendor={x.vendor}
-                              items={x.openStockForms}
-                              hideCompleted={hideCompleted}
-                              hideVendor={false} />;
+        return <OpenStockGroup key={x.boothNum}
+                               boothNum={x.boothNum}
+                               vendor={x.boothName}
+                               items={x.openStockForms}
+                               hideCompleted={hideCompleted}
+                               hideVendor={false} />;
       }
       return null;
     });

@@ -9,6 +9,7 @@ import {
   uiControls,
   stateManagement,
   database,
+  codeRepo,
 } from '../common/appversions';
 
 /*
@@ -22,16 +23,18 @@ export default class AboutPanel extends React.Component {
   render() {
     return (
       <>
-        <Header color='violet' as='h1'>BCI Trade Show Tracker</Header>
-        <p><b>Version {applicationVersion}</b></p>
+        <p><b>BCI Trade Show (Dealer App) - Version {applicationVersion}</b></p>
         <p>
           A simple vendor interaction tracking application for dealers attending BCI Trade Shows.
         </p>
-        <p>Copyright © {copyrightYearRange}, Daniel Brook. Not affiliated with Bradley Caldwell, Inc.</p>
+        <p>Copyright © {copyrightYearRange}, Daniel Brook.<br/>Not affiliated with Bradley Caldwell, Inc.</p>
         <p><a href="https://www.flaticon.com/free-icons/trade-show"
               title="trade show icons"
               rel='noreferrer'
               target="_blank">Trade show icon provided by Flat Icons - Flaticon</a></p>
+        <p>
+          Found a bug? Need support? Open an issue on <a href={codeRepo} rel='noreferrer' target="_blank">GitHub</a>!
+        </p>
         <Header color='orange' as='h2'>Application Details</Header>
         <p><u>User Interface Framework</u>: {uiLibrary}</p>
         <p><u>User Interface Controls</u>: {uiControls}</p>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Modal } from 'semantic-ui-react';
+import { Button, Header, Modal } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
@@ -36,62 +36,38 @@ export default class BoothModal extends React.Component<BoothModalProps> {
     );
   };
 
-  private getVendorsForBooth = (boothNum: number) => {
-    let boothsVendors: string[] = [];
+  private getVendorsForBooth = (boothNum: string) => {
+    // Is the booth for vendors?
+    if (this.props.showStore.boothVendors.get(boothNum)?.vendors.length) {
+      let vendors = [
+        <Header as='h3' key='HEAD'>
+          {this.props.showStore.boothVendors.get(boothNum).boothName}
+        </Header>,
+        this.props.showStore.boothVendors.get(boothNum).vendors.map((vendorName: string) => {
+          return <div key={vendorName}>{vendorName}</div>;
+        })
+      ];
 
-    // Is the booth for a vendor?
-    this.props.showStore.boothVendors.forEach((vendor: IVendorDirectory, boothId: string) => {
-      if (vendor.boothNum === boothNum) {
-        boothsVendors.push(boothId);
+      if (this.props.showStore.vendorsWithActions.get(boothNum)) {
+        vendors.push(<Button basic color='blue' onClick={() => this.newVendorTask(boothNum)}>
+          Go to Vendor Tab
+        </Button>);
+      } else {
+        vendors.push(<Button basic color='blue' onClick={() => this.newVendorTask(boothNum)}>
+          Initialize Vendor
+        </Button>);
       }
-    });
-    if (boothsVendors.length) {
-      let vendors = boothsVendors.map((item: string) => {
-        let boothItem = this.props.showStore.boothVendors.get(item);
-        let activeBooth = this.props.showStore.vendorsWithActions.get(item);
-        if (activeBooth) {
-          return <div key={item}>
-              <Button color='blue' onClick={() => this.vendorSwitch(item)}>{item}</Button>
-              : {boothItem.vendor}
-            </div>;
-        } else {
-          return <div key={item}>
-              <Button basic color='blue' onClick={() => this.newVendorTask(item)}>{item}</Button>
-              : {boothItem.vendor}
-            </div>;
-        }
-      });
       return vendors;
     }
 
     // Is the booth for administrative purposes?
-    boothsVendors = [];
-    this.props.showStore.boothAdmins.forEach((vendor: IVendorDirectory, boothId: string) => {
-      if (vendor.boothNum === boothNum) {
-        boothsVendors.push(boothId);
-      }
-    });
-    if (boothsVendors.length) {
-      let vendors = boothsVendors.map((item: string) => {
-        let boothItem = this.props.showStore.boothAdmins.get(item);
-        return <div key={item}>{boothItem.vendor}</div>;
-      });
-      return vendors;
+    if (this.props.showStore.boothAdmins.get(boothNum)) {
+      return <Header as='h3'>{this.props.showStore.boothAdmins.get(boothNum).boothName}</Header>;
     }
 
     // Is the booth for a show activity?
-    boothsVendors = [];
-    this.props.showStore.boothActivities.forEach((vendor: IVendorDirectory, boothId: string) => {
-      if (vendor.boothNum === boothNum) {
-        boothsVendors.push(boothId);
-      }
-    });
-    if (boothsVendors.length) {
-      let vendors = boothsVendors.map((item: string) => {
-        let boothItem = this.props.showStore.boothActivities.get(item);
-        return <div key={item}>{boothItem.vendor}</div>;
-      });
-      return vendors;
+    if (this.props.showStore.boothActivities.get(boothNum)) {
+      return <Header as='h3'>{this.props.showStore.boothActivities.get(boothNum).boothName}</Header>;
     }
   };
 

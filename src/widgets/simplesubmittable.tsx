@@ -4,9 +4,8 @@ import { Button, Icon, Label } from 'semantic-ui-react';
 import { inject, observer } from 'mobx-react';
 
 interface SimpleSubmittableProps {
-  boothId: string;
   prefix: string;
-  boothNum: number;
+  boothNum: string;
   submitted: boolean;
   quantity: number;
   itemId: string;
@@ -54,17 +53,17 @@ export default class SimpleSubmittable extends React.Component<SimpleSubmittable
   private toggleSubmitted = () => {
     const {
       prefix,
-      boothId,
+      boothNum,
       submitted,
       itemId,
       showStore: { submitPowerBuy, submitProfitCenter },
     } = this.props;
     switch (prefix) {
       case 'PB':
-        submitPowerBuy(boothId, itemId, !submitted);
+        submitPowerBuy(boothNum, itemId, !submitted);
         break;
       case 'PC':
-        submitProfitCenter(boothId, itemId, !submitted);
+        submitProfitCenter(boothNum, itemId, !submitted);
         break;
     }
   };
@@ -72,16 +71,16 @@ export default class SimpleSubmittable extends React.Component<SimpleSubmittable
   private deleteItem = () => {
     const {
       prefix,
-      boothId,
+      boothNum,
       itemId,
       showStore: { removePowerBuy, removeProfitCenter },
     } = this.props;
     switch (prefix) {
       case 'PB':
-        removePowerBuy(boothId, itemId);
+        removePowerBuy(boothNum, itemId);
         break;
       case 'PC':
-        removeProfitCenter(boothId, itemId);
+        removeProfitCenter(boothNum, itemId);
         break;
     }
   }

@@ -7,8 +7,7 @@ import { ISubmittableQty } from '../types/interfaces';
 import SimpleSubmittable from './simplesubmittable';
 
 interface SimpleSubmittableGroupProps {
-  boothId: string;
-  boothNum: number;
+  boothNum: string;
   vendor: string;
   items: Map<string, ISubmittableQty>;
   hideCompleted: boolean;
@@ -26,7 +25,6 @@ interface SimpleSubmittableGroupProps {
 export default class SimpleSubmittableGroup extends React.Component<SimpleSubmittableGroupProps> {
   render() {
     const {
-      boothId,
       boothNum,
       vendor,
       items,
@@ -42,7 +40,6 @@ export default class SimpleSubmittableGroup extends React.Component<SimpleSubmit
         if (!(hideCompleted && submitted)) {
           itemsAsSubmittables.push(
             <SimpleSubmittable key={key} 
-              boothId={boothId} 
               boothNum={boothNum} 
               submitted={submitted} 
               quantity={value.quantity}

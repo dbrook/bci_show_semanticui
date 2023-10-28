@@ -5,8 +5,8 @@ import { OpenStockForm } from './enums';
  */
 
 export interface IVendorDirectory {
-  boothNum: number;
-  vendor: string;
+  boothName: string;
+  vendors: string[];
   x1: number;
   y1: number;
   width: number;
@@ -14,7 +14,7 @@ export interface IVendorDirectory {
 };
 
 export interface DBVendorDirectory extends IVendorDirectory {
-  boothId: string;
+  boothNum: string;
 };
 
 export interface IOpenStock {
@@ -28,9 +28,8 @@ export interface IOpenStock {
  */
 
 export interface VendorStatusBackup {
-  boothId: string;
-  boothNum: number;
-  vendor: string;
+  boothNum: string;
+  boothName: string;
   questions: number[];
   powerBuys: { [key: string]: ISubmittableQty };      // Exporting maps is apparently a no-go...
   profitCenters: { [key: string]: ISubmittableQty };  // Exporting maps is apparently a no-go...
@@ -84,9 +83,8 @@ export interface DBIndexedString {
 };
 
 export interface IVendorStatus {
-  boothId: string;                              // Unique Booth Identifier (several vendors may share a booth)
-  boothNum: number;                             // The actual booth number of the vendor
-  vendor: string;                               // Vendor name from the show directory/index
+  boothNum: string;                             // The actual booth number of the vendor
+  boothName: string;                            // Easy to display vendor(s) combined names
   questions: number[];                          // List of question IDs relevant to this vendor
   powerBuys: Map<string, ISubmittableQty>;      // Power Buys (letter) relevant to this vendor
   profitCenters: Map<string, ISubmittableQty>;  // List of Profit Centers relevant to this vendor

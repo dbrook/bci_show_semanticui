@@ -123,7 +123,6 @@ class TradeShowData {
       // the nested powerbuys and profitcenters needs to be handled per boothID!
       const tempVwaMap = new Map<string, IVendorStatus>();
       for (const boothId in dataBackup.vendorsWithActions) {
-        console.log(boothId);
         const fileVWA = dataBackup.vendorsWithActions[boothId];
         let pbs: Map<string, ISubmittableQty> = new Map<string, ISubmittableQty>();
         for (const pbid in fileVWA.powerBuys) {
@@ -134,9 +133,8 @@ class TradeShowData {
           pcs.set(pcid, fileVWA.profitCenters[pcid]);
         }
         const vwa: IVendorStatus = {
-          boothId: fileVWA.boothId,
           boothNum: fileVWA.boothNum,
-          vendor: fileVWA.vendor,
+          boothName: fileVWA.boothName,
           questions: fileVWA.questions,
           powerBuys: pbs,
           profitCenters: pcs,
@@ -190,6 +188,7 @@ class TradeShowData {
           .then((responseJson) => {
             runInAction(() => {
               this.boothVendors = new Map(Object.entries(responseJson.vendors));
+              console.log(this.boothVendors);
               this.boothActivities = new Map(Object.entries(responseJson.activities));
               this.boothAdmins = new Map(Object.entries(responseJson.admins));
               this.floorPlanWidthPx = responseJson.width;
@@ -298,12 +297,11 @@ class TradeShowData {
     return this.vendorsWithActions.size;
   }
 
-  private initBoothIfNeeded = (boothId: string) => {
-    if (!this.vendorsWithActions.has(boothId)) {
-      this.vendorsWithActions.set(boothId, {
-        boothId: boothId,
-        boothNum: this.boothVendors.get(boothId)?.boothNum ?? 0,
-        vendor: this.boothVendors.get(boothId)?.vendor ?? '',
+  private initBoothIfNeeded = (boothNum: string) => {
+    if (!this.vendorsWithActions.has(boothNum)) {
+      this.vendorsWithActions.set(boothNum, {
+        boothNum: boothNum,
+        boothName: this.boothVendors.get(boothNum)?.boothName ?? "",
         questions: [],
         powerBuys: new Map<string, ISubmittableQty>(),
         profitCenters: new Map<string, ISubmittableQty>(),
@@ -334,9 +332,10 @@ class TradeShowData {
   /*
    * Propagate data changes to the database
    */
-  private saveActionToDatabase = (boothId: string) => {
-    const stat: IVendorStatus = toJS(this.vendorsWithActions.get(boothId));
-    this.db.putVendorAction(stat);
+  private saveActionToDatabase = (boothNum: string) => {
+    const stat: IVendorStatus = toJS(this.vendorsWithActions.get(boothNum));
+    console.log(stat);
+    this.db.putVendorAction(stat, boothNum);
   };
 
 
