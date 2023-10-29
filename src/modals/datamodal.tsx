@@ -18,8 +18,9 @@ import { toJS } from 'mobx';
 import { inject, observer } from 'mobx-react';
 
 import { DataLoad } from '../types/enums';
-import { DataBackup } from '../types/interfaces';
+import { DataBackup, VendorStatusBackup, IVendorStatus, ISubmittableQty } from '../types/interfaces';
 import AboutPanel from '../widgets/aboutpanel';
+import HelpPanel from '../widgets/helppanel';
 
 interface DataModalProps {
   open: boolean,
@@ -66,9 +67,6 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       showStore: {
         tradeShowId,
         nbVendorActions,
-        nbQuestions,
-        nbPowerBuys,
-        nbProfitCenters,
       },
     } = this.props;
     const { selectedShow, remoteVendorLoad, exportJson, importingFile, clearerOpen } = this.state;
@@ -117,12 +115,13 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
     const showDataTab = <Tab.Pane>
         {dataDropdown}
         <Message warning>
-          <Message.Header>Data Loss Warning</Message.Header>
+          <Message.Header>Data Storage and Privacy Notice</Message.Header>
           <p>
-            This is a web app that keeps your vendor progress data on your device.
-            Clearing browser website data/settings will erase this data. If you wish
-            to backup your data for use on another device, go to "On-Device Data" and
-            choose "Export".
+            This application stores all trade show data as well as your notes, questions,
+            and all other items in your device's web browser storage. This data is not
+            transmitted or uploaded anywhere, so clearing your browser's data may erase
+            it. If you wish to backup your data or package it for use on another device,
+            go to "On-Device Data" and choose "Export".
           </p>
         </Message>
       </Tab.Pane>;
@@ -146,31 +145,28 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
         <Form>
           <Form.Group widths='equal'>
             <Form.Field>
-              <p>Vendors with Actions: <b>{nbVendorActions()}</b></p>
-              <p>Number of Questions: <b>{nbQuestions}</b></p>
-              <p>Number of Power Buys: <b>{nbPowerBuys}</b></p>
-              <p>Number of Profit Centers: <b>{nbProfitCenters}</b></p>
+              <p>You have <b>{nbVendorActions()}</b> vendors with activity data stored on this device for trade show <b>{tradeShowId}</b>.</p>
             </Form.Field>
           </Form.Group>
           <Divider />
           <Form.Group widths='equal'>
             <Form.Field>
-              <label>Local Show Data Actions</label>
+              <label>Trade Show Local Data Actions:</label>
               <Form.Field className='BCIvendorquickactions'>
                 <Button basic={!exportJson}
                         color='blue'
                         onClick={this.exportData}>
-                  Export...
+                  Backup or extract for import on another device (Export...)
                 </Button>
                 <Button basic={!importer}
                         color='pink'
                         onClick={this.openImporter}>
-                  Import...
+                  Load an export of data from a file you have (Import...)
                 </Button>
                 <Button basic={!clearerOpen}
                         color='red'
                         onClick={clearerOpen ? this.reallyClear : this.openClearer}>
-                  Clear...
+                  Erase your local data but keep Trade Show data in place (Clear...)
                 </Button>
               </Form.Field>
               <Form.Field>
@@ -187,9 +183,14 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
         <AboutPanel />
       </Tab.Pane>;
 
+    const help = <Tab.Pane>
+        <HelpPanel />
+      </Tab.Pane>;
+
     const dataPanes = [
-      {menuItem: 'Vendor Data', render: () => showDataTab},
-      {menuItem: 'On-Device Data', render: () => localDataTab},
+      {menuItem: 'Shows', render: () => showDataTab},
+      {menuItem: 'Your Data', render: () => localDataTab},
+      {menuItem: 'Help', render: () => help},
       {menuItem: 'About', render: () => aboutApp},
     ];
 
@@ -198,8 +199,8 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
              centered={false}
              onMount={this.requestLoadAvailableShows}
              onUnmount={this.clearLocalState}>
-        <Modal.Header>Data Management</Modal.Header>
-        <Modal.Content>
+        <Modal.Header>BCI Trade Show - Dealer App</Modal.Header>
+        <Modal.Content scrolling>
           <Form>
             <Form.Group widths='equal'>
               <Form.Field>
@@ -280,7 +281,6 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
   };
 
   private processImportFile = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.files);
     //@ts-ignore
     const file: File = e.target.files[0];
     const inFile: FileReader = new FileReader();
@@ -290,7 +290,6 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
         try {
           const inputObj: DataBackup = JSON.parse(inputText);
           this.props.showStore.eraseAndImportData(inputObj);
-          console.log(inputObj);
           this.props.closeHander(false);
         } catch (e) {
           console.error('Failed to parse imported JSON file', e);
@@ -309,10 +308,8 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       boothVendors,
       boothActivities,
       boothAdmins,
-      vendorsWithActions,
       vendorQuestions,
-      powerBuys,
-      profitCenters,
+      vendorNotes,
     } = this.props.showStore;
 
     const backupObj: DataBackup = {
@@ -322,10 +319,10 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       admins: Object.fromEntries(toJS(boothAdmins)),
       activities: Object.fromEntries(toJS(boothActivities)),
       vendors: Object.fromEntries(toJS(boothVendors)),
-      vendorsWithActions: Object.fromEntries(toJS(vendorsWithActions)),
+      // vendorsWithActions is a complicated object so it needs to have its own handler
+      vendorsWithActions: this.extractVendorsWithActions(),
       vendorQuestions: toJS(vendorQuestions),
-      powerBuys: toJS(powerBuys),
-      profitCenters: toJS(profitCenters),
+      vendorNotes: toJS(vendorNotes),
     };
 
     this.setState({
@@ -334,6 +331,33 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       errorImportingFile: false,
       clearerOpen: false,
     });
+  };
+
+  private extractVendorsWithActions = () => {
+    // This is a gross leaky abstraction ... it should be probably done in the datastore.ts ?
+
+    let vwaExp: { [key: string]: VendorStatusBackup } = {};
+    this.props.showStore.vendorsWithActions.forEach((vendor: IVendorStatus, boothId: string) => {
+      let powerBuys: { [key: string]: ISubmittableQty } = {};
+      vendor.powerBuys.forEach((pb, key) => {
+        powerBuys[key] = pb;
+      });
+      let profitCenters: { [key: string]: ISubmittableQty } = {};
+      vendor.profitCenters.forEach((pc, key) => {
+        profitCenters[key] = pc;
+      });
+      let curVend: VendorStatusBackup = {
+        boothNum: vendor.boothNum,
+        boothName: vendor.boothName,
+        questions: vendor.questions,
+        powerBuys: powerBuys,
+        profitCenters: profitCenters,
+        vendorNotes: vendor.vendorNotes,
+        openStockForms: vendor.openStockForms,
+      };
+      vwaExp[boothId] = curVend;
+    });
+    return vwaExp;
   };
 
   private openClearer = () => {

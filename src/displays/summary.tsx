@@ -3,20 +3,20 @@ import { Table } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
-import { OpenStockForm, VendorVisit } from '../types/enums';
 import { IVendorStatus } from '../types/interfaces';
 import VendorActions from '../widgets/vendoractions';
 
 interface TaskListProps {
   hideCompleted: boolean;
   alphaSort: boolean;
+  boothButtonClick: () => void;
   showStore?: any;
 };
 
 /*
  * Contents of the Task Summary tab. This is a responsive component: in desktop mode it will show
  * a table with booth number, vendor name, visit, question, power buy, profit center, and open stock
- * form submission status for any vendor with at least one of the above actions assigned. In mobile
+ * forms submission status for any vendor with at least one of the above actions assigned. In mobile
  * mode, the table is taken out (because Semantic UI will stack all the contents making it difficult
  * to actually understand what components are representing) and replaced with labeled versions of
  * the widgets laid out using flexbox.
@@ -24,27 +24,27 @@ interface TaskListProps {
 @inject('showStore') @observer
 export default class Summary extends React.Component<TaskListProps> {
   render() {
-    const { alphaSort, showStore: { vendorsWithActions } } = this.props;
+    const { alphaSort, boothButtonClick, showStore: { vendorsWithActions } } = this.props;
 
     const tempVendorStat = Array.from(vendorsWithActions, ([key, value]) => {
       return value;
     }).sort((a: IVendorStatus, b: IVendorStatus) => {
       if (alphaSort) {
-        return a.vendor < b.vendor ? -1 : (a.vendor > b.vendor ? 1 : 0);
+        return a.boothName < b.boothName ? -1 : (a.boothName > b.boothName ? 1 : 0);
       }
-      return a.boothId < b.boothId ? -1 : (a.boothId > b.boothId ? 1 : 0);
+      return a.boothNum < b.boothNum ? -1 : (a.boothNum > b.boothNum ? 1 : 0);
     });
 
     let vendorRows = tempVendorStat.map((x: IVendorStatus) => {
       if (!this.props.hideCompleted || !this.vendorCompleted(x)) {
-        return <VendorActions key={x.boothId} vendorStatus={x} condensed={false}/>
+        return <VendorActions key={x.boothNum} vendorStatus={x} condensed={false} boothButtonClick={boothButtonClick} />
       }
       return null;
     });
 
     let vendorRowsMobile = tempVendorStat.map((x: IVendorStatus) => {
       if (!this.props.hideCompleted || !this.vendorCompleted(x)) {
-        return <VendorActions key={x.boothId} vendorStatus={x} condensed={true}/>
+        return <VendorActions key={x.boothNum} vendorStatus={x} condensed={true} boothButtonClick={boothButtonClick} />
       }
       return null;
     });
@@ -57,13 +57,10 @@ export default class Summary extends React.Component<TaskListProps> {
             <Table.Row>
               <Table.HeaderCell className='BCItasksum boothStyle'>Booth</Table.HeaderCell>
               <Table.HeaderCell>Vendor</Table.HeaderCell>
-              <Table.HeaderCell className='BCItasksum visitStyle'>Visit</Table.HeaderCell>
               <Table.HeaderCell className='BCItasksum simpleStyle'>Questions</Table.HeaderCell>
               <Table.HeaderCell className='BCItasksum simpleStyle'>Power Buy</Table.HeaderCell>
               <Table.HeaderCell className='BCItasksum simpleStyle'>Profit Center</Table.HeaderCell>
-              <Table.HeaderCell className='BCItasksum openStockStyle'>
-                Open Stock Form
-              </Table.HeaderCell>
+              <Table.HeaderCell className='BCItasksum simpleStyle'>Open Stock</Table.HeaderCell>
             </Table.Row>
           </Table.Header>
           <Table.Body>
@@ -82,15 +79,13 @@ export default class Summary extends React.Component<TaskListProps> {
       nbAnsweredQuestions,
       nbSubmittedPowerBuys,
       nbSubmittedProfitCenters,
+      nbSubmittedOpenStock,
     } = this.props.showStore;
     return (
-      (vendor.visit !== VendorVisit.NOT_VISITED && vendor.visit !== VendorVisit.NEED_REVISIT) &&
-      (vendor.openStockForm !== OpenStockForm.PICK_UP &&
-       vendor.openStockForm !== OpenStockForm.RETRIEVED &&
-       vendor.openStockForm !== OpenStockForm.FILLED_IN) &&
-      (nbAnsweredQuestions(vendor.boothId) === vendor.questions.length) &&
-      (nbSubmittedPowerBuys(vendor.boothId) === vendor.powerBuys.length) &&
-      (nbSubmittedProfitCenters(vendor.boothId) === vendor.profitCenters.length)
+      (nbSubmittedOpenStock(vendor.boothNum) === vendor.openStockForms.length) &&
+      (nbAnsweredQuestions(vendor.boothNum) === vendor.questions.length) &&
+      (nbSubmittedPowerBuys(vendor.boothNum) === vendor.powerBuys.size) &&
+      (nbSubmittedProfitCenters(vendor.boothNum) === vendor.profitCenters.size)
     );
   }
 }

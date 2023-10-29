@@ -5,7 +5,10 @@ import { inject, observer } from 'mobx-react';
 
 interface SimpleSubmittableProps {
   prefix: string;
-  itemIdx: number;
+  boothNum: string;
+  submitted: boolean;
+  quantity: number;
+  itemId: string;
   showStore?: any;
 };
 
@@ -19,27 +22,13 @@ interface SimpleSubmittableProps {
 @inject('showStore') @observer
 export default class SimpleSubmittable extends React.Component<SimpleSubmittableProps> {
   render() {
-    const { prefix, itemIdx, showStore } = this.props;
-    let chosenItemId: string|undefined;
-    let chosenSubmitted: boolean|undefined;
+    const { prefix, boothNum, submitted, quantity, itemId } = this.props;
+    const itemName = `${prefix}-${boothNum}${itemId}`;
 
-    switch (prefix) {
-      case 'PB':
-        chosenItemId = showStore.powerBuys[itemIdx].itemId;
-        chosenSubmitted = showStore.powerBuys[itemIdx].submitted;
-        break;
-      case 'PC':
-        chosenItemId = showStore.profitCenters[itemIdx].itemId;
-        chosenSubmitted = showStore.profitCenters[itemIdx].submitted;
-        break;
-    }
-
-    const itemName = `${prefix}-${chosenItemId}`;
-
-    if (chosenSubmitted) {
+    if (submitted) {
       return <Button.Group>
           <Button as='div' labelPosition='left'>
-            <Label basic color='green' as='a' className='BCIsimplesubmittable'>{itemName}</Label>
+            <Label basic color='green' as='a' className='BCIsimplesubmittable'>{quantity} x {itemName}</Label>
             <Button icon color='green' onClick={this.toggleSubmitted}>
               <Icon name='check circle'/>
             </Button>
@@ -49,7 +38,7 @@ export default class SimpleSubmittable extends React.Component<SimpleSubmittable
     } else {
       return <Button.Group>
           <Button as='div' labelPosition='left'>
-            <Label basic color='grey' as='a' className='BCIsimplesubmittable'>{itemName}</Label>
+            <Label basic color='grey' as='a' className='BCIsimplesubmittable'>{quantity} x {itemName}</Label>
             <Button icon basic color='grey' onClick={this.toggleSubmitted}>
               <Icon name='circle outline'/>
             </Button>
@@ -64,15 +53,17 @@ export default class SimpleSubmittable extends React.Component<SimpleSubmittable
   private toggleSubmitted = () => {
     const {
       prefix,
-      itemIdx,
-      showStore: { submitPowerBuy, powerBuys, submitProfitCenter, profitCenters },
+      boothNum,
+      submitted,
+      itemId,
+      showStore: { submitPowerBuy, submitProfitCenter },
     } = this.props;
     switch (prefix) {
       case 'PB':
-        submitPowerBuy(itemIdx, !powerBuys[itemIdx].submitted);
+        submitPowerBuy(boothNum, itemId, !submitted);
         break;
       case 'PC':
-        submitProfitCenter(itemIdx, !profitCenters[itemIdx].submitted);
+        submitProfitCenter(boothNum, itemId, !submitted);
         break;
     }
   };
@@ -80,15 +71,16 @@ export default class SimpleSubmittable extends React.Component<SimpleSubmittable
   private deleteItem = () => {
     const {
       prefix,
-      itemIdx,
+      boothNum,
+      itemId,
       showStore: { removePowerBuy, removeProfitCenter },
     } = this.props;
     switch (prefix) {
       case 'PB':
-        removePowerBuy(itemIdx);
+        removePowerBuy(boothNum, itemId);
         break;
       case 'PC':
-        removeProfitCenter(itemIdx);
+        removeProfitCenter(boothNum, itemId);
         break;
     }
   }

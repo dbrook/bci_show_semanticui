@@ -5,9 +5,10 @@ import {
   IVendorDirectory,
   IVendorStatus,
   IQuestionAnswer,
-  ISubmittableItem,
+  ISubmittableQty,
+  IOpenStock,
 } from '../types/interfaces';
-import { VendorVisit, OpenStockForm } from '../types/enums';
+import { OpenStockForm } from '../types/enums';
 import ShowDatabase from './showdatabase';
 
 /*
@@ -49,14 +50,17 @@ class TradeShowData {
   // Question Data
   @observable public vendorQuestions: Array<IQuestionAnswer|undefined>;
 
-  // Power Buy Data
-  @observable public powerBuys: Array<ISubmittableItem|undefined>;
-
-  // Profit Centers Data
-  @observable public profitCenters: Array<ISubmittableItem|undefined>;
+  // Notes for the vendors
+  @observable public vendorNotes: Array<string|undefined>;
 
   // Instance of the Dexie IndexedDB wrapper
   private db: ShowDatabase;
+
+  // Remembered last-used vendor on vendor tab
+  @observable public vendorPanelBoothId: string|undefined;
+
+  // For tracking which booth was selected in the floorplan tab to show appropriate vendors
+  @observable public mapSelectedBoothNum: number|undefined;
 
   constructor() {
     this.boothVendors = new Map();
@@ -65,8 +69,9 @@ class TradeShowData {
     this.floorPlanWidthPx = 0;
     this.floorPlanHeightPx = 0;
     this.vendorQuestions = [];
-    this.powerBuys = [];
-    this.profitCenters = [];
+    this.vendorNotes = [];
+    this.vendorPanelBoothId = undefined;
+    this.mapSelectedBoothNum = undefined;
 
     // DO NOT REMOVE! This is needed in MobX 6+ to make observers actually respect the decorators
     // More information @ https://mobx.js.org/enabling-decorators.html
@@ -80,8 +85,7 @@ class TradeShowData {
       this.loadShowData();
       this.loadProgressData();
       this.loadQuestionsData();
-      this.loadPowerBuys();
-      this.loadProfitCenters();
+      this.loadVendorNotes();
     } else {
       this.db = new ShowDatabase('');
     }
@@ -115,8 +119,32 @@ class TradeShowData {
       allBoothData.set('height', dataBackup.height);
       this.db.putBooths(allBoothData);
 
-      // Import the Vendors with vendors with actions
-      const tempVwaMap = new Map(Object.entries(dataBackup.vendorsWithActions));
+      // Import the 'vendors with actions'. A map in a map is not natively supported, so
+      // the nested powerbuys and profitcenters needs to be handled per boothID!
+      const tempVwaMap = new Map<string, IVendorStatus>();
+      for (const boothId in dataBackup.vendorsWithActions) {
+        const fileVWA = dataBackup.vendorsWithActions[boothId];
+        let pbs: Map<string, ISubmittableQty> = new Map<string, ISubmittableQty>();
+        for (const pbid in fileVWA.powerBuys) {
+          pbs.set(pbid, fileVWA.powerBuys[pbid]);
+        }
+        let pcs: Map<string, ISubmittableQty> = new Map<string, ISubmittableQty>();
+        for (const pcid in fileVWA.profitCenters) {
+          pcs.set(pcid, fileVWA.profitCenters[pcid]);
+        }
+        const vwa: IVendorStatus = {
+          boothNum: fileVWA.boothNum,
+          boothName: fileVWA.boothName,
+          questions: fileVWA.questions,
+          powerBuys: pbs,
+          profitCenters: pcs,
+          vendorNotes: fileVWA.vendorNotes,
+          openStockForms: fileVWA.openStockForms,
+        };
+        tempVwaMap.set(boothId, vwa);
+      }
+
+      // Put it into the store and the database
       this.vendorsWithActions = observable.map(tempVwaMap);
       tempVwaMap.forEach((value, key) => {
         this.saveActionToDatabase(key);
@@ -131,21 +159,12 @@ class TradeShowData {
         }
       });
 
-      // Import the Power Buys
-      const tempPBs = dataBackup.powerBuys;
-      this.powerBuys = tempPBs;
-      tempPBs.forEach((elem, index) => {
+      // Import the notes
+      const tempVNs = dataBackup.vendorNotes;
+      this.vendorNotes = tempVNs;
+      tempVNs.forEach((elem, index) => {
         if (elem !== null) {
-          this.db.putPB(index, elem);
-        }
-      });
-
-      // Import the Profit Centers
-      const tempPCs = dataBackup.profitCenters;
-      this.profitCenters = tempPCs;
-      tempPCs.forEach((elem, index) => {
-        if (elem !== null) {
-          this.db.putPC(index, elem);
+          this.db.putVN(index, elem as string);
         }
       });
     });
@@ -167,15 +186,19 @@ class TradeShowData {
         fetch(`show_vendors/${this.tradeShowId}.json`, { cache: "no-store" })
           .then((response) => response.json())
           .then((responseJson) => {
+            // Ensure the booth vendor list is sorted before saving
+            const tempVendorMap: Map<string, IVendorDirectory> =
+              new Map(Object.entries(responseJson.vendors));
+            tempVendorMap.forEach((booth: IVendorDirectory, boothNum: string) => {
+              booth.vendors.sort();
+            });
             runInAction(() => {
-              this.boothVendors = new Map(Object.entries(responseJson.vendors));
+              this.boothVendors = tempVendorMap;
               this.boothActivities = new Map(Object.entries(responseJson.activities));
               this.boothAdmins = new Map(Object.entries(responseJson.admins));
               this.floorPlanWidthPx = responseJson.width;
               this.floorPlanHeightPx = responseJson.height;
             });
-            const tempVendorMap: Map<string, IVendorDirectory> =
-              new Map(Object.entries(responseJson.vendors));
             const tempActivitiesMap: Map<string, IVendorDirectory> =
               new Map(Object.entries(responseJson.activities));
             const tempAdminsMap: Map<string, IVendorDirectory> =
@@ -210,15 +233,13 @@ class TradeShowData {
     }
     this.db.clearVendorActions();
     this.db.clearQuestions();
-    this.db.clearPBs();
-    this.db.clearPCs();
+    this.db.clearVNs();
   };
 
   @action public clearJSObjects = (eraseBoothVendors: boolean) => {
     runInAction(() => {
       this.vendorQuestions = [];
-      this.powerBuys = [];
-      this.profitCenters = [];
+      this.vendorNotes = [];
       this.vendorsWithActions.clear();
       if (eraseBoothVendors) {
         this.boothVendors = new Map();
@@ -247,8 +268,7 @@ class TradeShowData {
       this.db = new ShowDatabase(newShowId);
       this.loadProgressData();
       this.loadQuestionsData();
-      this.loadPowerBuys();
-      this.loadProfitCenters();
+      this.loadVendorNotes();
     }
   };
 
@@ -268,18 +288,10 @@ class TradeShowData {
     });
   };
 
-  private loadPowerBuys = () => {
-    this.db.getPBs().then((pbArray) => {
+  private loadVendorNotes = () => {
+    this.db.getVNs().then((vnArray) => {
       runInAction(() => {
-        this.powerBuys = pbArray;
-      });
-    });
-  };
-
-  private loadProfitCenters = () => {
-    this.db.getPCs().then((pcArray) => {
-      runInAction(() => {
-        this.profitCenters = pcArray;
+        this.vendorNotes = vnArray;
       });
     });
   };
@@ -288,17 +300,16 @@ class TradeShowData {
     return this.vendorsWithActions.size;
   }
 
-  private initBoothIfNeeded = (boothId: string) => {
-    if (!this.vendorsWithActions.has(boothId)) {
-      this.vendorsWithActions.set(boothId, {
-        boothId: boothId,
-        boothNum: this.boothVendors.get(boothId)?.boothNum ?? 0,
-        vendor: this.boothVendors.get(boothId)?.vendor ?? '',
-        visit: VendorVisit.DO_NOT_VISIT,
+  private initBoothIfNeeded = (boothNum: string) => {
+    if (!this.vendorsWithActions.has(boothNum)) {
+      this.vendorsWithActions.set(boothNum, {
+        boothNum: boothNum,
+        boothName: this.boothVendors.get(boothNum)?.boothName ?? "",
         questions: [],
-        powerBuys: [],
-        profitCenters: [],
-        openStockForm: OpenStockForm.DO_NOT_GET,
+        powerBuys: new Map<string, ISubmittableQty>(),
+        profitCenters: new Map<string, ISubmittableQty>(),
+        vendorNotes: [],
+        openStockForms: [],
       });
     }
   };
@@ -307,11 +318,11 @@ class TradeShowData {
     // Checks the boothId contents to see if it can be removed from the "vendorWithActions" data set
     if (this.vendorsWithActions.has(boothId)) {
       const booth: IVendorStatus = this.vendorsWithActions.get(boothId);
-      if (booth.visit === VendorVisit.DO_NOT_VISIT &&
-          booth.questions.length === 0 &&
-          booth.powerBuys.length === 0 &&
-          booth.profitCenters.length === 0 &&
-          booth.openStockForm === OpenStockForm.DO_NOT_GET) {
+      if (booth.questions.length === 0 &&
+          booth.powerBuys.size === 0 &&
+          booth.profitCenters.size === 0 &&
+          booth.vendorNotes.length === 0 &&
+          booth.openStockForms.length === 0) {
         this.vendorsWithActions.delete(boothId);
         this.db.deleteVendorAction(boothId);
       } else {
@@ -324,28 +335,9 @@ class TradeShowData {
   /*
    * Propagate data changes to the database
    */
-  private saveActionToDatabase = (boothId: string) => {
-    const stat: IVendorStatus = toJS(this.vendorsWithActions.get(boothId));
-    this.db.putVendorAction(stat);
-  };
-
-
-  /*
-   * Booth Visit Changes
-   */
-  @action public addVisit = (boothId: string) => {
-    runInAction(() => {
-      this.initBoothIfNeeded(boothId);
-      this.vendorsWithActions.get(boothId).visit = VendorVisit.NOT_VISITED;
-    });
-    this.saveActionToDatabase(boothId);
-  };
-
-  @action public setVisitMode = (boothId: string, visitStatus: VendorVisit) => {
-    runInAction(() => {
-      this.vendorsWithActions.get(boothId).visit = visitStatus;
-      this.cleanupBoothAuto(boothId);
-    });
+  private saveActionToDatabase = (boothNum: string) => {
+    const stat: IVendorStatus = toJS(this.vendorsWithActions.get(boothNum));
+    this.db.putVendorAction(stat, boothNum);
   };
 
 
@@ -448,168 +440,207 @@ class TradeShowData {
 
 
   /*
-   * Power Buy Maintenance
+   * Power Buy and Profit Center Maintenance
    */
-  @computed get nbPowerBuys() {
-    let nbDefined = 0;
-    for (const pb of this.powerBuys) {
-      if (pb !== undefined) {
-        nbDefined++;
+  @action public nbSubmittedPowerBuys = (boothId: string) => {
+    let nbSub = 0;
+    this.vendorsWithActions.get(boothId).powerBuys.forEach((pb: ISubmittableQty) => {
+      if (pb.submitted) {
+        nbSub++;
       }
-    }
-    return nbDefined;
-  }
-
-  @action public addPowerBuy = (boothId: string, pbNum: string) => {
-    const nextPbIdx = this.powerBuys.indexOf(undefined);
-    const newPbIdx = nextPbIdx !== -1 ? nextPbIdx : this.powerBuys.length;
-    this.db.putPB(newPbIdx, { itemId: pbNum, submitted: false }).then(() => {
-      runInAction(() => {
-        this.initBoothIfNeeded(boothId);
-        if (nextPbIdx !== -1) {
-          this.powerBuys[nextPbIdx] = { itemId: pbNum, submitted: false };
-          this.vendorsWithActions.get(boothId).powerBuys.push(nextPbIdx);
-        } else {
-          this.powerBuys.push({ itemId: pbNum, submitted: false });
-          this.vendorsWithActions.get(boothId).powerBuys.push(this.powerBuys.length - 1);
-        }
-      });
-      this.saveActionToDatabase(boothId);
     });
+    return nbSub;
   };
 
-  @action public removePowerBuy = (pbId: number) => {
-    if (pbId >= 0 && pbId < this.powerBuys.length) {
-      let boothIdFound: string = '';
-      this.vendorsWithActions.forEach((value, key) => {
-        const idxFound = this.vendorsWithActions.get(key).powerBuys.indexOf(pbId);
-        if (idxFound !== -1) {
-          this.vendorsWithActions.get(key).powerBuys.splice(idxFound, 1);
-          boothIdFound = key;
-        }
-      });
-      this.powerBuys[pbId] = undefined;
-      this.db.deletePB(pbId);
-      this.cleanupBoothAuto(boothIdFound);
-    }
-  }
-
-  @action public submitPowerBuy = (pbId: number, submitted: boolean) => {
-    if (pbId >= 0 && pbId < this.powerBuys.length && this.powerBuys[pbId] !== undefined) {
-      // This ignore is needed because the value could be undefined but it was already checked above
-      this.db.putPB(pbId,
-                    {
-                      // @ts-ignore
-                      itemId: this.powerBuys[pbId].itemId,
-                      submitted: submitted,
-                    }).then(() => {
-        // @ts-ignore
-        this.powerBuys[pbId].submitted = submitted;
-      });
-    }
-  };
-
-  @action public nbSubmittedPowerBuys = (boothId: string): number => {
-    let submitted = 0;
-    for (const questionId of this.vendorsWithActions.get(boothId).powerBuys) {
-      if (this.powerBuys[questionId]?.submitted) {
-        submitted++;
+  @action public setPowerBuys = (boothId: string, pbs: Map<string, number|undefined>) => {
+    this.initBoothIfNeeded(boothId);
+    let convertedPBs = this.vendorsWithActions.get(boothId).powerBuys;
+    pbs.forEach((value, key) => {
+      if (value === 0) {
+        // Unset a PB if it was explicitly set to 0
+        convertedPBs.delete(key);
+      } else if (value !== undefined) {
+        let submittable: ISubmittableQty = { quantity: value, submitted: false };
+        convertedPBs.set(key, submittable);
       }
-    }
-    return submitted;
+    });
+    this.vendorsWithActions.get(boothId).powerBuys = convertedPBs;
+    this.cleanupBoothAuto(boothId);
   };
+
+  @action public getGUIPowerBuys = (boothId: string|undefined): Map<string, number|undefined> => {
+    let pbs = new Map<string, number|undefined>();
+    this.vendorsWithActions.get(boothId)?.powerBuys.forEach((val: ISubmittableQty, key: string) => {
+      pbs.set(key, val.quantity);
+    });
+    return pbs;
+  };
+
+  @action public submitPowerBuy = (boothId: string, itemId: string, submitted: boolean) => {
+    this.vendorsWithActions.get(boothId).powerBuys.get(itemId).submitted = submitted;
+    this.cleanupBoothAuto(boothId);
+  };
+
+  @action public removePowerBuy = (boothId: string, itemId: string) => {
+    this.vendorsWithActions.get(boothId).powerBuys.delete(itemId);
+    this.cleanupBoothAuto(boothId);
+  };
+
+
+  @action public nbSubmittedProfitCenters = (boothId: string) => {
+    let nbSub = 0;
+    this.vendorsWithActions.get(boothId).profitCenters.forEach((pb: ISubmittableQty) => {
+      if (pb.submitted) {
+        nbSub++;
+      }
+    });
+    return nbSub;
+  };
+
+  @action public setProfitCenters = (boothId: string, pcs: Map<string, number|undefined>) => {
+    this.initBoothIfNeeded(boothId);
+    let convertedPCs = this.vendorsWithActions.get(boothId).profitCenters;
+    pcs.forEach((value, key) => {
+      if (value === 0) {
+        // Unset a PC if it was explicitly set to 0
+        convertedPCs.delete(key);
+      } else if (value !== undefined) {
+        let submittable: ISubmittableQty = { quantity: value, submitted: false };
+        convertedPCs.set(key, submittable);
+      }
+    });
+    this.vendorsWithActions.get(boothId).profitCenters = convertedPCs;
+    this.cleanupBoothAuto(boothId);
+  };
+
+  @action public getGUIProfitCenters = (boothId: string|undefined): Map<string, number|undefined> => {
+    let pcs = new Map<string, number|undefined>();
+    this.vendorsWithActions.get(boothId)?.profitCenters.forEach((val: ISubmittableQty, key: string) => {
+      pcs.set(key, val.quantity);
+    });
+    return pcs;
+  };
+
+  @action public submitProfitCenter = (boothId: string, itemId: string, submitted: boolean) => {
+    this.vendorsWithActions.get(boothId).profitCenters.get(itemId).submitted = submitted;
+    this.cleanupBoothAuto(boothId);
+  };
+
+  @action public removeProfitCenter = (boothId: string, itemId: string) => {
+    this.vendorsWithActions.get(boothId).profitCenters.delete(itemId);
+    this.cleanupBoothAuto(boothId);
+  };
+
 
   /*
-   * Profit Center Maintenance
+   * Vendor Notes Maintenance
    */
-  @computed get nbProfitCenters() {
+  @action nbVendorNotes = (boothId: string): number => {
     let nbDefined = 0;
-    for (const pc of this.profitCenters) {
-      if (pc !== undefined) {
+    for (const vn of this.vendorsWithActions.get(boothId).vendorNotes) {
+      if (vn !== undefined) {
         nbDefined++;
       }
     }
     return nbDefined;
   }
 
-  @action public addProfitCenter = (boothId: string, pcNum: string) => {
-    const nextPcIdx = this.profitCenters.indexOf(undefined);
-    const newPcIdx = nextPcIdx !== -1 ? nextPcIdx : this.profitCenters.length;
-    this.db.putPC(newPcIdx, { itemId: pcNum, submitted: false }).then(() => {
+  @action public addVendorNote = (boothId: string, note: string) => {
+    const nextNoteIdx = this.vendorNotes.indexOf(undefined);
+    const newNoteIdx = nextNoteIdx !== -1 ? nextNoteIdx : this.vendorNotes.length;
+    this.db.putVN(newNoteIdx, note).then(() => {
       runInAction(() => {
         this.initBoothIfNeeded(boothId);
-        if (nextPcIdx !== -1) {
-          this.profitCenters[nextPcIdx] = { itemId: pcNum, submitted: false };
-          this.vendorsWithActions.get(boothId).profitCenters.push(nextPcIdx);
+        if (nextNoteIdx !== -1) {
+          this.vendorNotes[nextNoteIdx] = note;
+          this.vendorsWithActions.get(boothId).vendorNotes.push(nextNoteIdx);
         } else {
-          this.profitCenters.push({ itemId: pcNum, submitted: false });
-          this.vendorsWithActions.get(boothId).profitCenters.push(this.profitCenters.length - 1);
+          this.vendorNotes.push(note);
+          this.vendorsWithActions.get(boothId).vendorNotes.push(this.vendorNotes.length - 1);
         }
       });
       this.saveActionToDatabase(boothId);
     });
   };
 
-  @action public removeProfitCenter = (pcId: number) => {
-    if (pcId >= 0 && pcId < this.profitCenters.length) {
+  @action public removeVendorNote = (vnId: number) => {
+    if (vnId >= 0 && vnId < this.vendorNotes.length) {
       let boothIdFound: string = '';
       this.vendorsWithActions.forEach((value, key) => {
-        const idxFound = this.vendorsWithActions.get(key).profitCenters.indexOf(pcId);
+        const idxFound = this.vendorsWithActions.get(key).vendorNotes.indexOf(vnId);
         if (idxFound !== -1) {
-          this.vendorsWithActions.get(key).profitCenters.splice(idxFound, 1);
+          this.vendorsWithActions.get(key).vendorNotes.splice(idxFound, 1);
           boothIdFound = key;
         }
       });
-      this.profitCenters[pcId] = undefined;
-      this.db.deletePC(pcId);
+      this.vendorNotes[vnId] = undefined;
+      this.db.deleteVN(vnId);
       this.cleanupBoothAuto(boothIdFound);
     }
   }
 
-  @action public submitProfitCenter = (pcId: number, submitted: boolean) => {
-    if (pcId >= 0 && pcId < this.profitCenters.length && this.profitCenters[pcId] !== undefined) {
-      // This ignore is needed because the value could be undefined but it was already checked above
-      this.db.putPC(pcId,
-                    {
-                      // @ts-ignore
-                      itemId: this.profitCenters[pcId].itemId,
-                      submitted: submitted,
-                    }).then(() => {
-        // @ts-ignore
-        this.profitCenters[pcId].submitted = submitted;
-      });
-    }
-  };
-
-  @action public nbSubmittedProfitCenters = (boothId: string): number => {
-    let submitted = 0;
-    for (const questionId of this.vendorsWithActions.get(boothId).profitCenters) {
-      if (this.profitCenters[questionId]?.submitted) {
-        submitted++;
+  @action public nbVendorNotesForBoothId = (boothId: string): number => {
+    let notes = 0;
+    for (const noteId of this.vendorsWithActions.get(boothId).vendorNotes) {
+      if (this.vendorNotes[noteId] !== undefined) {
+        notes++;
       }
     }
-    return submitted;
+    return notes;
+  };
+
+  @action public changeVendorNote = (noteId: number, text: string) => {
+    if (noteId >= 0 &&
+        noteId < this.vendorNotes.length &&
+        this.vendorNotes[noteId] !== undefined) {
+      // @ts-ignore
+      this.vendorNotes[noteId] = text;
+      this.db.putVN(noteId, text);
+    }
   };
 
 
   /*
    * Open Stock Form Progress Handling
    */
-  @action public setOpenStock = (boothId: string, osStatus: OpenStockForm) => {
+  @action public nbSubmittedOpenStock = (boothId: string) => {
+    let completed = 0;
+    for (const os of this.vendorsWithActions.get(boothId).openStockForms) {
+      if (os.formState === OpenStockForm.SUBMITTED || os.formState === OpenStockForm.ABANDONED) {
+        completed++;
+      }
+    }
+    return completed;
+  };
+
+  @action public addOpenStock = (boothId: string, label: string, osStatus: OpenStockForm) => {
     runInAction(() => {
-      this.vendorsWithActions.get(boothId).openStockForm = osStatus;
+      this.initBoothIfNeeded(boothId);
+      let osForm: IOpenStock = { label: label, formState: osStatus };
+      this.vendorsWithActions.get(boothId).openStockForms.push(osForm);
       this.cleanupBoothAuto(boothId);
     });
   };
 
-  @action public advanceOpenStockStatus = (boothId: string) => {
+  @action public renameOpenStock = (boothId: string, osIdx: number, newLabel: string) => {
+    runInAction(() => {
+      this.vendorsWithActions.get(boothId).openStockForms.at(osIdx).label = newLabel;
+      this.cleanupBoothAuto(boothId);
+    });
+  };
+
+  @action public setOpenStock = (boothId: string, osIdx: number, osStatus: OpenStockForm) => {
+    runInAction(() => {
+      this.vendorsWithActions.get(boothId).openStockForms[osIdx].formState = osStatus;
+      this.cleanupBoothAuto(boothId);
+    });
+  };
+
+  @action public advanceOpenStockStatus = (boothId: string, osIdx: number) => {
     if (this.vendorsWithActions.has(boothId)) {
-      const osState = this.vendorsWithActions.get(boothId).openStockForm;
-      let osNext: OpenStockForm = OpenStockForm.DO_NOT_GET;
+      const osState = this.vendorsWithActions.get(boothId).openStockForms[osIdx].formState;
+      let osNext: OpenStockForm = OpenStockForm.PICK_UP;
       switch (osState) {
-        case OpenStockForm.DO_NOT_GET:
-          osNext = OpenStockForm.PICK_UP;
-          break;
         case OpenStockForm.PICK_UP:
           osNext = OpenStockForm.RETRIEVED;
           break;
@@ -620,22 +651,38 @@ class TradeShowData {
           osNext = OpenStockForm.SUBMITTED;
           break;
         default:
-          osNext = OpenStockForm.DO_NOT_GET;
+          osNext = OpenStockForm.PICK_UP;
           break;
       }
       runInAction(() => {
         // Progress the status of the form
-        this.vendorsWithActions.get(boothId).openStockForm = osNext;
+        this.vendorsWithActions.get(boothId).openStockForms[osIdx].formState = osNext;
         this.cleanupBoothAuto(boothId);
       });
     }
   };
 
-  @action public abandonOpenStock = (boothId: string) => {
+  @action public abandonOpenStock = (boothId: string, osIdx: number) => {
     if (this.vendorsWithActions.has(boothId)) {
-      this.vendorsWithActions.get(boothId).openStockForm = OpenStockForm.ABANDONED;
+      this.vendorsWithActions.get(boothId).openStockForms[osIdx].formState = OpenStockForm.ABANDONED;
       this.saveActionToDatabase(boothId);
     }
+  };
+
+  @action public deleteOpenStock = (boothId: string, osIdx: number) => {
+    if (this.vendorsWithActions.has(boothId)) {
+      this.vendorsWithActions.get(boothId).openStockForms.splice(osIdx, 1);
+      this.saveActionToDatabase(boothId);
+    }
+  };
+
+
+  @action public setVendorPanelBoothId = (boothId: string|undefined) => {
+    this.vendorPanelBoothId = boothId;
+  };
+
+  @action public setMapSelectedBoothNum = (boothNum: number|undefined) => {
+    this.mapSelectedBoothNum = boothNum;
   };
 
 

@@ -1,9 +1,8 @@
 import React from 'react';
-import { Button, Icon } from 'semantic-ui-react';
+import { Button, Icon, Image } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
-import TaskModal from '../modals/taskmodal';
 import DataModal from '../modals/datamodal';
 
 interface MenuBarProps {
@@ -13,12 +12,11 @@ interface MenuBarProps {
   toggleAlphaSort: () => void;
   dataModalClose: () => void;
   showStore?: any;
-};
+}
 
 interface MenuBarState {
-  addTaskModalShown: boolean,
   dataModalShown: boolean,
-};
+}
 
 /*
  * Toolbar-like widget that appears at the top of the application window to allow users to start
@@ -30,8 +28,7 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
   constructor(props: MenuBarProps, state: MenuBarState) {
     super(props, state);
     this.state = {
-      addTaskModalShown: false,
-      dataModalShown: false
+      dataModalShown: false,
     };
   }
 
@@ -44,30 +41,24 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
       showStore: { tradeShowId },
     } = this.props;
 
-    const { addTaskModalShown, dataModalShown } = this.state;
+    const { dataModalShown } = this.state;
 
     const sortingIconName = alphaSort ? 'sort alphabet down' : 'sort numeric down';
     const sortingIconText = alphaSort ? 'Sort: Vendor' : 'Sort: Booth';
 
-    const vendorsPresent = tradeShowId !== undefined;
-
     return (
       <>
         <DataModal open={dataModalShown} closeHander={this.showDataModal}/>
-        <TaskModal open={addTaskModalShown}
-                   closeHander={this.showAddTaskModal}
-                   presetItemType='VI'/>
         <div className='topBar'>
-          <Button icon primary basic={vendorsPresent} labelPosition='left' onClick={() => this.showDataModal(true)}>
-            <Icon name='calendar alternate outline' />
-            {tradeShowId ?? 'Load Show Data...'}
-          </Button>
-          <Button icon primary basic button
-                  disabled={!vendorsPresent}
+          <Image src='bci-logo.png' style={{width: '79px', height: '36px'}}/>
+          <div style={{alignSelf: 'center', color: 'white', fontWeight: 'bold', fontSize: '26px', margin: '0 15px'}}>Trade Show</div>
+          <Button icon 
+                  primary 
                   labelPosition='left'
-                  onClick={() => this.showAddTaskModal(true)}>
-            <Icon name='plus square outline' />
-            Add...
+                  style={{width: '205px'}}
+                  onClick={() => this.showDataModal(true)}>
+            <Icon name='database' />
+            {tradeShowId ?? 'Load Show Data...'}
           </Button>
           <div className='BCIflexmenubarspacer' />
           <Button icon primary basic onClick={toggleAlphaSort} button labelPosition='left'>
@@ -83,17 +74,13 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
           </Button>
         </div>
         <div className='topBarCondensed'>
+          <Image src='bci-logo.png' style={{width: '79px', height: '36px', marginRight: '10px'}}/>
           <Button icon primary
-                  basic={vendorsPresent}
                   labelPosition='left'
+                  style={{width: '205px'}}
                   onClick={() => this.showDataModal(true)}>
             <Icon name='calendar alternate outline' />
             {tradeShowId ?? 'Load Show Data...'}
-          </Button>
-          <Button icon primary basic button
-                  disabled={!vendorsPresent}
-                  onClick={() => this.showAddTaskModal(true)}>
-            <Icon name='plus square outline' />
           </Button>
           <div className='BCIflexmenubarspacer' />
           <Button icon primary basic onClick={toggleAlphaSort} button>
@@ -105,11 +92,6 @@ export default class MenuBar extends React.Component<MenuBarProps, MenuBarState>
         </div>
       </>
     );
-  }
-
-  private showAddTaskModal = (showIt: boolean) => {
-    this.setState({ addTaskModalShown: showIt });
-    return;
   }
 
   private showDataModal = (showIt: boolean) => {

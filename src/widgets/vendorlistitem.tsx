@@ -1,17 +1,20 @@
 import React from 'react';
-import { Button, Icon } from 'semantic-ui-react';
 
-import TaskModal from '../modals/taskmodal';
+import { Accordion, Button, Icon } from 'semantic-ui-react';
 
 interface VendorListItemProps {
-  boothId: string;
-  boothNum: number;
-  vendor: string;
+  boothNum: string;
+  boothName: string;
+  vendors: string[];
   hasActions: boolean;
+  expand: boolean;
+  filter: string;
+  jumpToBoothFunc: (boothId: string) => void;
+  showStore?: any;
 };
 
 interface VendorListItemState {
-  addTaskModalShown: boolean;
+  activeIndex: number;
 };
 
 /*
@@ -19,41 +22,52 @@ interface VendorListItemState {
  *
  * Single vendor for use in the Vendor List display tab. This component shows the booth number
  * (highlighted to indicate there is at least 1 action assigned to the boothId / vendor), the
- * vendor name, and a button to show the Add Task modal preset to the vendor.
+ * vendor name, an indicator if any notes are associated with the vendor, and a button to open
+ * the vendor-specific tab to the vendor.
  */
-export default class VendorListItem extends React.Component<VendorListItemProps,
-                                                            VendorListItemState> {
+export default class VendorListItem extends React.Component<VendorListItemProps, VendorListItemState> {
   constructor(props: VendorListItemProps, state: VendorListItemState) {
     super(props, state);
-    this.state = { addTaskModalShown: false };
+    this.state = { activeIndex: props.expand ? 0 : -1 };
   }
 
   render() {
-    const { boothId, boothNum, vendor, hasActions } = this.props;
-    const { addTaskModalShown } = this.state;
+    const { boothNum, boothName, hasActions, expand, filter } = this.props;
+    const activeIndex = this.state.activeIndex;
+    let vendors = this.props.vendors;
 
-    const boothClassName = hasActions ? 'BCIvendorBoothNumStyle actioned': 'BCIvendorBoothNumStyle';
+    const button = hasActions
+      ? <Button icon primary button onClick={this.openTaskModal}>{boothNum}</Button>
+      : <Button icon primary basic button onClick={this.openTaskModal}>{boothNum}</Button>;
+
+    if (filter) {
+      vendors = vendors.filter((vendorName) => vendorName.toLowerCase().includes(filter));
+    }
+    let subVendors = <ul>{vendors.map((vendor, index) => {
+        return <li key={index}>{vendor}</li>;
+      })}</ul>;
 
     return <div className='BCIvendorListStyle'>
-        <TaskModal open={addTaskModalShown}
-                   closeHander={this.showAddTaskModal}
-                   presetItemType='VI'
-                   presetBoothId={boothId}
-                   presetVendorName={vendor} />
-        <Button icon primary basic button onClick={this.openTaskModal}>
-          <Icon name='plus square outline' />
-        </Button>
-        <span className={boothClassName}>{boothNum}</span>
-        <span className='BCIvendorListName'>{vendor}</span>
+        {button}
+        <span className='BCIvendorListName'>
+          <Accordion>
+            <Accordion.Title active={expand || activeIndex === 0}
+                             index={0}
+                             onClick={this.handleExpand}>
+              <Icon name='dropdown' />
+              {boothName}
+            </Accordion.Title>
+            <Accordion.Content active={expand || activeIndex === 0}>{subVendors}</Accordion.Content>
+          </Accordion>
+        </span>
       </div>;
   }
 
   private openTaskModal = () => {
-    this.showAddTaskModal(true);
-  }
+    this.props.jumpToBoothFunc(this.props.boothNum);
+  };
 
-  private showAddTaskModal = (showIt: boolean) => {
-    this.setState({ addTaskModalShown: showIt });
-    return;
-  }
+  private handleExpand = () => {
+    this.setState({ activeIndex: this.state.activeIndex === 0 ? -1 : 0 })
+  };
 }

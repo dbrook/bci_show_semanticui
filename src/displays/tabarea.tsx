@@ -7,6 +7,7 @@ import VendorList from './vendorlist';
 import FloorPlan from './floorplan';
 import Summary from './summary';
 import TaskDetailList from './taskdetaillist';
+import SingleVendor from './singlevendor';
 
 interface TabAreaProps {
   hideCompleted: boolean;
@@ -35,21 +36,12 @@ export default class TabArea extends React.Component<TabAreaProps, TabAreaState>
     const { activeTab } = this.state;
     const panes = [
       {
-        menuItem: 'Vendors',
+        menuItem: 'Index',
         render: () => {
           return (
             <Tab.Pane attached='top' className='innerTabStyle'>
-              <VendorList alphaSort={this.props.alphaSort} />
-            </Tab.Pane>
-          );
-        },
-      },
-      {
-        menuItem: 'Map',
-        render: () => {
-          return (
-            <Tab.Pane attached='top' className='innerTabStyle'>
-              <FloorPlan />
+              <VendorList alphaSort={this.props.alphaSort}
+                          boothButtonClick={this.switchToSingleVendorTab} />
             </Tab.Pane>
           );
         },
@@ -59,13 +51,35 @@ export default class TabArea extends React.Component<TabAreaProps, TabAreaState>
         render: () => {
           return (
             <Tab.Pane attached='top' className='innerTabStyle'>
-              <Summary hideCompleted={this.props.hideCompleted} alphaSort={this.props.alphaSort} />
+              <Summary hideCompleted={this.props.hideCompleted}
+                       alphaSort={this.props.alphaSort}
+                       boothButtonClick={this.switchToSingleVendorTab} />
             </Tab.Pane>
           );
         },
       },
       {
-        menuItem: 'Tasks',
+        menuItem: 'Map',
+        render: () => {
+          return (
+            <Tab.Pane attached='top' className='innerTabStyle'>
+              <FloorPlan boothButtonClick={this.switchToSingleVendorTab} />
+            </Tab.Pane>
+          );
+        },
+      },
+      {
+        menuItem: 'Vendor',
+        render: () => {
+          return (
+            <Tab.Pane attached='top' className='innerTabStyle'>
+              <SingleVendor />
+            </Tab.Pane>
+          );
+        },
+      },
+      {
+        menuItem: 'All',
         render: () => {
           return (
             <Tab.Pane attached='top' className='innerTabStyle'>
@@ -92,5 +106,9 @@ export default class TabArea extends React.Component<TabAreaProps, TabAreaState>
 
   public switchToVendorsList = () => {
     this.setState({ activeTab: 0 });
+  };
+
+  public switchToSingleVendorTab = () => {
+    this.setState({ activeTab: 3 });
   };
 }

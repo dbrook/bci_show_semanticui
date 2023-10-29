@@ -1,12 +1,12 @@
-import { OpenStockForm, VendorVisit } from './enums';
+import { OpenStockForm } from './enums';
 
 /*
  * Data Model Interfaces
  */
 
 export interface IVendorDirectory {
-  boothNum: number;
-  vendor: string;
+  boothName: string;
+  vendors: string[];
   x1: number;
   y1: number;
   width: number;
@@ -14,13 +14,28 @@ export interface IVendorDirectory {
 };
 
 export interface DBVendorDirectory extends IVendorDirectory {
-  boothId: string;
+  boothNum: string;
+};
+
+export interface IOpenStock {
+  label: string;
+  formState: OpenStockForm;
 };
 
 
 /*
  * Data Export/Import Interfaces
  */
+
+export interface VendorStatusBackup {
+  boothNum: string;
+  boothName: string;
+  questions: number[];
+  powerBuys: { [key: string]: ISubmittableQty };      // Exporting maps is apparently a no-go...
+  profitCenters: { [key: string]: ISubmittableQty };  // Exporting maps is apparently a no-go...
+  vendorNotes: number[];
+  openStockForms: IOpenStock[];
+};
 
 export interface DataBackup {
   tradeShowId: string;
@@ -29,10 +44,9 @@ export interface DataBackup {
   admins: { [key: string]: IVendorDirectory };
   activities: { [key: string]: IVendorDirectory };
   vendors: { [key: string]: IVendorDirectory };
-  vendorsWithActions: { [key: string]: IVendorStatus };
+  vendorsWithActions: { [key: string]: VendorStatusBackup };
   vendorQuestions: IQuestionAnswer[];
-  powerBuys: ISubmittableItem[];
-  profitCenters: ISubmittableItem[];
+  vendorNotes: string[];
 };
 
 
@@ -54,17 +68,26 @@ export interface ISubmittableItem {
   submitted: boolean;
 };
 
+export interface ISubmittableQty {
+  quantity: number;
+  submitted: boolean;
+};
+
 export interface DBSubmittableItem extends ISubmittableItem {
   itmIdx: number;
 };
 
+export interface DBIndexedString {
+  itmIdx: number;
+  note: string;
+};
+
 export interface IVendorStatus {
-  boothId: string;               // Unique Booth Identifier (several vendors may share a booth)
-  boothNum: number;              // The actual booth number of the vendor
-  vendor: string;                // Vendor name from the show directory/index
-  visit: VendorVisit;            // Status of the vender from an initial/revisit point of view
-  questions: number[];           // List of question IDs relevant to this vendor
-  powerBuys: number[];           // List of Power Buys relevant to this vendor
-  profitCenters: number[];       // List of Profit Centers relevant to this vendor
-  openStockForm: OpenStockForm;  // Open Stock Form completion progress (for this vendor)
+  boothNum: string;                             // The actual booth number of the vendor
+  boothName: string;                            // Easy to display vendor(s) combined names
+  questions: number[];                          // List of question IDs relevant to this vendor
+  powerBuys: Map<string, ISubmittableQty>;      // Power Buys (letter) relevant to this vendor
+  profitCenters: Map<string, ISubmittableQty>;  // List of Profit Centers relevant to this vendor
+  vendorNotes: number[];                        // List of notes relevant to this vendor
+  openStockForms: IOpenStock[];                 // Open Stock Forms' completion progress (for this vendor)
 };

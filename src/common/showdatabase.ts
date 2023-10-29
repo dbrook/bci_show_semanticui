@@ -6,8 +6,7 @@ import {
   IVendorStatus,
   IQuestionAnswer,
   DBQuestionAnswer,
-  ISubmittableItem,
-  DBSubmittableItem,
+  DBIndexedString,
 } from '../types/interfaces';
 
 /*
@@ -25,20 +24,18 @@ export default class ShowDatabase extends Dexie {
   mapDimensions!: Dexie.Table<any>;
   actions!: Dexie.Table<IVendorStatus>;
   questions!: Dexie.Table<DBQuestionAnswer>;
-  pwrBuys!: Dexie.Table<DBSubmittableItem>;
-  prfCtrs!: Dexie.Table<DBSubmittableItem>;
+  vndNote!: Dexie.Table<DBIndexedString>;
 
   constructor(showId: string) {
     super(showId);
     this.version(1).stores({
-      vendors: 'boothId, boothNum, vendor, x1, y1, width, height',
-      activities: 'boothId, boothNum, vendor, x1, y1, width, height',
-      admins: 'boothId, boothNum, vendor, x1, y1, width, height',
+      vendors: 'boothNum, boothName, vendors, x1, y1, width, height',
+      activities: 'boothNum, boothName, vendors, x1, y1, width, height',
+      admins: 'boothNum, boothName, vendors, x1, y1, width, height',
       mapDimensions: 'parameter, value',
-      actions: 'boothId, boothNum, vendor, visit, questions, powerBuys, profitCenters, openStockForm',
+      actions: 'boothNum, boothName, questions, powerBuys, profitCenters, openStockForms, vendorNotes',
       questions: 'qIdx, question, answer',
-      pwrBuys: 'itmIdx, itemId, submitted',
-      prfCtrs: 'itmIdx, itemId, submitted',
+      vndNote: 'itmIdx, note',
     });
   }
 
@@ -59,9 +56,9 @@ export default class ShowDatabase extends Dexie {
       this.vendors.toArray().then((outputArray) => {
         let vendorsMap: Map<string, IVendorDirectory> = new Map();
         for (const item of outputArray) {
-          vendorsMap.set(item.boothId, {
-            boothNum: item.boothNum,
-            vendor: item.vendor,
+          vendorsMap.set(item.boothNum, {
+            boothName: item.boothName,
+            vendors: item.vendors,
             x1: item.x1,
             y1: item.y1,
             width: item.width,
@@ -71,9 +68,9 @@ export default class ShowDatabase extends Dexie {
         this.activities.toArray().then((actArray) => {
           let actsMap: Map<string, IVendorDirectory> = new Map();
           for (const item of actArray) {
-            actsMap.set(item.boothId, {
-              boothNum: item.boothNum,
-              vendor: item.vendor,
+            actsMap.set(item.boothNum, {
+              boothName: item.boothName,
+              vendors: item.vendors,
               x1: item.x1,
               y1: item.y1,
               width: item.width,
@@ -83,9 +80,9 @@ export default class ShowDatabase extends Dexie {
           this.admins.toArray().then((admArray) => {
             let admMap: Map<string, IVendorDirectory> = new Map();
             for (const item of admArray) {
-              admMap.set(item.boothId, {
-                boothNum: item.boothNum,
-                vendor: item.vendor,
+              admMap.set(item.boothNum, {
+                boothName: item.boothName,
+                vendors: item.vendors,
                 x1: item.x1,
                 y1: item.y1,
                 width: item.width,
@@ -117,23 +114,23 @@ export default class ShowDatabase extends Dexie {
 
   public putBooths = (booths: Map<string, any>) => {
     booths.get('vendors').forEach((vendor: IVendorDirectory, key: string) => {
-      const itemWithId: DBVendorDirectory = { boothId: key, ...vendor };
+      const itemWithId: DBVendorDirectory = { boothNum: key, ...vendor };
       this.vendors.put(itemWithId);
     });
     booths.get('activities').forEach((vendor: IVendorDirectory, key: string) => {
-      const itemWithId: DBVendorDirectory = { boothId: key, ...vendor };
+      const itemWithId: DBVendorDirectory = { boothNum: key, ...vendor };
       this.activities.put(itemWithId);
     });
     booths.get('admins').forEach((vendor: IVendorDirectory, key: string) => {
-      const itemWithId: DBVendorDirectory = { boothId: key, ...vendor };
+      const itemWithId: DBVendorDirectory = { boothNum: key, ...vendor };
       this.admins.put(itemWithId);
     });
     this.mapDimensions.put({ parameter: 'width', value: booths.get('width') });
     this.mapDimensions.put({ parameter: 'height', value: booths.get('height') });
   };
 
-  public putVendorAction = (action: IVendorStatus) => {
-    this.actions.put(action).then((keyname) => {
+  public putVendorAction = (action: IVendorStatus, boothNum: string) => {
+    this.actions.put(action, boothNum).then((keyname) => {
       // console.log('Added', keyname);
     });
   };
@@ -149,15 +146,14 @@ export default class ShowDatabase extends Dexie {
       this.actions.toArray().then((outputArray) => {
         let outputMap: Map<string, IVendorStatus> = new Map();
         for (const item of outputArray) {
-          outputMap.set(item.boothId, {
-            boothId: item.boothId,
+          outputMap.set(item.boothNum, {
             boothNum: item.boothNum,
-            vendor: item.vendor,
-            visit: item.visit,
+            boothName: item.boothName,
             questions: item.questions,
             powerBuys: item.powerBuys,
             profitCenters: item.profitCenters,
-            openStockForm: item.openStockForm,
+            vendorNotes: item.vendorNotes,
+            openStockForms: item.openStockForms,
           });
         }
         resolve(outputMap);
@@ -197,54 +193,30 @@ export default class ShowDatabase extends Dexie {
   };
 
 
-  public putPB = (pbIdx: number, pb: ISubmittableItem): Promise<number> => {
-    return this.pwrBuys.put({ itmIdx: pbIdx, ...pb });
+  public putVN = (vnIdx: number, vn: string): Promise<number> => {
+    return this.vndNote.put({ itmIdx: vnIdx, note: vn });
   };
 
-  public deletePB = (pbIdx: number) => {
-    this.pwrBuys.delete(pbIdx);
+  public deleteVN = (vnIdx: number) => {
+    this.vndNote.delete(vnIdx);
   };
 
-  public getPBs = (): Promise<ISubmittableItem[]> => {
+  public getVNs = (): Promise<string[]> => {
     return new Promise((resolve, reject) => {
-      this.pwrBuys.toArray().then((srcArr) => {
-        let tmpArr: ISubmittableItem[] = [];
+      this.vndNote.toArray().then((srcArr) => {
+        let tmpArr: string[] = [];
         for (const item of srcArr) {
-          tmpArr[item.itmIdx] = { itemId: item.itemId, submitted: item.submitted };
+          tmpArr[item.itmIdx] = item.note;
         }
         resolve(tmpArr);
       });
     });
   };
 
-  public clearPBs = () => {
-    this.pwrBuys.clear();
+  public clearVNs = () => {
+    this.vndNote.clear();
   };
 
-
-  public putPC = (pcIdx: number, pc: ISubmittableItem): Promise<number> => {
-    return this.prfCtrs.put({ itmIdx: pcIdx, ...pc });
-  };
-
-  public deletePC = (pcIdx: number) => {
-    this.prfCtrs.delete(pcIdx);
-  };
-
-  public getPCs = (): Promise<ISubmittableItem[]> => {
-    return new Promise((resolve, reject) => {
-      this.prfCtrs.toArray().then((srcArr) => {
-        let tmpArr: ISubmittableItem[] = [];
-        for (const item of srcArr) {
-          tmpArr[item.itmIdx] = { itemId: item.itemId, submitted: item.submitted };
-        }
-        resolve(tmpArr);
-      });
-    });
-  };
-
-  public clearPCs = () => {
-    this.prfCtrs.clear();
-  };
 
   public deleteDB = (dbName: string) => {
     Dexie.delete(dbName);

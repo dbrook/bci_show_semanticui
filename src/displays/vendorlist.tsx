@@ -9,6 +9,7 @@ import VendorListItem from '../widgets/vendorlistitem';
 
 interface VendorListProps {
   alphaSort: boolean;
+  boothButtonClick: () => void;
   showStore?: any;
 }
 
@@ -33,28 +34,34 @@ export default class VendorList extends React.Component<VendorListProps, VendorL
     const lowerFilterText = filterText.toLowerCase();
 
     // Filter results by vendor and sort them according to the global sort setting
-    const tempVendorStat = Array.from(boothVendors, ([key, value]) => {
-      return {boothId: key, boothNum: value.boothNum, vendor: value.vendor};
+    const tempVendorStat = Array.from(boothVendors, (value: any) => {
+      return {boothNum: value[0], boothName: value[1].boothName, vendors: value[1].vendors};
     }).filter((item: any) => {
       if (lowerFilterText !== '') {
-        return item.vendor.toLowerCase().includes(lowerFilterText);
+        return (
+          item.boothName.toLowerCase().includes(lowerFilterText) ||
+          item.vendors.find((vendorName: string) => {
+            return vendorName.toLowerCase().includes(lowerFilterText)
+          }) !== undefined
+        );
       }
       return true;
     }).sort((a: any, b: any) => {
       if (alphaSort) {
-        return a.vendor < b.vendor ? -1 : (a.vendor > b.vendor ? 1 : 0);
+        return a.boothName < b.boothName ? -1 : (a.boothName > b.boothName ? 1 : 0);
       }
-      return a.boothId < b.boothId ? -1 : (a.boothId > b.boothId ? 1 : 0);
+      return a.boothNum < b.boothNum ? -1 : (a.boothNum > b.boothNum ? 1 : 0);
     });
 
-    // FIXME: make the result from Array.from() above into a type so a VendorListItem
-    //        won't need to map with just 'any' as the type
-    let vendorRows = tempVendorStat.map((x: any) => {
-      const vendorHasActions = vendorsWithActions.has(x.boothId);
-      return <VendorListItem key={x.boothId}
-                             boothId={x.boothId}
+    let vendorRows = tempVendorStat.map((x) => {
+      const vendorHasActions = vendorsWithActions.has(x.boothNum);
+      return <VendorListItem key={x.boothNum}
                              boothNum={x.boothNum}
-                             vendor={x.vendor}
+                             boothName={x.boothName}
+                             vendors={x.vendors}
+                             expand={filterText !== ""}
+                             filter={filterText}
+                             jumpToBoothFunc={this.jumpToBoothFunc}
                              hasActions={vendorHasActions}/>
     });
 
@@ -78,5 +85,16 @@ export default class VendorList extends React.Component<VendorListProps, VendorL
 
   private clearFilterText = (e: SyntheticEvent, data: InputProps) => {
     this.setState({ filterText: '' });
+  };
+
+  private jumpToBoothFunc = (boothId: string) => {
+    this.props.showStore.setVendorPanelBoothId(boothId);
+    if (!this.props.showStore.vendorsWithActions.has(boothId)) {
+      this.props.showStore.addVendorNote(
+        boothId, 
+        "This is a newly initialized vendor. Use the buttons to add tasks and then delete this note."
+      );
+    }
+    this.props.boothButtonClick();
   };
 }
