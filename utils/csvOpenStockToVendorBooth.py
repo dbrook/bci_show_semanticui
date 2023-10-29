@@ -139,5 +139,6 @@ def parseCSVVendors(argv):
 if __name__ == "__main__":
     if len(sys.argv) != 3:
         print("Use: python csvOpenStockToVendorBooth.py order_form.csv booth_coordinates.csv")
+        print(" OR: python csvOpenStockToVendorBooth.py NO booth_coordinates.csv")
     else:
         parseCSVVendors(sys.argv)
