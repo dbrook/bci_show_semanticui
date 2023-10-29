@@ -1,10 +1,11 @@
 import React from 'react';
 
-import { Button } from 'semantic-ui-react';
+import { Button, List } from 'semantic-ui-react';
 
 interface VendorListItemProps {
   boothNum: string;
-  vendor: string;
+  boothName: string;
+  vendors: string[];
   hasActions: boolean;
   jumpToBoothFunc: (boothId: string) => void;
   showStore?: any;
@@ -20,15 +21,22 @@ interface VendorListItemProps {
  */
 export default class VendorListItem extends React.Component<VendorListItemProps> {
   render() {
-    const { boothNum, vendor, hasActions } = this.props;
+    const { boothNum, boothName, vendors, hasActions } = this.props;
 
     const button = hasActions
       ? <Button icon primary button onClick={this.openTaskModal}>{boothNum}</Button>
       : <Button icon primary basic button onClick={this.openTaskModal}>{boothNum}</Button>;
 
+    const subVendors = vendors.length > 1
+      ? <List>{vendors.map((vendor) => <List.Item>{vendor}</List.Item>)}</List>
+      : null;
+
     return <div className='BCIvendorListStyle'>
         {button}
-        <span className='BCIvendorListName'>{vendor}</span>
+        <span className='BCIvendorListName'>
+          <b>{boothName}</b>
+          {subVendors}
+        </span>
       </div>;
   }
 

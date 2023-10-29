@@ -35,7 +35,7 @@ export default class VendorList extends React.Component<VendorListProps, VendorL
 
     // Filter results by vendor and sort them according to the global sort setting
     const tempVendorStat = Array.from(boothVendors, (value: any) => {
-      return {boothNum: value[0], boothName: value[1].boothName};
+      return {boothNum: value[0], boothName: value[1].boothName, vendors: value[1].vendors};
     }).filter((item: any) => {
       if (lowerFilterText !== '') {
         return item.vendor.toLowerCase().includes(lowerFilterText);
@@ -55,7 +55,8 @@ export default class VendorList extends React.Component<VendorListProps, VendorL
       const vendorHasActions = vendorsWithActions.has(x.boothNum);
       return <VendorListItem key={x.boothNum}
                              boothNum={x.boothNum}
-                             vendor={x.boothName}
+                             boothName={x.boothName}
+                             vendors={x.vendors}
                              jumpToBoothFunc={this.jumpToBoothFunc}
                              hasActions={vendorHasActions}/>
     });

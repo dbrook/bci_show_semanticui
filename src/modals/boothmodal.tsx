@@ -3,8 +3,6 @@ import { Button, Header, Modal } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
-import { IVendorDirectory } from '../types/interfaces'
-
 interface BoothModalProps {
   open: boolean,
   setAddTaskModal: (boothId: string|undefined) => any;
@@ -27,17 +25,19 @@ export default class BoothModal extends React.Component<BoothModalProps> {
       <Modal open={open} centered={false}>
         <Modal.Header>Booth #{mapSelectedBoothNum}</Modal.Header>
         <Modal.Content>
-          {vendors}
+          {vendors[0]}
         </Modal.Content>
         <Modal.Actions>
+          {vendors[1]}
           <Button basic color='grey' onClick={this.modalCloseOps}>Close</Button>
         </Modal.Actions>
       </Modal>
     );
   };
 
-  private getVendorsForBooth = (boothNum: string) => {
+  private getVendorsForBooth = (boothNum: string): [any, any] => {
     // Is the booth for vendors?
+    let confirmButton = null;
     if (this.props.showStore.boothVendors.get(boothNum)?.vendors.length) {
       let vendors = [
         <Header as='h3' key='HEAD'>
@@ -49,26 +49,34 @@ export default class BoothModal extends React.Component<BoothModalProps> {
       ];
 
       if (this.props.showStore.vendorsWithActions.get(boothNum)) {
-        vendors.push(<Button basic color='blue' onClick={() => this.newVendorTask(boothNum)}>
+        confirmButton = <Button basic color='blue' onClick={() => this.vendorSwitch(boothNum)}>
           Go to Vendor Tab
-        </Button>);
+        </Button>;
       } else {
-        vendors.push(<Button basic color='blue' onClick={() => this.newVendorTask(boothNum)}>
+        confirmButton = <Button color='blue' onClick={() => this.newVendorTask(boothNum)}>
           Initialize Vendor
-        </Button>);
+        </Button>;
       }
-      return vendors;
+      return [vendors, confirmButton];
     }
 
     // Is the booth for administrative purposes?
     if (this.props.showStore.boothAdmins.get(boothNum)) {
-      return <Header as='h3'>{this.props.showStore.boothAdmins.get(boothNum).boothName}</Header>;
+      return [
+        <Header as='h3'>{this.props.showStore.boothAdmins.get(boothNum).boothName}</Header>,
+        confirmButton
+      ];
     }
 
     // Is the booth for a show activity?
     if (this.props.showStore.boothActivities.get(boothNum)) {
-      return <Header as='h3'>{this.props.showStore.boothActivities.get(boothNum).boothName}</Header>;
+      return [
+        <Header as='h3'>{this.props.showStore.boothActivities.get(boothNum).boothName}</Header>,
+        confirmButton
+      ];
     }
+
+    return [null, null];
   };
 
   private vendorSwitch = (boothId: string) => {
