@@ -18,9 +18,9 @@ export default class HelpPanel extends React.Component {
         </p>
         <Header color='blue' as='h1'>Trade Show Operations</Header>
         <p>
-          Choose the current trade show under the "Vendors" tab of this window, then click "Load
+          Choose the current trade show under the "Shows" tab of this window, then click "Load
           Selected". You may also wish to load an existing backup file, which can be done in the
-          "Activity" tab of this window. Once a show has been loaded, interactions are performed
+          "Your Data" tab of this window. Once a show has been loaded, interactions are performed
           across 5 tabs (selected at the bottom of the screen).
         </p>
         <ol>
@@ -53,7 +53,8 @@ export default class HelpPanel extends React.Component {
                 uninitialized vendor will add a single task and switch to that tab.
               </li>
               <li>
-                Unanswered questions are indicated by a red outline in the booth. The fill color
+                Booths that have at least one action associated will contain a teal outline, and
+                unanswered questions are indicated by a red outline (in the booth). The fill color
                 of a booth represents the least-completed open stock form status of all vendors
                 and forms at that booth. Orange: form to be collected, Purple: form collected,
                 Blue: form filled-in, Green: form submitted.

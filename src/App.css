@@ -95,8 +95,9 @@
   row-gap: 20px;
   column-gap: 20px;
   align-content: stretch;
-  justify-content: center;
-  max-width: 1450px;
+  justify-content: left;
+  /* justify-content: center; */
+  /* max-width: 1450px; */
 }
 
 .BCI_taskgroupitem {
@@ -181,7 +182,7 @@
   display: flex;
   width: 500px;
   margin-bottom: 5px;
-  align-items: center;
+  align-items: stretch;
 }
 .BCIvendorBoothNumStyle {
   border: 1px solid black;

@@ -4,11 +4,14 @@ import {
   Button,
   Checkbox,
   CheckboxProps,
+  Dropdown,
   Form,
   Input,
   InputProps,
   Message,
   Modal,
+  Header,
+  DropdownProps,
 } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
@@ -21,6 +24,7 @@ interface TaskModalProps {
   presetBoothId?: string;
   presetVendorName?: string;
   presetItemType?: string;
+  subVendors?: string[];
   showStore?: any;
 };
 
@@ -58,7 +62,7 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
 
   render() {
     const {
-      open, presetBoothId, presetVendorName, showStore: { boothVendors, vendorsWithActions },
+      open, presetBoothId, presetVendorName, subVendors, showStore: { boothVendors, vendorsWithActions },
     } = this.props;
     const { itemTypeToAdd, keepOpenOnAdd } = this.state;
 
@@ -85,21 +89,27 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
         break;
     }
 
+    let keepOpenCheckbox = null;
     let addBtnText = 'Add';
     let helperBox = null;
     switch (itemTypeToAdd) {
       case 'NOTE':
       case 'QU':
       case 'OS': {
-        let copyButton = null;
+        let vendorDropDown = null;
         if (itemTypeToAdd === 'OS') {
-          copyButton = <Button primary basic onClick={this.copyVendorToInput}>
-              Copy Vendor Name as Form Name
-            </Button>;
+          let vendorMenu = subVendors?.map((x: any, index) => {
+            return {key: index, text: x, value: x}
+          });
+          vendorDropDown = <Dropdown fluid
+                                     selection
+                                     options={vendorMenu}
+                                     placeholder='Name form from known vendors'
+                                     onChange={this.newVendorSelected} />
         }
         entryField = <Form.Group widths='equal'>
             <Form.Field>
-              {copyButton}
+              {vendorDropDown}
               <Input fluid
                      label={itemTypeToAdd}
                      defaultValue={this.state.inputValue}
@@ -107,6 +117,7 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
             </Form.Field>
           </Form.Group>;
         pbpcSelection = null;
+        keepOpenCheckbox = <Checkbox checked={keepOpenOnAdd} onChange={this.setKeepOpened} label='Keep Open'/>;
         break;
       }
       case 'PC':
@@ -145,20 +156,16 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
     return (
       <Modal open={open} centered={false}>
         <Modal.Header>{headerText}</Modal.Header>
-        <Modal.Content scrolling>
+        <Modal.Content scrolling={itemTypeToAdd !== 'OS'}>
+        <Header as='h3'>Vendor: {presetVendorName}</Header>
           <Form>
-            <Form.Group widths='equal'>
-              <Form.Field>
-                <label>Vendor</label>{presetVendorName}
-              </Form.Field>
-            </Form.Group>
             {helperBox}
             {entryField}
             {pbpcSelection}
           </Form>
         </Modal.Content>
         <Modal.Actions>
-          <Checkbox checked={keepOpenOnAdd} onChange={this.setKeepOpened} label='Keep Open'/>
+          {keepOpenCheckbox}
           <Button basic
                   color='green'
                   onClick={this.addEntry}
@@ -222,7 +229,7 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
     this.props.closeHander(false, this.state.itemTypeToAdd);
   };
 
-  private copyVendorToInput = () => {
-    this.setState({ inputValue: this.props.presetVendorName as string });
+  private newVendorSelected = (event: SyntheticEvent, data: DropdownProps) => {
+    this.setState({ inputValue: data.value as string });
   };
 }

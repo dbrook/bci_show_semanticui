@@ -186,16 +186,19 @@ class TradeShowData {
         fetch(`show_vendors/${this.tradeShowId}.json`, { cache: "no-store" })
           .then((response) => response.json())
           .then((responseJson) => {
+            // Ensure the booth vendor list is sorted before saving
+            const tempVendorMap: Map<string, IVendorDirectory> =
+              new Map(Object.entries(responseJson.vendors));
+            tempVendorMap.forEach((booth: IVendorDirectory, boothNum: string) => {
+              booth.vendors.sort();
+            });
             runInAction(() => {
-              this.boothVendors = new Map(Object.entries(responseJson.vendors));
-              console.log(this.boothVendors);
+              this.boothVendors = tempVendorMap;
               this.boothActivities = new Map(Object.entries(responseJson.activities));
               this.boothAdmins = new Map(Object.entries(responseJson.admins));
               this.floorPlanWidthPx = responseJson.width;
               this.floorPlanHeightPx = responseJson.height;
             });
-            const tempVendorMap: Map<string, IVendorDirectory> =
-              new Map(Object.entries(responseJson.vendors));
             const tempActivitiesMap: Map<string, IVendorDirectory> =
               new Map(Object.entries(responseJson.activities));
             const tempAdminsMap: Map<string, IVendorDirectory> =
@@ -334,7 +337,6 @@ class TradeShowData {
    */
   private saveActionToDatabase = (boothNum: string) => {
     const stat: IVendorStatus = toJS(this.vendorsWithActions.get(boothNum));
-    console.log(stat);
     this.db.putVendorAction(stat, boothNum);
   };
 

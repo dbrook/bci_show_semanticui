@@ -188,8 +188,8 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       </Tab.Pane>;
 
     const dataPanes = [
-      {menuItem: 'Vendors', render: () => showDataTab},
-      {menuItem: 'Activity', render: () => localDataTab},
+      {menuItem: 'Shows', render: () => showDataTab},
+      {menuItem: 'Your Data', render: () => localDataTab},
       {menuItem: 'Help', render: () => help},
       {menuItem: 'About', render: () => aboutApp},
     ];
@@ -281,7 +281,6 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
   };
 
   private processImportFile = (e: ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.files);
     //@ts-ignore
     const file: File = e.target.files[0];
     const inFile: FileReader = new FileReader();
@@ -291,7 +290,6 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
         try {
           const inputObj: DataBackup = JSON.parse(inputText);
           this.props.showStore.eraseAndImportData(inputObj);
-          console.log(inputObj);
           this.props.closeHander(false);
         } catch (e) {
           console.error('Failed to parse imported JSON file', e);
@@ -359,7 +357,6 @@ export default class DataModal extends React.Component<DataModalProps, DataModal
       };
       vwaExp[boothId] = curVend;
     });
-    console.log(vwaExp);
     return vwaExp;
   };
 

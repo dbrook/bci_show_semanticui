@@ -54,7 +54,7 @@ export default class BoothModal extends React.Component<BoothModalProps> {
         </Button>;
       } else {
         confirmButton = <Button color='blue' onClick={() => this.newVendorTask(boothNum)}>
-          Initialize Vendor
+          Start Vendor Actions
         </Button>;
       }
       return [vendors, confirmButton];

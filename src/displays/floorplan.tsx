@@ -17,10 +17,11 @@ interface FloorPlanState {
 }
 
 interface BoothOverall {
-  x: number,
-  y: number,
-  width: number,
-  height: number,
+  actions: boolean;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
   openQuestionCount: number | null;
   openStock: OpenStockForm | null;
 }
@@ -123,7 +124,7 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
         }
       }
 
-      // See if the current vendor has more outstanding questions than the others
+      // See if the booth has any outstanding questions
       if (curQuestionCount !== null) {
         if (knownQuestionCount !== null) {
           knownQuestionCount = curQuestionCount > knownQuestionCount ? curQuestionCount : knownQuestionCount;
@@ -143,6 +144,7 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
       }
 
       let tmpBooth: BoothOverall = {
+        actions: boothAction !== undefined,
         x: booth.x1,
         y: booth.y1,
         width: booth.width,
@@ -193,7 +195,9 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
         borderStyle: "solid",
         backgroundColor: fillColor ?? bgColor,
         color: bgColor ? "white" : "black",
-        boxShadow: (vend.openQuestionCount && vend.openQuestionCount > 0) ? "inset 0 0 0 5px red" : "",
+        boxShadow: (vend.openQuestionCount && vend.openQuestionCount > 0)
+                     ? "inset 0 0 0 5px red"
+                     : vend.actions && !bgColor ? "inset 0 0 0 5px #6dcfcf" : "",
         display: "flex",
         flexDirection: "column" as "column",
         justifyContent: "center",

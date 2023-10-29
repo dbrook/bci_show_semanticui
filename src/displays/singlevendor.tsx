@@ -42,7 +42,7 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
   }
 
   render() {
-    const { showStore: { vendorPanelBoothId, vendorsWithActions } } = this.props;
+    const { showStore: { vendorPanelBoothId, vendorsWithActions, boothVendors } } = this.props;
     const { addNoteModalShown, addQuModalShown, addPBModalShown, addPCModalShown, addOSModalShown } = this.state;
 
     const tempVendorStat = Array.from(vendorsWithActions, ([key, value]) => {
@@ -66,27 +66,27 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
                                    items={vendorItem.vendorNotes} />;
       questionsComponent = <QuestionAnswerGroup key={'QU-' + vendorItem.boothNum}
                                                 boothNum={vendorItem.boothNum}
-                                                vendor={vendorItem.vendor}
+                                                vendor={vendorItem.boothName}
                                                 items={vendorItem.questions}
                                                 hideCompleted={false}
                                                 hideVendor={true} />;
       powerBuysComponent = <SimpleSubmittableGroup key={'PB-' + vendorItem.boothNum}
                                                    boothNum={vendorItem.boothNum}
-                                                   vendor={vendorItem.vendor}
+                                                   vendor={vendorItem.boothName}
                                                    items={vendorItem.powerBuys}
                                                    hideCompleted={false}
                                                    hideVendor={true}
                                                    prefix='PB' />;
       profitCtrComponent = <SimpleSubmittableGroup key={'PC-' + vendorItem.boothNum}
                                                    boothNum={vendorItem.boothNum}
-                                                   vendor={vendorItem.vendor}
+                                                   vendor={vendorItem.boothName}
                                                    items={vendorItem.profitCenters}
                                                    hideCompleted={false}
                                                    hideVendor={true}
                                                    prefix='PC' />;
       openStockComponent = <OpenStockGroup key={'OS-' + vendorItem.boothNum}
                                            boothNum={vendorItem.boothNum}
-                                           vendor={vendorItem.vendor}
+                                           vendor={vendorItem.boothName}
                                            items={vendorItem.openStockForms}
                                            hideCompleted={false}
                                            hideVendor={true} />;
@@ -97,31 +97,32 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
                    closeHander={this.showAddTaskModal}
                    presetItemType='NOTE'
                    presetBoothId={vendorItem.boothNum}
-                   presetVendorName={vendorItem.vendor} />,
+                   presetVendorName={vendorItem.boothName} />,
         <TaskModal open={addQuModalShown}
                    key='qu'
                    closeHander={this.showAddTaskModal}
                    presetItemType='QU'
                    presetBoothId={vendorItem.boothNum}
-                   presetVendorName={vendorItem.vendor} />,
+                   presetVendorName={vendorItem.boothName} />,
         <TaskModal open={addOSModalShown}
                    key='os'
+                   subVendors={boothVendors.get(vendorPanelBoothId).vendors}
                    closeHander={this.showAddTaskModal}
                    presetItemType='OS'
                    presetBoothId={vendorItem.boothNum}
-                   presetVendorName={vendorItem.vendor} />,
+                   presetVendorName={vendorItem.boothName} />,
         <TaskModal open={addPBModalShown}
                    key='pb'
                    closeHander={this.showAddTaskModal}
                    presetItemType='PB'
                    presetBoothId={vendorItem.boothNum}
-                   presetVendorName={vendorItem.vendor} />,
+                   presetVendorName={vendorItem.boothName} />,
         <TaskModal open={addPCModalShown}
                    key='pc'
                    closeHander={this.showAddTaskModal}
                    presetItemType='PC'
                    presetBoothId={vendorItem.boothNum}
-                   presetVendorName={vendorItem.vendor} />,
+                   presetVendorName={vendorItem.boothName} />,
       ];
 
       taskButtons = [
