@@ -8,7 +8,7 @@ show instances.
 This project was started with [Create React App](https://github.com/facebook/create-react-app).
 
 This repository contains just the source code for the application. A production instance of it is
-available at my website: [BCI Trade Show](http://danbrook.org/bci/).
+available at my website: [BCI Trade Show](https://danbrook.org/bci/).
 
 ## Implementation
 
@@ -21,110 +21,22 @@ present.
 The UI is a tweaked version of Semantic UI React (as it provided a great deal of out-of-the-box
 usefulness) to add some non-standard component designs, in particular a heavy use of flexbox.
 
-## How to Use
+When loaded on an HTTPS site, a service worker and application manifest allow installing the
+single page application as a device "app", and will prompt a user to do so upon connecting.
 
-Upon first load of the site, you are prompted to select a show with the upper-left menu bar button
-"Load Show Data...". After you've set a show, this information is stored in your web browser and
-will be automatically reloaded after coming back to the application or refreshing the page.
+## How to Use / Components
+
+The help guide has been moved into an online help system within the application itself. Click
+on the Trade Show Data Button (the leftmost one in the page header) to get instructions on how
+to use the application's different views and manage your data.
 
 ### Menu Bar
 
-The menu bar at the top contains 4 buttons for application-wide features:
+The menu bar at the top contains 3 buttons for application-wide features: choosing a trade
+show instance from the database (or new data from the server, exporting data, and getting
+usage help), sorting the "Index" and "All" panels by vendor or booth number, and hiding all
+tasks which are complete from the "Summary" and "All" panels.
 
-#### Data Management
-
-This button text will show the currently-loaded trade show data. It also is how you can change
-between trade shows (as time progresses, new show data will be added). Clicking it reveals the
-Data Management modal.
-
-##### Data Management Modal
-
-- "Erase All Show Data": shown next to the currently-loaded show. This purges all database
-  storage of the current show (including the vendor directory information and your progress!)
-- "Vendor Data": lets you load (a different) trade show vendor directory. If you switch to one
-  you previously used, it will also restore your progress data from the local database.
-- "On-Device Data": shows your current progress data, allows you to save it to a JSON file,
-  and allows you to load a JSON file from your device into the application. The "Clear" feature
-  erases the local progress data but leaves the vendor directory for the show intact.
-- "About": just a standard 'about this application' style of window.
-
-#### Add...
-
-Adds a visit flag, question, Power Buy, Profit Center tasks to any vendor using a vendor search
-dropdown menu.
-
-#### Sort: Booth/Vendor
-
-Sorts the "Vendors", "Summary", and "Tasks" interfaces either by booth number or alphabetically
-by vendor.
-
-#### Hide Done
-
-Hides vendors in the "Summary" and "Tasks" interfaces that have no remaining actions for the show.
-What constitutes as "no remaining actions"?
-
-- None/Abandoned/Submitted Open Stock Form
-- No Visit or Visited vendor visit status
-- 0 unanswered questions
-- 0 unsubmitted items
-
-### Main (Tabbed) Interface
-
-The primary view is a 4-tab window that has the following panels:
-
-#### Vendors
-
-The list of all vendors present at the show. The booth number appears as purple if the associated
-vendor has any actions assigned to it. Clicking the (+) button next to the booth will open the
-"Add Task" modal, preset to that vendor. The Vendors tab also supports filtering the vendors by
-name at the top.
-
-The sorting of this view may be changed with the Sort Menu Bar button.
-
-#### Map
-
-Displays a floorplan of the current trade show.
-
-Vendor Booths: black outline. An inner outline represents the booth visit status. The fill of
-the booth matches the color scheme of the open stock form status for that vendor.
-
-Activities Booths: light gray outline and fill.
-
-Administrative Booths: light blue outline and fill. These are the BCI kiosk and clearance booths.
-
-#### Summary
-
-Shows all vendors with at least 1 action assigned. The booth number is a button that allows adding
-a task to that vendor with the "Add Task" modal. The visit status is a button that, when clicked,
-allows quick follow-up actions like changing the open stock form status and marking a revisit by
-opening the Visitation Modal. The Questions (QU), Power Buy (PB), Profit Center (PC) display the
-number (if any) tasks for the vendor. Lastly, the Open Stock Form (OS) component displays the
-current status of the form for the vendor.
-
-A note about progression through the open stock form statuses:
-
-None, Pick-Up, Retrieved, Filled-In, Submitted. At any time between Pick-Up and Filled-In, a form
-may be marked as abandoned. After a form is marked submitted, it may be restarted. An abandoned
-form can always be restarted.
-
-The sorting of this view may be changed with the Sort Menu Bar button. Completed vendors can be
-hidden using the "Hide Done" Menu Bar button.
-
-#### Tasks
-
-The Questions/Answers as well as Power Buy / Profit Center submission statuses are all updated in
-this interface. Questions are shown first, followed by Power Buys, and finally Profit Centers.
-
-Questions may be deleted with the trash can icon to the right. By clicking the question mark icon,
-a question's text may be updated. By clicking the red right arrow icon, an answer can be provided
-or modified. When done modifying the content, be sure to press the save (floppy disk) icon. Any
-content in the answer field intrinsically marks the question as "answered" across the application.
-
-Power Buys and Profit Centers can be marked as submitted by clicking the gray circle button to
-make it into a green check mark. They can be deleted with the attached trash can icon.
-
-The sorting of this view may be changed with the Sort Menu Bar button. Completed tasks can be
-hidden using the "Hide Done" Menu Bar button.
 
 ## Building the Application
 
@@ -135,7 +47,7 @@ local development instance at [http://localhost:3000](http://localhost:3000).
 
 Be sure to update the `package.json` file's "homepage" field to match your deploy target's actual
 path. For my server, I configure this to be `"homepage": "/bci/"` to get it working on my server
-at [http://danbrook.org/bci/](http://danbrook.org/bci/), but your path may vary. This is needed
+at [https://danbrook.org/bci/](https://danbrook.org/bci/), but your path may vary. This is needed
 or else the Vendor Data load will not properly function.
 
 After picking your homepage path, run `yarn build` and copy all contents of the resulting "build"
@@ -153,17 +65,17 @@ mentioned in the "About" section of the "Data Management" modal.
 **Note: Adding new shows is not considered a version change as the operations to do so are entirely
 outside of the "src" directory.
 
-See the "utls" directory for sample test data and a conversion script for CSV vendor data to a
+See the `utils` directory for sample test data and a conversion script for CSV vendor data to a
 JSON file like those under "public/show_vendors".
 
 ### Basic Procedure
 
 1. Acquire the new show directory and floorplan.
 1. Convert the directory into a CSV file, with the fields in the following order:
-    1. Booth ID (unique to each vendor, even if they share a booth, make this up based on booth nb)
     1. Booth Number (as it appears on the directory)
     1. Type of Booth: "activity", "admin", or "vendor"
-    1. Vendor Name / Activity Name / Admin Type
+    1. Vendor Name / Activity Name / Admin Type. For booths that appear twice, try and unify
+       the name so there aren't duplicate booth entries.
     1. Left-most Pixel Coordinate of Booth on floorplan
     1. Top-most Pixel Coordinate of Booth on floorplan
     1. Width (in pixels) of booth on floorplan
@@ -171,9 +83,24 @@ JSON file like those under "public/show_vendors".
 1. Add 2 lines at the top of the CSV file for the overall height/width of the floorplan, for ex:
     1. `width,590,,,,,,`
     1. `height,620,,,,,,`
+1. Acquire the Open Stock "Showbook Order Form" for the new trade show.
+    1. Export it as a CSV file and make sure that the `"` symbol is the text quote character.
+    1. Open the exported file in a text editor and remove all the heading rows so that there is
+       only data to be processed.
 1. Run the Python application and direct the output to the "public/show_vendors/" path:
     1. `cd utils`
-    1. `./csv2IVendorDirectoryMap.py 2019-Fall-ACY.csv > ../public/show_vendors/2019-Fall-ACY.json`
+    1. `./csvOpenStockToVendorBooth.py F19_Showbook_Order_Form.csv 2019-Fall-ACY.csv`
+       1. (Note: if you don't have a showbook order form, you should really get a copy! But if
+          you cannot, just pass a `NO` as the command ling argument instead of the order form
+          file and it'll make due with just the data from the directoy/floorplan)
+    1. Any booth that has multiple vendors per the showbook order form file will prompt you to
+       fill in a useful name to represent the booth as a whole on the "Index" panel, this should
+       be taken from the show floorplan or directory.
+    1. Any booth that is only on the floorplan or directory (from the file you generate from the
+       directory originally when making the pixel coordinates) that does not exist in the showbook
+       order form will be alerted to and you'll be given the opportunity to update the name.
+    1. Upon completion, a JSON blob will be dumped to your terminal, which you can copy and paste
+       for the next step.
 1. Update the file "public/show_vendors/all_shows.json" to include the new show based on its file
    name. (For example, add "2019-Fall-ACY" for the created "2019-Fall-ACY.json" file.). The
    all_shows.json file is used for finding shows when the Data Management modal is opened.

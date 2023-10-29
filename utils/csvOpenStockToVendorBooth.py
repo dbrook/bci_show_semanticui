@@ -32,21 +32,22 @@ vendor_json = {
 }  # JSON-safe Vendor Booths
 
 def parseCSVVendors(argv):
-    with open(argv[1], newline='') as csvfile:
-        csvVendors = csv.reader(csvfile, delimiter=',', quotechar='"')
+    if argv[1] != 'NO':
+        with open(argv[1], newline='') as csvfile:
+            csvVendors = csv.reader(csvfile, delimiter=',', quotechar='"')
 
-        # Build an internal structure for the vendor data
-        for row in csvVendors:
-            booth_num = row[22]
-            vendor = row[12]
-            try:
-                vendors[booth_num].add(vendor)
-            except KeyError:
-                vendors[booth_num] = {vendor}
+            # Build an internal structure for the vendor data
+            for row in csvVendors:
+                booth_num = row[22]
+                vendor = row[12]
+                try:
+                    vendors[booth_num].add(vendor)
+                except KeyError:
+                    vendors[booth_num] = {vendor}
 
-        # JSON-ify it!
-        for booth_num in vendors:
-            vendor_json['vendors'][booth_num] = { 'vendors': list(vendors[booth_num]) }
+            # JSON-ify it!
+            for booth_num in vendors:
+                vendor_json['vendors'][booth_num] = { 'vendors': list(vendors[booth_num]) }
 
     with open(argv[2], newline='') as csvfile:
         csvBooths = csv.reader(csvfile, delimiter=',', quotechar='"')
@@ -71,9 +72,11 @@ def parseCSVVendors(argv):
             # A vendor booth has been instantiated already from the order form CSV (hopefully!)
             if booth_type == 'vendor':
                 if booth_num not in vendor_json['vendors']:
-                    # Offer a deliberate naming opportunity for booths that came from the floorplan
-                    print(f"\nBOOTH NUMBER '{booth_num}':'{default_name}' IS ONLY ON THE MAP / DIRECTORY, NOT THE SHOW BOOK")
-                    new_name = input(f"PRESS ENTER TO ACCEPT '{default_name}' OR SPECIFY A NEW NAME HERE > ")
+                    new_name = ""
+                    if argv[1] != 'NO':
+                        # Offer a deliberate naming opportunity for booths that came from the floorplan
+                        print(f"\nBOOTH NUMBER '{booth_num}':'{default_name}' IS ONLY ON THE MAP / DIRECTORY, NOT THE SHOW BOOK")
+                        new_name = input(f"PRESS ENTER TO ACCEPT '{default_name}' OR SPECIFY A NEW NAME HERE > ")
                     if new_name == "":
                         unexpected_vendor = {
                             'boothName': default_name,
