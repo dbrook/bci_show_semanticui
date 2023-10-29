@@ -122,7 +122,7 @@ def parseCSVVendors(argv):
             
             # An activity booth is very similar to an admin booth
             elif booth_type == 'activity':
-                vendor_json['activity'][booth_num] = {
+                vendor_json['activities'][booth_num] = {
                     'boothName': default_name,
                     'vendors': [],
                     'x1': x1,

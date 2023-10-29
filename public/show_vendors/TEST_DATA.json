@@ -1,1 +1,116 @@
-{"width": 590, "height": 620, "vendors": {"100-0": {"boothNum": 100, "vendor": "SAMPLE CO, INC", "x1": 1, "y1": 1, "width": 550, "height": 53}, "100-1": {"boothNum": 100, "vendor": "ANOTHER CORP", "x1": 1, "y1": 97, "width": 54, "height": 64}, "101-0": {"boothNum": 101, "vendor": "ZZZ MFG GROUP", "x1": 1, "y1": 161, "width": 54, "height": 65}, "102-0": {"boothNum": 102, "vendor": "ABCD COMPANIES", "x1": 1, "y1": 226, "width": 54, "height": 127}, "987-0": {"boothNum": 103, "vendor": "D & M PRODUCTS", "x1": 1, "y1": 353, "width": 54, "height": 62}}, "admins": {"BCI01": {"boothNum": 105, "vendor": "Kiosk 1", "x1": 1, "y1": 415, "width": 54, "height": 167}, "BCI02": {"boothNum": 215, "vendor": "Clearance", "x1": 111, "y1": 415, "width": 51, "height": 167}, "BCI03": {"boothNum": 283, "vendor": "Kiosk 2", "x1": 111, "y1": 350, "width": 51, "height": 65}, "BCI04": {"boothNum": 912, "vendor": "New and Exciting", "x1": 111, "y1": 297, "width": 51, "height": 53}}, "activities": {"ACT01": {"boothNum": 1, "vendor": "Time Sink", "x1": 162, "y1": 117, "width": 51, "height": 112}, "ACT02": {"boothNum": 2, "vendor": "Deposit Boxes", "x1": 162, "y1": 229, "width": 51, "height": 353}, "ACT03": {"boothNum": 139, "vendor": "Refreshment Booth", "x1": 111, "y1": 243, "width": 51, "height": 54}, "ACT04": {"boothNum": 165, "vendor": "Activity", "x1": 111, "y1": 117, "width": 51, "height": 126}}}
+{
+    "width": 590,
+    "height": 620,
+    "vendors": {
+        "100": {
+            "vendors": [
+                "ANOTHER CORP",
+                "SAMPLE CO"
+            ],
+            "boothName": "ANOTHER / SAMPLE",
+            "x1": 1,
+            "y1": 1,
+            "width": 550,
+            "height": 53
+        },
+        "101": {
+            "vendors": [
+                "ZZZ MFG GROUP"
+            ],
+            "boothName": "ZZZ MFG GROUP",
+            "x1": 1,
+            "y1": 161,
+            "width": 54,
+            "height": 65
+        },
+        "102": {
+            "vendors": [
+                "ABCD COMPANIES"
+            ],
+            "boothName": "ABCD COMPANIES",
+            "x1": 1,
+            "y1": 226,
+            "width": 54,
+            "height": 127
+        },
+        "103": {
+            "vendors": [
+                "MMM SUPPLY INC",
+                "DDD PRODUCTS"
+            ],
+            "boothName": "D & M COMPANIES",
+            "x1": 1,
+            "y1": 353,
+            "width": 54,
+            "height": 62
+        }
+    },
+    "admins": {
+        "105": {
+            "boothName": "Kiosk 1",
+            "vendors": [],
+            "x1": 1,
+            "y1": 415,
+            "width": 54,
+            "height": 167
+        },
+        "215": {
+            "boothName": "Clearance",
+            "vendors": [],
+            "x1": 111,
+            "y1": 415,
+            "width": 51,
+            "height": 167
+        },
+        "283": {
+            "boothName": "Kiosk 2",
+            "vendors": [],
+            "x1": 111,
+            "y1": 350,
+            "width": 51,
+            "height": 65
+        },
+        "912": {
+            "boothName": "New and Exciting",
+            "vendors": [],
+            "x1": 111,
+            "y1": 297,
+            "width": 51,
+            "height": 53
+        }
+    },
+    "activities": {
+        "1": {
+            "boothName": "Time Sink",
+            "vendors": [],
+            "x1": 162,
+            "y1": 117,
+            "width": 51,
+            "height": 112
+        },
+        "2": {
+            "boothName": "Deposit Boxes",
+            "vendors": [],
+            "x1": 162,
+            "y1": 229,
+            "width": 51,
+            "height": 353
+        },
+        "139": {
+            "boothName": "Refreshment Booth",
+            "vendors": [],
+            "x1": 111,
+            "y1": 243,
+            "width": 51,
+            "height": 54
+        },
+        "165": {
+            "boothName": "Activity",
+            "vendors": [],
+            "x1": 111,
+            "y1": 117,
+            "width": 51,
+            "height": 126
+        }
+    }
+}
