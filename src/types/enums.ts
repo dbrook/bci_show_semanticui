@@ -24,5 +24,7 @@ export enum DataLoad {
  * Task Types
  */
 export enum TaskType {
-  
+
 };
+
+export type SimpleSubmittableType = 'PC' | 'PB';

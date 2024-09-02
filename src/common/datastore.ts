@@ -468,6 +468,20 @@ class TradeShowData {
     this.cleanupBoothAuto(boothId);
   };
 
+  @action public updatePowerBuy = (boothId: string, pcCode: string, pbQty: number) => {
+    this.initBoothIfNeeded(boothId);
+    let convertedPBs = this.vendorsWithActions.get(boothId).powerBuys;
+    if (pbQty === 0) {
+      // Unset a PC if it was explicitly set to 0
+      convertedPBs.delete(pcCode);
+    } else if (pbQty !== undefined) {
+      let submittable: ISubmittableQty = { quantity: pbQty, submitted: false };
+      convertedPBs.set(pcCode, submittable);
+    }
+    this.vendorsWithActions.get(boothId).powerBuys = convertedPBs;
+    this.cleanupBoothAuto(boothId);
+  };
+
   @action public getGUIPowerBuys = (boothId: string|undefined): Map<string, number|undefined> => {
     let pbs = new Map<string, number|undefined>();
     this.vendorsWithActions.get(boothId)?.powerBuys.forEach((val: ISubmittableQty, key: string) => {
@@ -509,6 +523,20 @@ class TradeShowData {
         convertedPCs.set(key, submittable);
       }
     });
+    this.vendorsWithActions.get(boothId).profitCenters = convertedPCs;
+    this.cleanupBoothAuto(boothId);
+  };
+
+  @action public updateProfitCenter = (boothId: string, pcCode: string, pcQty: number) => {
+    this.initBoothIfNeeded(boothId);
+    let convertedPCs = this.vendorsWithActions.get(boothId).profitCenters;
+    if (pcQty === 0) {
+      // Unset a PC if it was explicitly set to 0
+      convertedPCs.delete(pcCode);
+    } else if (pcQty !== undefined) {
+      let submittable: ISubmittableQty = { quantity: pcQty, submitted: false };
+      convertedPCs.set(pcCode, submittable);
+    }
     this.vendorsWithActions.get(boothId).profitCenters = convertedPCs;
     this.cleanupBoothAuto(boothId);
   };

@@ -38,8 +38,8 @@ def parseCSVVendors(argv):
 
             # Build an internal structure for the vendor data
             for row in csvVendors:
-                booth_num = row[22]
-                vendor = row[12]
+                booth_num = row[24]
+                vendor = row[14]
                 try:
                     vendors[booth_num].add(vendor)
                 except KeyError:
@@ -99,7 +99,7 @@ def parseCSVVendors(argv):
                     continue
                 if len(vendor_json['vendors'][booth_num]['vendors']) > 1:
                     print(f"\nBOOTH {booth_num} CONTAINS MULTIPLE VENDORS:\n{vendor_json['vendors'][booth_num]['vendors']}")
-                    input_name = input(f'ENTER WHAT TO NAME BOOTH NUMBER {booth_num} > ')
+                    input_name = input(f"PRESS ENTER TO ACCEPT '{default_name}' OR SPECIFY A NEW NAME HERE > ")
                     if input_name == "":
                         booth_name = default_name
                     else:
