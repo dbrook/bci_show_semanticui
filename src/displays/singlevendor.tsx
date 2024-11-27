@@ -11,6 +11,7 @@ import OpenStockGroup from '../widgets/openstockgroup';
 import NotesGroup from '../widgets/notesgroup';
 
 interface SingleVendorProps {
+  inModal: boolean;
   showStore?: any;
 };
 
@@ -43,7 +44,13 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
 
   render() {
     const { showStore: { vendorPanelBoothId, vendorsWithActions, boothVendors } } = this.props;
-    const { addNoteModalShown, addQuModalShown, addPBModalShown, addPCModalShown, addOSModalShown } = this.state;
+    const {
+      addNoteModalShown,
+      addQuModalShown,
+      addPBModalShown,
+      addPCModalShown,
+      addOSModalShown
+    } = this.state;
 
     const tempVendorStat = Array.from(vendorsWithActions, ([key, value]) => {
       return {boothNum: key, vendor: value.boothName};
@@ -139,15 +146,19 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
     }
 
     return (
-      <div className='tabInnerLayout'>
+      <div>
         {taskModals}
-        <Dropdown as='h3'
-                  fluid
-                  selection
-                  options={vendorMenu}
-                  placeholder='Vendors'
-                  defaultValue={vendorPanelBoothId ?? vendorPanelBoothId}
-                  onChange={this.newVendorSelected} />
+        {
+          (!this.props.inModal)
+          ? <Dropdown as='h3'
+                      fluid
+                      selection
+                      options={vendorMenu}
+                      placeholder='Vendors'
+                      defaultValue={vendorPanelBoothId ?? vendorPanelBoothId}
+                      onChange={this.newVendorSelected} />
+          : null
+        }
         <div className="BCI_vendoritems">
           <div className='BCI_taskgroupitem' style={{textAlign: 'left'}}>{taskButtons}</div>
           <div className='BCI_taskgroupitem'>

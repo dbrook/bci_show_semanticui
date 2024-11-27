@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, Header, Modal } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
+import SingleVendor from '../displays/singlevendor';
 
 interface BoothModalProps {
   open: boolean,
@@ -24,7 +25,7 @@ export default class BoothModal extends React.Component<BoothModalProps> {
     return (
       <Modal open={open} centered={false}>
         <Modal.Header>Booth #{mapSelectedBoothNum}</Modal.Header>
-        <Modal.Content>
+        <Modal.Content scrolling>
           {vendors[0]}
         </Modal.Content>
         <Modal.Actions>
@@ -39,13 +40,18 @@ export default class BoothModal extends React.Component<BoothModalProps> {
     // Is the booth for vendors?
     let confirmButton = null;
     if (this.props.showStore.boothVendors.get(boothNum)?.vendors.length) {
+      const vends = this.props.showStore.boothVendors.get(boothNum)?.vendors;
+      const subVendors = <ul>{vends.map((vendor: string, index: string) => {
+        return <li key={index}>{vendor}</li>;
+      })}</ul>
       let vendors = [
         <Header as='h3' key='HEAD'>
           {this.props.showStore.boothVendors.get(boothNum).boothName}
         </Header>,
-        this.props.showStore.boothVendors.get(boothNum).vendors.map((vendorName: string) => {
-          return <div key={vendorName}>{vendorName}</div>;
-        })
+        subVendors,
+        (this.props.showStore.vendorsWithActions.get(boothNum))
+          ? <SingleVendor inModal={true} />
+          : null,
       ];
 
       if (this.props.showStore.vendorsWithActions.get(boothNum)) {
@@ -86,7 +92,6 @@ export default class BoothModal extends React.Component<BoothModalProps> {
 
   private newVendorTask = (boothId: string) => {
     this.props.setAddTaskModal(boothId);
-    this.props.closeHandler(false, undefined);
   };
 
   private modalCloseOps = () => {

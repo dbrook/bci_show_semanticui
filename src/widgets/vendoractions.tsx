@@ -10,6 +10,7 @@ interface VendorActionsProps {
   vendorStatus: IVendorStatus;
   condensed: boolean;
   boothButtonClick: () => void;
+  boothModalTrigger: (boothNum: string) => void;
   showStore?: any;
 };
 
@@ -25,6 +26,13 @@ interface VendorActionsProps {
  */
 @inject('showStore') @observer
 export default class VendorActions extends React.Component<VendorActionsProps> {
+  constructor(props: VendorActionsProps) {
+    super(props);
+    this.state = {
+      boothModalShown: false,
+    };
+  }
+
   render() {
     const {
       boothNum,
@@ -47,7 +55,7 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
           <Header as='h3' style={{textAlign: 'left'}}>{boothName}</Header>
           <div className='BCImobilevendorgroup'>
             <div className='BCImobilevendorbuttonnote'>
-              <Button primary basic onClick={this.switchToVendorTab}>{boothNum}</Button>
+              <Button primary basic onClick={this.showBoothModal}>{boothNum}</Button>
               {noteIcon}
             </div>
             <div className='BCImobilevendorstatus'>
@@ -72,7 +80,7 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
       return (
         <Table.Row>
           <Table.Cell textAlign='left'>
-            <Button primary basic onClick={this.switchToVendorTab}>{boothNum}</Button>
+            <Button primary basic onClick={this.showBoothModal}>{boothNum}</Button>
             {noteIcon}
           </Table.Cell>
           <Table.Cell>{boothName}</Table.Cell>
@@ -93,8 +101,8 @@ export default class VendorActions extends React.Component<VendorActionsProps> {
     }
   }
 
-  private switchToVendorTab = () => {
-    this.props.showStore.setVendorPanelBoothId(this.props.vendorStatus.boothNum);
-    this.props.boothButtonClick();
+  private showBoothModal = () => {
+    this.props.boothModalTrigger(this.props.vendorStatus.boothNum);
   }
+
 }

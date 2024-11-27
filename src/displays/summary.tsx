@@ -5,12 +5,17 @@ import { inject, observer } from 'mobx-react';
 
 import { IVendorStatus } from '../types/interfaces';
 import VendorActions from '../widgets/vendoractions';
+import BoothModal from '../modals/boothmodal';
 
 interface TaskListProps {
   hideCompleted: boolean;
   alphaSort: boolean;
   boothButtonClick: () => void;
   showStore?: any;
+};
+
+interface TaskListState {
+  boothModalShown: boolean;
 };
 
 /*
@@ -22,7 +27,14 @@ interface TaskListProps {
  * the widgets laid out using flexbox.
  */
 @inject('showStore') @observer
-export default class Summary extends React.Component<TaskListProps> {
+export default class Summary extends React.Component<TaskListProps, TaskListState> {
+  constructor(props: TaskListProps, state: TaskListState) {
+    super(props, state);
+    this.state = {
+      boothModalShown: false,
+    };
+  }
+
   render() {
     const { alphaSort, boothButtonClick, showStore: { vendorsWithActions } } = this.props;
 
@@ -37,14 +49,22 @@ export default class Summary extends React.Component<TaskListProps> {
 
     let vendorRows = tempVendorStat.map((x: IVendorStatus) => {
       if (!this.props.hideCompleted || !this.vendorCompleted(x)) {
-        return <VendorActions key={x.boothNum} vendorStatus={x} condensed={false} boothButtonClick={boothButtonClick} />
+        return <VendorActions key={x.boothNum}
+                              vendorStatus={x}
+                              condensed={false}
+                              boothButtonClick={boothButtonClick}
+                              boothModalTrigger={this.showBoothModal} />
       }
       return null;
     });
 
     let vendorRowsMobile = tempVendorStat.map((x: IVendorStatus) => {
       if (!this.props.hideCompleted || !this.vendorCompleted(x)) {
-        return <VendorActions key={x.boothNum} vendorStatus={x} condensed={true} boothButtonClick={boothButtonClick} />
+        return <VendorActions key={x.boothNum}
+                              vendorStatus={x}
+                              condensed={true}
+                              boothButtonClick={boothButtonClick}
+                              boothModalTrigger={this.showBoothModal} />
       }
       return null;
     });
@@ -52,11 +72,14 @@ export default class Summary extends React.Component<TaskListProps> {
     // Displays tabular format on wide screens, condensed view on mobiles/tablets
     return (
       <div className='tabInnerLayout'>
+        <BoothModal open={this.state.boothModalShown}
+                    setAddTaskModal={this.addTaskModalBoothId}
+                    closeHandler={this.toggleBoothModal} />
         <Table unstackable celled className='BCIdesktop'>
           <Table.Header className='BCItasksum stickyTableHead'>
             <Table.Row>
               <Table.HeaderCell className='BCItasksum boothStyle'>Booth</Table.HeaderCell>
-              <Table.HeaderCell>Vendor</Table.HeaderCell>
+              <Table.HeaderCell>Name</Table.HeaderCell>
               <Table.HeaderCell className='BCItasksum simpleStyle'>Questions</Table.HeaderCell>
               <Table.HeaderCell className='BCItasksum simpleStyle'>Power Buy</Table.HeaderCell>
               <Table.HeaderCell className='BCItasksum simpleStyle'>Profit Center</Table.HeaderCell>
@@ -87,5 +110,38 @@ export default class Summary extends React.Component<TaskListProps> {
       (nbSubmittedPowerBuys(vendor.boothNum) === vendor.powerBuys.size) &&
       (nbSubmittedProfitCenters(vendor.boothNum) === vendor.profitCenters.size)
     );
-  }
+  };
+
+  private showBoothModal = (boothNum: string): void => {
+    this.props.showStore.setMapSelectedBoothNum(boothNum);
+    this.toggleBoothModal(true, boothNum);
+  };
+
+  private toggleBoothModal = (showIt: boolean, boothNum: any): void => {
+    if (showIt) {
+      this.props.showStore.setVendorPanelBoothId(boothNum);
+    }
+
+    this.setState({
+      boothModalShown: showIt
+    });
+
+    if (!showIt && boothNum) {
+      // Closing modal and have a booth identifier: switch to the vendor tab
+      this.props.boothButtonClick();
+    }
+    return;
+  };
+
+  private addTaskModalBoothId = (boothId: string|undefined) => {
+    if (boothId) {
+      // Add a simple note to the booth so it can be interfaced with in the Vendor pane
+      this.props.showStore.setVendorPanelBoothId(boothId);
+      this.props.showStore.addVendorNote(
+        boothId,
+        "This is a newly initialized vendor. Use the buttons to add tasks and then delete this note."
+      );
+    }
+  };
+
 }

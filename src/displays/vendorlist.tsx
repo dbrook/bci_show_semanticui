@@ -91,7 +91,7 @@ export default class VendorList extends React.Component<VendorListProps, VendorL
     this.props.showStore.setVendorPanelBoothId(boothId);
     if (!this.props.showStore.vendorsWithActions.has(boothId)) {
       this.props.showStore.addVendorNote(
-        boothId, 
+        boothId,
         "This is a newly initialized vendor. Use the buttons to add tasks and then delete this note."
       );
     }
