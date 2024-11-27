@@ -73,7 +73,7 @@ export default class TabArea extends React.Component<TabAreaProps, TabAreaState>
         render: () => {
           return (
             <Tab.Pane attached='top' className='innerTabStyle'>
-              <SingleVendor />
+              <SingleVendor inModal={false} />
             </Tab.Pane>
           );
         },

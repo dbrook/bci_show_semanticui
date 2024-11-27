@@ -218,9 +218,14 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
   };
 
   private showBoothModal = (showIt: boolean, boothNum: any) => {
+    if (showIt) {
+      this.props.showStore.setVendorPanelBoothId(boothNum);
+    }
+
     this.setState({
       boothModalShown: showIt
     });
+
     if (!showIt && boothNum) {
       // Closing modal and have a booth identifier: switch to the vendor tab
       this.props.boothButtonClick();
@@ -233,10 +238,9 @@ export default class FloorPlan extends React.Component<FloorPlanProps, FloorPlan
       // Add a simple note to the booth so it can be interfaced with in the Vendor pane
       this.props.showStore.setVendorPanelBoothId(boothId);
       this.props.showStore.addVendorNote(
-        boothId, 
+        boothId,
         "This is a newly initialized vendor. Use the buttons to add tasks and then delete this note."
       );
-      this.props.boothButtonClick();
     }
   };
 
