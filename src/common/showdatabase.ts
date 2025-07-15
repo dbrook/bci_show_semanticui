@@ -22,6 +22,7 @@ export default class ShowDatabase extends Dexie {
   activities!: Dexie.Table<DBVendorDirectory>;
   admins!: Dexie.Table<DBVendorDirectory>;
   mapDimensions!: Dexie.Table<any>;
+  fulfillMonths!: Dexie.Table<any>;
   actions!: Dexie.Table<IVendorStatus>;
   questions!: Dexie.Table<DBQuestionAnswer>;
   vndNote!: Dexie.Table<DBIndexedString>;
@@ -33,6 +34,7 @@ export default class ShowDatabase extends Dexie {
       activities: 'boothNum, boothName, vendors, x1, y1, width, height',
       admins: 'boothNum, boothName, vendors, x1, y1, width, height',
       mapDimensions: 'parameter, value',
+      fulfillMonths: 'idx, month',
       actions: 'boothNum, boothName, questions, powerBuys, profitCenters, openStockForms, vendorNotes',
       questions: 'qIdx, question, answer',
       vndNote: 'itmIdx, note',
@@ -44,6 +46,7 @@ export default class ShowDatabase extends Dexie {
     this.activities.clear();
     this.admins.clear();
     this.mapDimensions.clear();
+    this.fulfillMonths.clear();
   };
 
   public get nbBoothVendors() {
@@ -99,12 +102,15 @@ export default class ShowDatabase extends Dexie {
                   width = item.value;
                 }
               }
-              outputMap.set('vendors', vendorsMap);
-              outputMap.set('activities', actsMap);
-              outputMap.set('admins', admMap);
-              outputMap.set('height', height);
-              outputMap.set('width', width);
-              resolve(outputMap);
+              this.fulfillMonths.toArray().then((fulfillMonthArr) => {
+                outputMap.set('vendors', vendorsMap);
+                outputMap.set('activities', actsMap);
+                outputMap.set('admins', admMap);
+                outputMap.set('height', height);
+                outputMap.set('width', width);
+                outputMap.set('fulfillMonths', fulfillMonthArr);
+                resolve(outputMap);
+              });
             });
           });
         });
@@ -127,6 +133,9 @@ export default class ShowDatabase extends Dexie {
     });
     this.mapDimensions.put({ parameter: 'width', value: booths.get('width') });
     this.mapDimensions.put({ parameter: 'height', value: booths.get('height') });
+    for (let i = 0; i < booths.get('fulfillMonths').length; i++) {
+      this.fulfillMonths.put({idx: i, month: booths.get('fulfillMonths')[i]});
+    }
   };
 
   public putVendorAction = (action: IVendorStatus, boothNum: string) => {

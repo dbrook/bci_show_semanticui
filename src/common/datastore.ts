@@ -41,6 +41,9 @@ class TradeShowData {
   @observable public floorPlanWidthPx: number;
   @observable public floorPlanHeightPx: number;
 
+  // Breakdown of product fulfillment months
+  @observable public fulfillmentMonths: string[];
+
   // Vendors With Action Items
   // FIXME: Ideally this is the declaration to use for an observable map, but....
   // ... this workaround below is required to make a map "properly" observable
@@ -68,6 +71,7 @@ class TradeShowData {
     this.boothAdmins = new Map();
     this.floorPlanWidthPx = 0;
     this.floorPlanHeightPx = 0;
+    this.fulfillmentMonths = [];
     this.vendorQuestions = [];
     this.vendorNotes = [];
     this.vendorPanelBoothId = undefined;
@@ -101,6 +105,9 @@ class TradeShowData {
       this.floorPlanWidthPx = dataBackup.width;
       this.floorPlanHeightPx = dataBackup.height;
 
+      // Import Fulfillment Month Array
+      this.fulfillmentMonths = dataBackup.fulfillMonths;
+
       // Import the Booth-Vendor Data, including activities and BCI administrative blocks
       const tempVendorMap = new Map(Object.entries(dataBackup.vendors));
       this.boothVendors = tempVendorMap;
@@ -117,6 +124,7 @@ class TradeShowData {
       allBoothData.set('admins', tempAdminsMap);
       allBoothData.set('width', dataBackup.width);
       allBoothData.set('height', dataBackup.height);
+      allBoothData.set('fulfillMonths', dataBackup.fulfillMonths);
       this.db.putBooths(allBoothData);
 
       // Import the 'vendors with actions'. A map in a map is not natively supported, so
@@ -198,6 +206,7 @@ class TradeShowData {
               this.boothAdmins = new Map(Object.entries(responseJson.admins));
               this.floorPlanWidthPx = responseJson.width;
               this.floorPlanHeightPx = responseJson.height;
+              this.fulfillmentMonths = responseJson.fulfillMonths;
             });
             const tempActivitiesMap: Map<string, IVendorDirectory> =
               new Map(Object.entries(responseJson.activities));
@@ -210,6 +219,7 @@ class TradeShowData {
             allBoothData.set('admins', tempAdminsMap);
             allBoothData.set('width', this.floorPlanWidthPx);
             allBoothData.set('height', this.floorPlanHeightPx);
+            allBoothData.set('fulfillMonths', this.fulfillmentMonths);
             this.db.putBooths(allBoothData);
           });
       } else {
@@ -221,6 +231,7 @@ class TradeShowData {
             this.boothAdmins = dataMap.get('admins');
             this.floorPlanWidthPx = dataMap.get('width');
             this.floorPlanHeightPx = dataMap.get('height');
+            this.fulfillmentMonths = dataMap.get('fulfillMonths').map((monthItm: any) => monthItm.month);
           });
         });
       }
@@ -247,6 +258,7 @@ class TradeShowData {
         this.boothAdmins = new Map();
         this.floorPlanWidthPx = 0;
         this.floorPlanHeightPx = 0;
+        this.fulfillmentMonths = [];
       }
     });
   };
@@ -452,42 +464,22 @@ class TradeShowData {
     return nbSub;
   };
 
-  @action public setPowerBuys = (boothId: string, pbs: Map<string, number|undefined>) => {
+  @action public addPowerBuy = (boothId: string, pbId: string) => {
     this.initBoothIfNeeded(boothId);
-    let convertedPBs = this.vendorsWithActions.get(boothId).powerBuys;
-    pbs.forEach((value, key) => {
-      if (value === 0) {
-        // Unset a PB if it was explicitly set to 0
-        convertedPBs.delete(key);
-      } else if (value !== undefined) {
-        let submittable: ISubmittableQty = { quantity: value, submitted: false };
-        convertedPBs.set(key, submittable);
-      }
+    this.vendorsWithActions.get(boothId).powerBuys.set(pbId, {
+      quantities: Array(this.fulfillmentMonths.length).fill(0),
+      submitted: false,
     });
-    this.vendorsWithActions.get(boothId).powerBuys = convertedPBs;
     this.cleanupBoothAuto(boothId);
   };
 
-  @action public updatePowerBuy = (boothId: string, pcCode: string, pbQty: number) => {
+  @action public updatePowerBuy = (boothId: string, pbId: string, index: number, value: number) => {
     this.initBoothIfNeeded(boothId);
-    let convertedPBs = this.vendorsWithActions.get(boothId).powerBuys;
-    if (pbQty === 0) {
-      // Unset a PC if it was explicitly set to 0
-      convertedPBs.delete(pcCode);
-    } else if (pbQty !== undefined) {
-      let submittable: ISubmittableQty = { quantity: pbQty, submitted: false };
-      convertedPBs.set(pcCode, submittable);
-    }
-    this.vendorsWithActions.get(boothId).powerBuys = convertedPBs;
+    let pbTemp = this.vendorsWithActions.get(boothId).powerBuys.get(pbId);
+    pbTemp.quantities[index] = value;
+    this.vendorsWithActions.get(boothId).powerBuys.set(pbId, pbTemp);
+    // this.vendorsWithActions.get(boothId).powerBuys[pbId].quantities[index] = value;
     this.cleanupBoothAuto(boothId);
-  };
-
-  @action public getGUIPowerBuys = (boothId: string|undefined): Map<string, number|undefined> => {
-    let pbs = new Map<string, number|undefined>();
-    this.vendorsWithActions.get(boothId)?.powerBuys.forEach((val: ISubmittableQty, key: string) => {
-      pbs.set(key, val.quantity);
-    });
-    return pbs;
   };
 
   @action public submitPowerBuy = (boothId: string, itemId: string, submitted: boolean) => {
@@ -501,6 +493,23 @@ class TradeShowData {
   };
 
 
+  @action public addProfitCenter = (boothId: string, pcId: string) => {
+    this.initBoothIfNeeded(boothId);
+    this.vendorsWithActions.get(boothId).profitCenters.set(pcId, {
+      quantities: Array(this.fulfillmentMonths.length).fill(0),
+      submitted: false,
+    });
+    this.cleanupBoothAuto(boothId);
+  };
+
+  @action public updateProfitCenter = (boothId: string, pcId: string, index: number, value: number) => {
+    this.initBoothIfNeeded(boothId);
+    let pcTemp = this.vendorsWithActions.get(boothId).profitCenters.get(pcId);
+    pcTemp.quantities[index] = value;
+    this.vendorsWithActions.get(boothId).profitCenters.set(pcId, pcTemp);
+    this.cleanupBoothAuto(boothId);
+  };
+
   @action public nbSubmittedProfitCenters = (boothId: string) => {
     let nbSub = 0;
     this.vendorsWithActions.get(boothId).profitCenters.forEach((pb: ISubmittableQty) => {
@@ -509,44 +518,6 @@ class TradeShowData {
       }
     });
     return nbSub;
-  };
-
-  @action public setProfitCenters = (boothId: string, pcs: Map<string, number|undefined>) => {
-    this.initBoothIfNeeded(boothId);
-    let convertedPCs = this.vendorsWithActions.get(boothId).profitCenters;
-    pcs.forEach((value, key) => {
-      if (value === 0) {
-        // Unset a PC if it was explicitly set to 0
-        convertedPCs.delete(key);
-      } else if (value !== undefined) {
-        let submittable: ISubmittableQty = { quantity: value, submitted: false };
-        convertedPCs.set(key, submittable);
-      }
-    });
-    this.vendorsWithActions.get(boothId).profitCenters = convertedPCs;
-    this.cleanupBoothAuto(boothId);
-  };
-
-  @action public updateProfitCenter = (boothId: string, pcCode: string, pcQty: number) => {
-    this.initBoothIfNeeded(boothId);
-    let convertedPCs = this.vendorsWithActions.get(boothId).profitCenters;
-    if (pcQty === 0) {
-      // Unset a PC if it was explicitly set to 0
-      convertedPCs.delete(pcCode);
-    } else if (pcQty !== undefined) {
-      let submittable: ISubmittableQty = { quantity: pcQty, submitted: false };
-      convertedPCs.set(pcCode, submittable);
-    }
-    this.vendorsWithActions.get(boothId).profitCenters = convertedPCs;
-    this.cleanupBoothAuto(boothId);
-  };
-
-  @action public getGUIProfitCenters = (boothId: string|undefined): Map<string, number|undefined> => {
-    let pcs = new Map<string, number|undefined>();
-    this.vendorsWithActions.get(boothId)?.profitCenters.forEach((val: ISubmittableQty, key: string) => {
-      pcs.set(key, val.quantity);
-    });
-    return pcs;
   };
 
   @action public submitProfitCenter = (boothId: string, itemId: string, submitted: boolean) => {

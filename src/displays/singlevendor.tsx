@@ -18,8 +18,6 @@ interface SingleVendorProps {
 interface DataModalState {
   addNoteModalShown: boolean;
   addQuModalShown: boolean;
-  addPBModalShown: boolean;
-  addPCModalShown: boolean;
   addOSModalShown: boolean;
   deleteWarnShown: boolean;
 };
@@ -35,8 +33,6 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
     this.state = {
       addNoteModalShown: false,
       addQuModalShown: false,
-      addPBModalShown: false,
-      addPCModalShown: false,
       addOSModalShown: false,
       deleteWarnShown: false,
     };
@@ -47,8 +43,6 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
     const {
       addNoteModalShown,
       addQuModalShown,
-      addPBModalShown,
-      addPCModalShown,
       addOSModalShown
     } = this.state;
 
@@ -118,18 +112,6 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
                    presetItemType='OS'
                    presetBoothId={vendorItem.boothNum}
                    presetVendorName={vendorItem.boothName} />,
-        <TaskModal open={addPBModalShown}
-                   key='pb'
-                   closeHander={this.showAddTaskModal}
-                   presetItemType='PB'
-                   presetBoothId={vendorItem.boothNum}
-                   presetVendorName={vendorItem.boothName} />,
-        <TaskModal open={addPCModalShown}
-                   key='pc'
-                   closeHander={this.showAddTaskModal}
-                   presetItemType='PC'
-                   presetBoothId={vendorItem.boothNum}
-                   presetVendorName={vendorItem.boothName} />,
       ];
 
       taskButtons = [
@@ -140,8 +122,6 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
           <Icon name='question circle outline' />
         </Button>,
         <Button primary button name='OS' key='OSbtn' onClick={this.openTaskModal}>OS</Button>,
-        <Button primary button name='PB' key='PBbtn' onClick={this.openTaskModal}>PB</Button>,
-        <Button primary button name='PC' key='PCbtn' onClick={this.openTaskModal}>PC</Button>,
       ];
     }
 
@@ -200,12 +180,6 @@ export default class SingleVendor extends React.Component<SingleVendorProps, Dat
       break;
     case 'QU':
       this.setState({ addQuModalShown: showIt });
-      break;
-    case 'PB':
-      this.setState({ addPBModalShown: showIt });
-      break;
-    case 'PC':
-      this.setState({ addPCModalShown: showIt });
       break;
     case 'OS':
       this.setState({ addOSModalShown: showIt });

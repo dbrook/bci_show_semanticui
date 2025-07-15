@@ -245,13 +245,12 @@
   text-align: center;
 }
 
-/* Simple Submittable (Profit Ctr / Power Buy) */
+/* Simple Submittable (Profit Ctr / Power Buy) Drop-Down */
 .BCIsimplesubmittable {
   justify-content: center;
-  width: 10.87em;
+  width: 4em;
   font-family: monospace;
 }
-
 
 /* GROUPS OF ITEMS */
 /* Flex Container for question/answers */
@@ -312,8 +311,11 @@
  * * * * * * * * * * * */
 
 /* Hide the tabular format if the display isn't wide enough */
-@media (max-width: 1024px) {
+@media (max-width: 860px) {
   .ui.celled.unstackable.table.BCIdesktop {
+    display: none;
+  }
+  .ui.unstackable.table.BCIdesktop {
     display: none;
   }
   .topBar {
@@ -322,7 +324,7 @@
 }
 
 /* Hide the condensed / tablet-mobile view if the display is wide enough to show the desktop one */
-@media (min-width: 1024px) {
+@media (min-width: 861px) {
   .BCImobiletablet {
     display: none;
   }

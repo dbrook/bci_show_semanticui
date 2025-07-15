@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Header } from 'semantic-ui-react';
+import { Header } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
@@ -7,17 +7,11 @@ import { IVendorStatus } from '../types/interfaces';
 import SimpleSubmittableGroup from '../widgets/simplesubmittablegroup';
 import QuestionAnswerGroup from '../widgets/questionanswergroup';
 import OpenStockGroup from '../widgets/openstockgroup';
-import BulkAddModal from '../modals/bulkaddmodal';
 
 interface TaskDetailListProps {
   hideCompleted: boolean;
   alphaSort: boolean;
   showStore?: any;
-};
-
-interface TaskDetailListState {
-  bulkModalPBShown: boolean;
-  bulkModalPCShown: boolean;
 };
 
 /*
@@ -26,15 +20,7 @@ interface TaskDetailListState {
  * The display can be sorted by booth number or lexicographically by vendor.
  */
 @inject('showStore') @observer
-export default class TaskDetailList extends React.Component<TaskDetailListProps, TaskDetailListState> {
-  constructor(props: TaskDetailListProps, state: TaskDetailListState) {
-    super(props, state);
-    this.state ={
-      bulkModalPBShown: false,
-      bulkModalPCShown: false,
-    };
-  }
-
+export default class TaskDetailList extends React.Component<TaskDetailListProps> {
   render() {
     const {
       hideCompleted,
@@ -122,17 +108,7 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps,
 
     return (
       <div className='tabInnerLayout'>
-        <BulkAddModal open={this.state.bulkModalPBShown} closeHandler={this.showBulkModalPB} type='PB' />
-        <BulkAddModal open={this.state.bulkModalPCShown} closeHandler={this.showBulkModalPC} type='PC' />
         <div className="BCI_vendoritems">
-        <div className='BCI_taskgroupitem' style={{textAlign: 'left'}}>
-          <Button primary button name='PB' key='PBbtn' onClick={this.triggerBulkModalPB}>
-            Bulk-Add Power Buys
-          </Button>
-          <Button primary button name='PC' key='PCbtn' onClick={this.triggerBulkModalPC}>
-            Bulk-Add Profit Centers
-          </Button>
-        </div>
         <div className='BCI_taskgroupitem'>
             <Header as='h2' dividing textAlign='left' color='orange'>Questions</Header>
             {questionRows}
@@ -154,23 +130,4 @@ export default class TaskDetailList extends React.Component<TaskDetailListProps,
     );
   }
 
-  private triggerBulkModalPC = () => {
-    this.showBulkModalPC(true);
-  };
-
-  private showBulkModalPC = (shown: boolean) => {
-    this.setState({
-      bulkModalPCShown: shown,
-    });
-  };
-
-  private triggerBulkModalPB = () => {
-    this.showBulkModalPB(true);
-  };
-
-  private showBulkModalPB = (shown: boolean) => {
-    this.setState({
-      bulkModalPBShown: shown,
-    });
-  };
 }

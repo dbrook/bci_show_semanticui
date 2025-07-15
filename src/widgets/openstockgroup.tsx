@@ -38,11 +38,13 @@ export default class OpenStockGroup extends React.Component<OpenStockGroupProps>
           (formState === OpenStockForm.ABANDONED || formState === OpenStockForm.SUBMITTED)) {
         return null;
       }
-      return <OpenStock key={itemIdx}
-                        formStatus={formState}
-                        name={label}
-                        boothNum={boothNum}
-                        itmIdx={itemIdx} />;
+      return (
+        <OpenStock key={itemIdx}
+                   formStatus={formState}
+                   name={label}
+                   boothNum={boothNum}
+                   itmIdx={itemIdx} />
+      );
     });
 
     let header = null;
