@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, Icon, Label } from 'semantic-ui-react';
+import { Button, Icon } from 'semantic-ui-react';
 
 import { inject, observer } from 'mobx-react';
 
@@ -22,13 +22,10 @@ interface SimpleSubmittableProps {
 @inject('showStore') @observer
 export default class SimpleSubmittable extends React.Component<SimpleSubmittableProps> {
   render() {
-    const { prefix, boothNum, submitted, quantity, itemId } = this.props;
-    const itemName = `${prefix}-${boothNum}${itemId}`;
-
+    const { submitted } = this.props;
     if (submitted) {
       return <Button.Group>
           <Button as='div' labelPosition='left'>
-            <Label basic color='green' as='a' className='BCIsimplesubmittable'>{quantity} x {itemName}</Label>
             <Button icon color='green' onClick={this.toggleSubmitted}>
               <Icon name='check circle'/>
             </Button>
@@ -38,7 +35,6 @@ export default class SimpleSubmittable extends React.Component<SimpleSubmittable
     } else {
       return <Button.Group>
           <Button as='div' labelPosition='left'>
-            <Label basic color='grey' as='a' className='BCIsimplesubmittable'>{quantity} x {itemName}</Label>
             <Button icon basic color='grey' onClick={this.toggleSubmitted}>
               <Icon name='circle outline'/>
             </Button>

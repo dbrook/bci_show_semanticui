@@ -41,6 +41,7 @@ export interface DataBackup {
   tradeShowId: string;
   width: number;
   height: number;
+  fulfillMonths: string[];
   admins: { [key: string]: IVendorDirectory };
   activities: { [key: string]: IVendorDirectory };
   vendors: { [key: string]: IVendorDirectory };
@@ -69,7 +70,7 @@ export interface ISubmittableItem {
 };
 
 export interface ISubmittableQty {
-  quantity: number;
+  quantities: number[];
   submitted: boolean;
 };
 

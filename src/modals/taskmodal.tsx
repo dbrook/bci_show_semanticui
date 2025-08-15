@@ -8,7 +8,6 @@ import {
   Form,
   Input,
   InputProps,
-  Message,
   Modal,
   Header,
   DropdownProps,
@@ -118,32 +117,6 @@ export default class TaskModal extends React.Component<TaskModalProps, TaskModal
           </Form.Group>;
         pbpcSelection = null;
         keepOpenCheckbox = <Checkbox checked={keepOpenOnAdd} onChange={this.setKeepOpened} label='Keep Open'/>;
-        break;
-      }
-      case 'PC':
-      case 'PB': {
-        let fields = [];
-        if (presetBoothId) {
-          for (const letter of ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']) {
-            let initValPB = vendorsWithActions.get(presetBoothId)?.powerBuys.get(letter)?.quantity;
-            let initValPC = vendorsWithActions.get(presetBoothId)?.profitCenters.get(letter)?.quantity;
-            let field = <Form.Field inline key={letter}>
-                <label style={{fontFamily: 'monospace', fontSize: 'medium'}}>{itemTypeToAdd}-{boothNum}{letter}: </label>
-                <Input style={{fontFamily: 'monospace', width: '90px'}}
-                       defaultValue={itemTypeToAdd === 'PC' ? initValPC : initValPB}
-                       onChange={this.qtyChange}
-                       type='number' min='0' max='9999' name={letter} placeholder='Qty' />
-              </Form.Field>;
-            fields.push(field);
-          }
-        }
-        entryField = null;
-        pbpcSelection = <div style={{display: 'flex', justifyContent: 'center', flexWrap: 'wrap', columnGap: '45px'}}>{fields}</div>;
-        addBtnText = 'Update';
-        helperBox = <Message info>
-            <Message.Header>How to {headerText}:</Message.Header>
-            <p>Use the input boxes to set a quantity above 0 and the profit center will be added. Input boxes that are empty or 0 will be deleted.</p>
-          </Message>;
         break;
       }
       default:

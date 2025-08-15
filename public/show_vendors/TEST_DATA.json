@@ -1,6 +1,13 @@
 {
     "width": 590,
     "height": 620,
+    "fulfillMonths": [
+        "Immed.",
+        "MAY",
+        "JUN",
+        "JUL",
+        "AUG"
+    ],
     "vendors": {
         "100": {
             "vendors": [
