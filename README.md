@@ -72,6 +72,7 @@ JSON file like those under "public/show_vendors".
 
 1. Acquire the new show directory and floorplan.
 1. Convert the directory into a CSV file, with the fields in the following order:
+    1. TIP: Zoom your floorplan so a standard booth width is around 42 pixels!
     1. Booth Number (as it appears on the directory)
     1. Type of Booth: "activity", "admin", or "vendor"
     1. Vendor Name / Activity Name / Admin Type. For booths that appear twice, try and unify
@@ -80,9 +81,10 @@ JSON file like those under "public/show_vendors".
     1. Top-most Pixel Coordinate of Booth on floorplan
     1. Width (in pixels) of booth on floorplan
     1. Height (in pixels) of booth on floorplan
-1. Add 2 lines at the top of the CSV file for the overall height/width of the floorplan, for ex:
+1. Add 3 lines at the top of the CSV file for the overall height/width of the floorplan and fulfillment months, for ex:
     1. `width,590,,,,,,`
     1. `height,620,,,,,,`
+    1. `fulfillMonths,"Immed.,Sep,Oct,Nov,Dec,Jan,Feb,Mar",,,,,`
 1. Acquire the Open Stock "Showbook Order Form" for the new trade show.
     1. Export it as a CSV file and make sure that the `"` symbol is the text quote character.
     1. Open the exported file in a text editor and remove all the heading rows so that there is
