@@ -1,7 +1,7 @@
 #! /usr/bin/env python3
 
 # Takes a converted-to-CSV open stock order file and determines all vendor/booth/sub-vendors.
-# 
+#
 # Background:
 # Some vendors have multiple sub-vendors that share a booth under a single top-level vendor.
 # Other vendors share booths with other vendors despite both being top-level vendors in the
@@ -26,6 +26,7 @@ vendors = {}      # Vendor Booths
 vendor_json = {
     'width': None,
     'height': None,
+    'fulfillMonths': [],
     'vendors': {},
     'admins': {},
     'activities': {},
@@ -58,6 +59,9 @@ def parseCSVVendors(argv):
                 continue
             elif row[0] == 'height':
                 vendor_json['height'] = int(row[1])
+                continue
+            elif row[0] == 'fulfillMonths':
+                vendor_json['fulfillMonths'] = row[1].split(',')
                 continue
 
             # Otherwise just regular booths
@@ -111,7 +115,7 @@ def parseCSVVendors(argv):
                 vendor_json['vendors'][booth_num]['y1'] = y1
                 vendor_json['vendors'][booth_num]['width'] = width
                 vendor_json['vendors'][booth_num]['height'] = height
-            
+
             # An administrative booth is only from the map/directory CSV we made separately
             elif booth_type == 'admin':
                 vendor_json['admins'][booth_num] = {
@@ -122,7 +126,7 @@ def parseCSVVendors(argv):
                     'width': width,
                     'height': height,
                 }
-            
+
             # An activity booth is very similar to an admin booth
             elif booth_type == 'activity':
                 vendor_json['activities'][booth_num] = {
@@ -133,7 +137,7 @@ def parseCSVVendors(argv):
                     'width': width,
                     'height': height,
                 }
-    
+
     print("\n\n" + json.dumps(vendor_json))
 
 if __name__ == "__main__":
